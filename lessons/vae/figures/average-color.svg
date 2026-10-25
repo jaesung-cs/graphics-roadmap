@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>흑백 사과 사진의 정답 색은 빨강 +1 이 5 장, 초록 −1 이 5 장이다. MSE 로 학습한 모델은 평균 0 을 내서 사과를 회색으로 칠한다</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#f87171"/>
+    </marker>
+    <g id="apple">
+      <path d="M0,-9 C-6,-15 -16,-12 -16,-1 C-16,9 -8,16 0,13 C8,16 16,9 16,-1 C16,-12 6,-15 0,-9 z"/>
+      <line x1="0" y1="-9" x2="2" y2="-17" stroke="#94a3b8" stroke-width="2"/>
+    </g>
+  </defs>
+  <rect x="1" y="1" width="638" height="298" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <rect x="40" y="40" width="560" height="220" fill="#0e1628" stroke="#1e293b" stroke-width="1.5"/>
+  <line x1="200" y1="80" x2="600" y2="80" stroke="#475569" stroke-width="1" stroke-dasharray="3 5"/>
+  <text x="592" y="70" fill="#94a3b8" font-size="12" text-anchor="end">+1 (빨강)</text>
+  <line x1="200" y1="150" x2="600" y2="150" stroke="#475569" stroke-width="1" stroke-dasharray="3 5"/>
+  <text x="592" y="140" fill="#94a3b8" font-size="12" text-anchor="end">0 (색 없음)</text>
+  <line x1="200" y1="220" x2="600" y2="220" stroke="#475569" stroke-width="1" stroke-dasharray="3 5"/>
+  <text x="592" y="240" fill="#94a3b8" font-size="12" text-anchor="end">−1 (초록)</text>
+  <use href="#apple" fill="#6b7280" stroke="#e2e8f0" stroke-width="1" transform="translate(100 150) scale(1.6)"/>
+  <text x="100" y="196" fill="#e2e8f0" font-size="13" text-anchor="middle">흑백 사진 (입력)</text>
+  <g fill="#f87171">
+    <use href="#apple" x="250" y="82"/><use href="#apple" x="290" y="82"/><use href="#apple" x="330" y="82"/><use href="#apple" x="370" y="82"/><use href="#apple" x="410" y="82"/>
+  </g>
+  <text x="330" y="60" fill="#f87171" font-size="13" text-anchor="middle">정답 5 장</text>
+  <g fill="#34d399">
+    <use href="#apple" x="250" y="222"/><use href="#apple" x="290" y="222"/><use href="#apple" x="330" y="222"/><use href="#apple" x="370" y="222"/><use href="#apple" x="410" y="222"/>
+  </g>
+  <text x="330" y="252" fill="#34d399" font-size="13" text-anchor="middle">정답 5 장</text>
+  <line x1="132" y1="150" x2="474" y2="150" stroke="#f87171" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#arrow-red)"/>
+  <use href="#apple" x="500" y="152" fill="#9ca3af" stroke="#f87171" stroke-width="1.5"/>
+  <text x="430" y="186" fill="#f87171" font-size="13" text-anchor="middle">MSE 의 예측: 평균 0 → 회색 사과</text>
+</svg>

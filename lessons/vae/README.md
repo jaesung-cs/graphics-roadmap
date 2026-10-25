@@ -4,7 +4,7 @@ title: VAE
 branch: generative
 requires: [pytorch-mlp]
 hours: 2
-summary: 데이터를 latent 로 줄였다 되살리면서 latent 를 N(0, I) 에 맞춰, 뽑은 숫자에서 새 sample 을 만드는 생성 모델. Gaussian encoder, reparameterization trick, KL 과 ELBO, β 와 posterior collapse, ACT 의 CVAE
+summary: 데이터를 latent 로 줄였다 되살리면서 latent 를 N(0, I) 에 맞춰, 뽑은 숫자에서 새 sample 을 만드는 생성 모델. Gaussian encoder, reparameterization trick, KL 과 ELBO, β 와 posterior collapse, 여러 답을 내는 그림 변환의 CVAE
 papers:
   - title: "Auto-Encoding Variational Bayes"
     authors: Diederik P. Kingma, Max Welling
@@ -18,31 +18,41 @@ papers:
     authors: Diederik P. Kingma, Max Welling
     year: 2019
     url: https://arxiv.org/abs/1906.02691
+  - title: "Colorful Image Colorization"
+    authors: Richard Zhang, Phillip Isola, Alexei A. Efros
+    year: 2016
+    url: https://arxiv.org/abs/1603.08511
+  - title: "Toward Multimodal Image-to-Image Translation"
+    authors: Jun-Yan Zhu, Richard Zhang, Deepak Pathak, Trevor Darrell, Alexei A. Efros, Oliver Wang, Eli Shechtman
+    year: 2017
+    url: https://arxiv.org/abs/1711.11586
 ---
 
 # VAE
 
-사람이 로봇 팔을 조종해 같은 큐브 옮기기를 여러 번 시연하면 시연마다 움직임이 조금씩 다르다. 큐브 위에서 잠깐 멈췄다 내려가는 시연도
-있고 바로 내려가는 시연도 있는데, 이 데이터로 정답 하나를 맞히는 모델을 학습하면 여러 시연의 평균에 가까운 동작이 나온다. 여러 시연이
-퍼진 모양을 그대로 배워 그 안에서 동작 하나를 뽑으려면 모델은 무엇을 학습해야 할까?
+흑백 사진에 색을 칠하는 모델을 컬러 사진으로 학습시킨다고 하자. 같은 모양의 사과가 어떤 사진에서는 빨갛고 어떤 사진에서는 초록인데, 이
+데이터로 정답 색 하나를 맞히는 모델을 학습하면 두 색의 평균인 칙칙한 회색에 가까운 사과가 나온다. 여러 정답이 퍼진 모양을 그대로 배워 그
+안에서 하나를 뽑으려면 모델은 무엇을 학습해야 할까?
 
 VAE(variational autoencoder)는 데이터를 숫자 몇 개로 줄였다가 되살리도록 학습하면서, 줄인 숫자들이 평균이 0 이고 표준편차가 1 인
 정규분포를 따르도록 함께 맞춘다. 학습이 끝나면 그 정규분포에서 뽑은 숫자를 되살리는 쪽(decoder)에 넣기만 해도 데이터를 닮은 새 sample
-이 나온다. 양팔 로봇 ALOHA 의 policy 인 ACT 는 VAE 에 조건을 붙인 CVAE 로 사람의 시연을 학습하는데, 저자들이 CVAE 를 빼고 학습하자
-사람 시연으로 학습한 simulator 과제의 성공률이 35.3% 에서 2% 로 떨어졌다.
+이 나온다. Stable Diffusion 도 VAE 로 $512 \times 512 \times 3$ 그림을 $64 \times 64 \times 4$ 의 숫자 묶음으로 줄인 뒤, 그 작은 숫자
+묶음 위에서 그림을 그린다.
 
 ## 학습 목표
 
-- 갈라진 시연을 MSE 로 학습한 모델이 평균을 내는 이유와, autoencoder 의 latent space 에 빈 곳이 생기는 이유를 설명할 수 있다
+- 정답이 갈라진 데이터를 MSE 로 학습한 모델이 평균을 내는 이유와, autoencoder 의 latent space 에 빈 곳이 생기는 이유를 설명할 수 있다
 - VAE 의 encoder 가 평균과 분산을 내는 이유를 설명하고, reparameterization trick 으로 gradient 가 encoder 까지 전해지는 과정을 숫자로 따라갈 수 있다
 - reconstruction 항과 KL 항으로 된 loss 가 ELBO 와 어떻게 이어지는지, β 가 커지거나 작아지면 무슨 일이 생기는지 설명할 수 있다
-- ACT 가 CVAE encoder 를 학습 때만 쓰고 실행할 때 $z = 0$ 으로 두는 이유와 그 한계를 설명할 수 있다
+- 조건을 붙인 CVAE 가 밑그림 한 장에서 색이 다른 그림 여러 장을 내는 과정과, 그때 KL 항이 하는 일을 설명할 수 있다
 
 ## 정답 하나를 내는 모델의 평균
 
-로봇이 앞으로 가다가 정면의 상자를 비켜 가는 시연을 10 번 모았더니, 5 번은 왼쪽으로 1 m 비켜 갔고 나머지 5 번은 오른쪽으로 1 m 비켜
-갔다고 하자. 왼쪽은 $+1$ 로 적고 오른쪽은 $-1$ 로 적는다. 예측 $a$ 하나를 내는 모델을 MSE(오차를 제곱해 평균한 값)로 학습하면 정답
-$+1$ 과 $-1$ 이 반반이라서, loss 는 두 오차 제곱의 평균이 된다.
+흑백 사진에 색을 칠하는 일을 **colorization** 이라고 한다. 컬러 사진에서 밝기만 남기면 입력이 되고 지운 색이 정답이 되므로, 컬러 사진만
+있으면 학습 데이터를 얼마든지 만들 수 있다. 사진의 pixel 값은 흔히 밝기와 색을 나눠 적는데, 여기서는 색을 나타내는 축 하나만 보고 빨강 쪽 끝을 $+1$,
+초록 쪽 끝을 $-1$, 색이 없는 회색을 0 으로 적는다. Zhang 등(2016)의 예처럼 사과는 대개 빨강·초록·노랑이고 파랑일 일은 거의 없다. 흑백으로는 똑같아 보이는 사과
+사진 10 장 가운데 5 장은 빨간 사과($+1$)이고 5 장은 초록 사과($-1$)라고 하자. 색 $a$ 하나를 내는 모델을 MSE(오차를 제곱해 평균한 값)로
+학습하면 정답 $+1$ 과 $-1$ 이 반반이라서, loss 는 두 오차 제곱의 평균이 된다.
 
 | 예측 $a$ | 정답 $+1$ 과의 오차 제곱 | 정답 $-1$ 과의 오차 제곱 | MSE |
 | --- | --- | --- | --- |
@@ -51,18 +61,20 @@ $+1$ 과 $-1$ 이 반반이라서, loss 는 두 오차 제곱의 평균이 된�
 | $0$ | $(0 - 1)^2 = 1$ | $(0 + 1)^2 = 1$ | $(1 + 1) \div 2 = 1$ |
 | $-0.5$ | $(-0.5 - 1)^2 = 2.25$ | $(-0.5 + 1)^2 = 0.25$ | $1.25$ |
 
-MSE 는 $a = 0$ 에서 1 로 가장 작아서 학습을 마친 모델은 0 을 낸다. 0 은 어느 쪽으로도 비키지 않는다는 뜻이라 로봇은 상자에 정면으로
-부딪힌다. MSE 를 가장 작게 하는 예측은 정답들의 평균인데, 정답이 두 무리로 갈라져 있으면 그 평균은 어느 무리에도 속하지 않는다.
+MSE 는 $a = 0$ 에서 1 로 가장 작아서 학습을 마친 모델은 0 을 낸다. 0 은 색이 없다는 뜻이라 모델은 사과를 회색으로 칠한다. 일반적으로 MSE 를
+가장 작게 하는 예측은 정답들의 평균인데, 정답이 두 무리로 갈라져 있으면 그 평균은 어느 무리에도 속하지 않는다. Zhang 등(2016)도 colorization
+에서 한 물체가 여러 색을 가질 수 있으면 제곱 오차를 가장 작게 하는 답은 그 색들의 평균이 되고, 그래서 결과가 회색에 가깝고 색이 바랜다고
+설명한다.
 
-![예로 든 시연. 로봇 앞에 상자가 있고, 시연 5 번은 왼쪽(+1)으로 비켜 갔고 나머지 5 번은 오른쪽(−1)으로 비켜 갔다. 평균 0 을 따라가면 상자에 부딪힌다](figures/average-path.svg)
+![예로 든 colorization. 흑백 사과 사진의 정답은 빨강(+1) 5 장과 초록(−1) 5 장이다. MSE 로 학습한 모델은 평균 0 을 내서 사과를 회색으로 칠한다](figures/average-color.svg)
 
-위 그림의 초록 길이 시연이고, 빨간 점선이 MSE 로 학습한 모델이 내는 평균 0 의 길이다. 이처럼 같은 상황에서 정답이 여러 무리로 갈라지는
+위 그림의 빨강과 초록 사과가 정답이고, 빨간 점선이 MSE 로 학습한 모델이 내는 평균 0 이다. 이처럼 같은 입력에 정답이 여러 무리로 갈라지는
 데이터를 **multimodal** 이라고 한다. mode 는 값이 몰린 봉우리를 뜻하고, multimodal 은 그 봉우리가 여럿이라는 뜻이다.
 
-VLA 처럼 카메라 이미지와 글 지시를 함께 받는 모델도 multimodal 모델이라고 부르는데, 이때는 입력의 종류가 여럿이라는 뜻이다. 이 강의와
-behavior cloning·ACT 강의에서 쓰는 multimodal 은 앞의 뜻이다.
+[CLIP](../clip/README.md) 처럼 그림과 글을 함께 다루는 모델도 multimodal 모델이라고 부르는데, 이때는 입력의 종류가 여럿이라는 뜻이다. 이
+강의와 [DDPM](../ddpm/README.md)·[Flow Matching](../flow-matching/README.md) 강의에서 쓰는 multimodal 은 앞의 뜻이다.
 
-평균을 피하려면 왼쪽과 오른쪽에 정답이 반씩 몰린 분포 자체를 배우고, 실행할 때마다 그 분포에서 하나를 뽑아야 한다. 학습 데이터의 분포를
+평균을 피하려면 빨강과 초록에 정답이 반씩 몰린 분포 자체를 배우고, 칠할 때마다 그 분포에서 하나를 뽑아야 한다. 학습 데이터의 분포를
 배워 그 분포를 닮은 새 데이터를 만드는 모델을 **생성 모델**(generative model)이라고 한다. 분류 모델이 손글씨 그림을 받아 "7" 을
 고른다면, 생성 모델은 무작위로 고른 숫자 몇 개를 받아 학습한 그림들을 닮은 새 손글씨 그림을 낸다.
 
@@ -71,11 +83,12 @@ behavior cloning·ACT 강의에서 쓰는 multimodal 은 앞의 뜻이다.
 손글씨 dataset MNIST 의 그림 한 장은 $28 \times 28 = 784$ 개 pixel 의 밝기를 늘어놓은 784 차원 vector 라서 그 분포를 표로 적을 수
 없다. 그래서 VAE 는 분포를 직접 적지 않고, 정규분포에서 뽑은 숫자 몇 개를 그림으로 바꾸는 decoder 를 학습한다.
 
-**확인 문제.** 시연의 정답이 $+2$, $+2$, $-2$, $-2$ 일 때 MSE 를 가장 작게 하는 예측은 얼마이고, 그 예측은 시연 중 몇 개와 같을까?
+**확인 문제.** 사진 네 장의 정답 색이 $+2$, $+2$, $-2$, $-2$ 일 때 MSE 를 가장 작게 하는 예측은 얼마이고, 그 예측은 정답 중 몇 개와
+같을까?
 
 <details><summary>답 보기</summary>
 
-MSE 를 가장 작게 하는 예측은 정답들의 평균이므로 $(2 + 2 - 2 - 2) \div 4 = 0$ 이다. 시연 네 개 중 0 인 것은 하나도 없다.
+MSE 를 가장 작게 하는 예측은 정답들의 평균이므로 $(2 + 2 - 2 - 2) \div 4 = 0$ 이다. 정답 네 개 중 0 인 것은 하나도 없다.
 
 </details>
 
@@ -211,7 +224,8 @@ VAE 논문은 encoder 가 낸 분포를 $q_\phi(z \mid x)$ 로 적는다. 세로
 $z$ 의 분포라는 뜻이고, 아래첨자 $\phi$ (phi, 파이)는 encoder 의 weight 전체를 가리킨다. decoder 는 같은 방식으로 $p_\theta(x \mid z)$ 로
 적고 $\theta$ (theta, 세타)가 decoder 의 weight 다. $z$ 가 여러 차원이면 encoder 는 차원마다 $\mu_j$ 와 $\sigma_j$ 를 하나씩 내는데,
 $\sigma$ 는 0 보다 커야 해서 실제로는 분산에 log 를 씌운 logvar $= \log \sigma^2$ 을 낸다. PyTorch 공식 예제에서도 encoder 가 $\mu$ 와
-logvar 를 따로 낸다. LeRobot 의 ACT 구현에서는 같은 값을 `log_sigma_x2` 라는 이름으로 받는다.
+logvar 를 따로 낸다. Stable Diffusion 의 VAE 를 담은 diffusers 의 `DiagonalGaussianDistribution` 도 encoder 출력을 반으로 나눠 앞의
+반을 $\mu$ 로, 뒤의 반을 logvar 로 쓴다.
 
 <details><summary><b>심화: σ 대신 logvar 를 내는 이유</b></summary>
 
@@ -301,8 +315,9 @@ $$
 z = \mu + \sigma \odot \epsilon, \qquad \epsilon \sim \mathcal N(0, I)
 $$
 
-PyTorch 공식 예제에서는 $\epsilon$ 을 뽑는 `torch.randn_like` 한 줄과 곱하고 더하는 한 줄로 이 식을 계산한다. ACT 논문에서도 CVAE encoder
-가 낸 평균과 분산으로 이 방법을 써서 $z$ 를 뽑고, encoder 와 policy 를 함께 학습한다.
+PyTorch 공식 예제에서는 $\epsilon$ 을 뽑는 `torch.randn_like` 한 줄과 곱하고 더하는 한 줄로 이 식을 계산한다. diffusers 의
+`DiagonalGaussianDistribution` 도 logvar 로 $\sigma = e^{\text{logvar}/2}$ 를 구한 뒤, 같은 모양으로 뽑은 $\epsilon$ 에 곱하고 $\mu$ 를
+더해 latent 를 만든다.
 
 **흔한 오해.** reparameterization trick 을 쓰면 $z$ 의 무작위성이 사라진다고 생각하기 쉽다. $\epsilon$ 은 여전히 매번 새로 뽑으므로 $z$ 는
 매번 다르다. 무작위성이 계산의 가운데에서 바깥 입력 자리로 옮겨 갔을 뿐이고, 그 덕분에 $\mu$ 와 $\sigma$ 를 지나는 계산이 끊기지 않는다.
@@ -355,7 +370,9 @@ $\epsilon = 0$ 이 뽑히면 $z = 0.6$ 이라 loss 가 0 이다. $\epsilon = -2$
 $3 \times 0.2^2 = 0.12$ 로 커진다. $\sigma$ 가 클수록 $z$ 가 $\mu$ 에서 멀리 뽑히는 일이 잦으므로, reconstruction 항만 있으면 학습은
 $\sigma$ 를 0 쪽으로 줄인다. Kingma 와 Welling 은 그림 한 장마다 $\epsilon$ 을 한 번만 뽑고 그림 100 장을 한 mini-batch 로 묶어
 학습했다. 한 번 뽑은 값은 운에 따라 크거나 작을 수 있지만, 그림이 100 장이면 그 운이 고르게 섞인다. pixel 이 0 과 1 에 몰린 MNIST
-에서는 PyTorch 공식 예제처럼 제곱 오차 자리에 BCE 를 쓰기도 한다. ACT 는 reconstruction 항으로 action 오차의 절댓값으로 잰 L1 을 쓴다.
+에서는 PyTorch 공식 예제처럼 제곱 오차 자리에 BCE 를 쓰기도 한다. Stable Diffusion 이 쓰는 autoencoder 는 LDM(latent diffusion model) 저자들이
+만들었는데, 이들이 공개한 code 는 pixel 오차의 절댓값으로 잰 L1 에, 사람이 느끼는 차이를 미리 학습한 network 로 잰 LPIPS(learned perceptual image patch similarity)를 더해 reconstruction
+항으로 쓴다.
 
 <details><summary><b>심화: 0 과 1 사이 pixel 의 BCE</b></summary>
 
@@ -399,8 +416,9 @@ $\mu = 0$, $\sigma = 0.5$ 라면 $\sigma^2 = 0.25$ 이고 $\log 0.25 = -1.386$ �
 $\sigma^2 - \log \sigma^2$ 은 $\sigma = 1$ 에서 가장 작아서, $\sigma$ 가 1 보다 작아지면 $-\log \sigma^2$ 이 KL 을 키우고 1 보다 커지면
 $\sigma^2$ 이 KL 을 키운다.
 
-$z$ 가 여러 차원이면 차원마다 KL 을 구해 더한다. PyTorch 공식 예제와 LeRobot 의 ACT 구현은 $\sigma^2$ 자리에는 $e^{\text{logvar}}$ 을
-넣고 $\log \sigma^2$ 자리에는 logvar 를 넣어 이 식을 그대로 계산한다.
+$z$ 가 여러 차원이면 차원마다 KL 을 구해 더한다. PyTorch 공식 예제와 diffusers 의 `DiagonalGaussianDistribution` 은 $\sigma^2$ 자리에는
+$e^{\text{logvar}}$ 을 넣고 $\log \sigma^2$ 자리에는 logvar 를 넣어 이 식을 그대로 계산한다. diffusers 는 latent 의 channel·세로·가로
+자리마다 구한 KL 을 모두 더한다.
 
 <details><summary><b>심화: 동전 두 개의 KL divergence</b></summary>
 
@@ -481,7 +499,8 @@ $\log p_\theta(x)$ 와 같아진다. 유도는 Kingma 와 Welling 의 입문서 
 ## β 와 posterior collapse
 
 그림 한 장의 VAE loss 를 $\beta$ 와 함께 적으면 아래와 같다. $\beta$ (beta, 베타)는 KL 항을 얼마나 무겁게 볼지 정하는 숫자다. VAE 논문의
-loss 는 $\beta = 1$ 에 해당하고, ACT 는 $\beta = 10$ 을 쓴다.
+loss 는 $\beta = 1$ 에 해당한다. Stable Diffusion 이 쓰는 autoencoder 를 만든 LDM 저장소의 설정 파일(`kl-f8`)에는 $\beta$ 자리의
+`kl_weight` 가 $10^{-6}$ 으로 적혀 있다.
 
 $$
 L = L_{\text{rec}} + \beta \cdot D_{\mathrm{KL}}\big(q_\phi(z \mid x) \,\Vert\, \mathcal N(0, I)\big)
@@ -514,10 +533,12 @@ decoder 로 써서 문장을 만드는 VAE 를 학습했는데, 단순하게 구
 0 에서 시작해 1 까지 천천히 올리는 KL annealing 으로 이 문제를 줄였다.
 
 pixel 784 개의 reconstruction 항을 더하지 않고 평균하면 그 항만 784 분의 1 로 작아져서, KL 을 784 배 무겁게 본 것과 같다. PyTorch 공식
-예제는 reconstruction 항을 모든 pixel 에 걸쳐 더하고 KL 도 latent 차원마다 더한 뒤 둘을 합해서, 두 항의 비율을 바꾸지 않는다. LeRobot
-의 ACT 구현은 반대로 L1 을 chunk 100 step × 관절 목표 14 개 $= 1400$ 개 숫자의 평균으로 계산하고, KL 은 32 차원을 모두 더한 뒤 10 을
-곱한다. L1 을 1400 개에 걸쳐 더한 loss 를 기준으로 계산하면 이 구현에서 KL 의 무게는 $1400 \times 10 = 14{,}000$ 배가 된다. 이렇게 KL
-이 무거우면 $z$ 에 담기는 정보가 적어지는데, ACT 논문도 $\beta$ 가 클수록 $z$ 로 전해지는 정보가 적어진다고 설명한다.
+예제는 reconstruction 항을 모든 pixel 에 걸쳐 더하고 KL 도 latent 차원마다 더한 뒤 둘을 합해서, 두 항의 비율을 바꾸지 않는다. LDM
+의 code 도 L1 과 LPIPS 를 pixel 마다 더하고 KL 도 latent 의 숫자마다 더한 뒤, KL 에만 $10^{-6}$ 을 곱한다. 이 설정은 $256 \times 256$
+그림으로 학습하므로, 계산하면 그림 한 장에 reconstruction 항의 숫자는 $256 \times 256 \times 3 = 196{,}608$ 개이고
+latent 의 숫자는 $32 \times 32 \times 4 = 4{,}096$ 개다. $\beta = 10^{-6}$ 이면 KL 이 100 줄어도 loss 는 0.0001 줄어드는 데 그쳐서, 이 VAE 는
+posterior collapse 와 반대쪽 끝인 보통의 autoencoder 에 가깝다. 그래서 Stable Diffusion 은 $\mathcal N(0, I)$ 에서 뽑은 $z$ 를 decoder
+에 바로 넣지 않고, 새 latent 를 만드는 일을 diffusion 에 맡긴다. 이 구성은 [Latent Diffusion](../latent-diffusion/README.md) 에서 다룬다.
 
 **확인 문제.** 어떤 그림의 reconstruction loss 가 100, KL 이 20 이다. $\beta = 1$ 일 때와 $\beta = 4$ 일 때 loss 는 각각 얼마이고, $\beta = 4$
 이면 학습이 어느 항을 더 줄이려 할까?
@@ -574,7 +595,7 @@ $$
 
 </details>
 
-## CVAE 와 ACT
+## CVAE 와 여러 답을 내는 그림 변환
 
 VAE 로는 $z$ 를 뽑을 때 어떤 숫자 그림이 나올지 고를 수 없다. **CVAE**(conditional VAE)는 encoder 와 decoder 양쪽에 조건 $c$ 를 함께 넣어
 원하는 조건의 sample 을 만든다. MNIST 에서 조건은 그림이 어떤 숫자인지이고, 숫자 10 개 중 그 숫자의 자리만 1 이고 나머지는 0 인
@@ -586,64 +607,81 @@ $z$ 를 두고 $c$ 만 바꿔 넣으면 같은 굵기와 기울기로 쓴 다른
 
 ![CVAE 의 구조. encoder 는 그림 x 와 one-hot 조건 c 를 받아 μ, σ 를 내고, decoder 는 z 와 c 를 받아 그림을 낸다. 아래는 같은 z 에 c 만 1, 4, 7 로 바꾸면 기울기가 같은 1, 4, 7 이 나오는 모습](figures/cvae.svg)
 
-로봇이 지금 상황에서 어떤 행동을 할지 정하는 규칙을 policy 라고 한다. ACT(Action Chunking with Transformers)는 앞으로 여러 step 동안의
-관절 목표를 한 덩어리(action chunk)로 예측하는 로봇 팔 policy 로, CVAE 구조로 사람의 시연을 학습하고 CVAE 의 decoder 를 policy 로 쓴다.
-ACT 논문과 LeRobot 기본 설정의 값을 MNIST 의 CVAE 와 나란히 놓으면 아래와 같다.
+그림 한 장을 받아 다른 그림 한 장을 내는 일을 **image-to-image translation**(그림 변환)이라고 한다. 신발의 윤곽선만 그린 밑그림에 색과
+무늬를 칠해 사진처럼 만드는 일이 그 예다. 같은 밑그림이 빨간 신발도 되고 검은 신발도 될 수 있어서, [첫 절](#정답-하나를-내는-모델의-평균)
+의 사과처럼 정답이 여럿이다. Zhu 등(2017)은 밑그림을 조건 $c$ 로 넣은 CVAE 로 이 문제를 다뤘다.
 
-| 항목 | MNIST CVAE | ACT |
+이 논문에서는 decoder 를 generator 라고 부른다. loss 에는 reconstruction 항과 KL 항 말고도, 진짜 사진과 generator 가 만든 그림을
+구별하도록 따로 학습시킨 network(discriminator)를 속일수록 작아지는 항이 하나 더 붙는다. 이렇게 두 network 를 맞세워 학습하는 방법을
+GAN(generative adversarial network)이라고 하고, 이 항은 generator 가 흐릿한 평균 대신 사진처럼 그럴듯한 그림을 내게 한다. 저자들은
+CVAE 에 이 항을 붙인 방법을 cVAE-GAN 이라고 불렀다. cVAE-GAN 의 값을 MNIST 의 CVAE 와 나란히 놓으면 아래와 같다.
+
+| 항목 | MNIST CVAE | cVAE-GAN (Zhu 등, 2017) |
 | --- | --- | --- |
-| 되살릴 데이터 $x$ | 손글씨 그림 | 시연의 action chunk (100 step × 관절 목표 14 개) |
-| encoder 의 입력 | 그림과 숫자 label | 시연의 action chunk 와 관절 위치 |
-| decoder 의 입력 | $z$ 와 숫자 label | $z$, 카메라 이미지, 관절 위치 |
-| latent $z$ | 2 차원 (위 그림의 예) | 32 차원 |
-| reconstruction loss | BCE 의 합 | L1 (오차의 절댓값) |
-| KL 의 weight $\beta$ | 1 | 10 |
+| 되살릴 데이터 $x$ | 손글씨 그림 | 정답 사진 ($256 \times 256 \times 3$) |
+| 조건 $c$ | 숫자 label | 윤곽선 밑그림 |
+| encoder 의 입력 | 그림과 숫자 label | 정답 사진 |
+| decoder 의 입력 | $z$ 와 숫자 label | $z$ 와 밑그림 |
+| latent $z$ | 2 차원 (위 그림의 예) | 8 차원 |
+| reconstruction loss | BCE 의 합 | L1 (오차의 절댓값), weight 10 |
+| KL 의 weight $\beta$ | 1 | 0.01 |
 
-학습할 때는 encoder 가 시연의 action chunk 와 관절 위치를 보고 $\mu$, $\sigma$ 를 내고, reparameterization trick 으로 그 분포에서 뽑은
-$z$ 를 policy 에 넣는다. encoder 는 같은 장면에서도 시연마다 달라지는 움직임(예를 들어 큐브 위에서 멈췄는지)을 $z$ 에 담아 policy 에
-넘긴다. 그래서 같은 관측에 정답 chunk 가 여럿이어도 시연마다 policy 의 입력이 달라지므로, policy 는 정답들의 평균을 낼 필요가 없다.
-저자들이 CVAE 를 빼고 L1 만으로 학습하자 사람 시연으로 학습한 simulator 과제 두 개의 성공률이 35.3% 에서 2% 로 떨어졌다. 반면
-프로그램으로 만든 시연은 매번 똑같아서 CVAE 가 있든 없든 성공률이 거의 같았다.
+학습할 때는 encoder 가 정답 사진을 보고 $\mu$, $\sigma$ 를 내고, reparameterization trick 으로 그 분포에서 뽑은 $z$ 를 밑그림과 함께
+generator 에 넣는다. 모양은 이미 밑그림에 있으므로, encoder 는 밑그림에 없는 색과 무늬를 $z$ 에 담아 넘긴다. 같은 밑그림에 정답 사진이
+여럿이어도 사진마다 generator 의 입력이 달라지므로, generator 는 정답들의 평균을 낼 필요가 없다.
 
-로봇을 실제로 움직일 때는 encoder 에 넣을 시연 action chunk 가 없어서, 저자들은 CVAE encoder 를 policy 학습에만 쓰고 실행할 때는
-버린다. 실행할 때는 $z$ 를 prior 의 평균인 0 으로 두고, policy 는 카메라 이미지와 관절 위치만으로 action chunk 를 낸다.
+새 밑그림에 색을 칠할 때는 encoder 에 넣을 정답 사진이 없다. 그래서 $\mathcal N(0, I)$ 에서 $z$ 를 뽑아 밑그림과 함께 generator 에 넣고,
+$z$ 를 다시 뽑을 때마다 색이 다른 신발이 나온다. KL 항은 학습 때 encoder 가 낸 posterior 를 이 $\mathcal N(0, I)$ 쪽으로 모아, 실행 때
+뽑은 $z$ 가 generator 가 받아 본 적 있는 자리에 떨어지게 한다.
 
-![ACT 의 CVAE. 학습 때는 encoder 가 시연 action chunk 와 관절 위치로 μ, σ 를 내고 z = μ + σ ⊙ ε 를 policy 에 넣는다. 로봇을 움직일 때는 encoder 없이 z = 0 을 넣고 카메라 이미지와 관절 위치로 action chunk 를 낸다](figures/act-cvae.svg)
+![cVAE-GAN 의 학습과 실행. 학습 때는 encoder 가 정답 사진으로 μ, σ 를 내고 z = μ + σ ⊙ ε 를 밑그림과 함께 generator 에 넣어 L1 × 10 과 KL × 0.01 을 줄인다. 실행 때는 encoder 없이 N(0, I) 에서 뽑은 z 세 개로 같은 밑그림에서 색이 다른 신발 세 켤레를 낸다](figures/cvae-shoes.svg)
 
-시연이 왼쪽으로 잡기와 오른쪽으로 잡기처럼 정반대인 두 무리로 반반 갈리는 경우를 생각해 보자. policy 는 실행할 때 $z = 0$ 하나만 받고
-$\beta = 10$ 이라 $z$ 에 담긴 정보도 적어서, $z = 0$ 에서 나온 chunk 가 두 무리 중 하나를 고른다는 보장이 없다. ACT 가 chunk 를 겹쳐
-평균하는 temporal ensembling 은 ACT 에서 다루고, 무작위 출발점에서 시작해 두 무리 중 하나에 도착하게 만드는 방법은
-Diffusion Policy 에서 다룬다.
+저자들은 이 구성의 각 부분을 빼 보며 비교했다. 아래 표의 pix2pix 는 정답 사진을 보는 encoder 없이 밑그림만 받아 그림 한 장을 내는 GAN 그림 변환
+모델이고, cAE-GAN 은 cVAE-GAN 에서 KL 항만 뺀 방법이다.
 
-**흔한 오해.** ACT 가 CVAE 를 쓰니 실행할 때마다 $z$ 를 뽑아 여러 움직임 중 하나를 고른다고 생각하기 쉽다. CVAE 의 encoder 는 학습할 때
-시연마다 다른 움직임을 $z$ 에 담아 policy 에 넘기는 데만 쓰인다. 실행할 때는 $z$ 를 0 하나로 고정하므로 같은 관측에는 늘 같은 chunk 가
-나온다.
+| 방법 | latent $z$ 를 얻는 법 | 논문이 밝힌 결과 |
+| --- | --- | --- |
+| pix2pix + noise | $\mathcal N(0, I)$ 에서 뽑아 넣기만 함 | generator 가 noise 를 무시해서, 그럴듯하지만 거의 같은 그림 하나만 낸다 |
+| cAE-GAN | encoder 가 정답 사진에서 구함, KL 없음 | 결과가 다양해지지만, 뽑은 $z$ 가 학습 때 비어 있던 자리에 떨어져 그림이 크게 망가진다 |
+| cVAE-GAN | encoder 가 정답 사진에서 구함, KL 있음 | KL 을 더하자 다양함을 지키면서 그림의 사실감이 돌아온다 |
 
-**확인 문제.** ACT 의 CVAE encoder 가 한 차원에서 $\mu = 0.5$, $\sigma = 1$ 을 냈다. 이 차원의 KL 은 얼마이고, $\beta = 10$ 을 곱하면 loss 에
-얼마가 더해질까?
+둘째 줄은 [latent space 의 빈 곳](#latent-space-의-빈-곳) 이 실제 그림 변환에서 나타난 예다. 같은 논문의 BicycleGAN 은 cVAE-GAN 에
+학습을 하나 더 붙인 방법이다. 뽑은 $z$ 로 그림을 만든 뒤 그 그림을 encoder 에 넣어 같은 $z$ 를 되찾게 하고, 저자들은 이 학습을 더해
+다양함과 사실감을 함께 높였다. 조건을 받아 그 조건에
+맞는 sample 을 만든다는 생각은, 글 한 줄을 조건으로 받아 그림을 그리는 Stable Diffusion 까지 이어진다.
+
+**흔한 오해.** 입력에 무작위 noise 를 더하기만 하면 실행할 때마다 다른 그림이 나온다고 생각하기 쉽다. pix2pix 의 저자들은 generator 가 그
+noise 를 무시한다는 것을 확인하고 최종 실험에서 noise 를 뺐다. noise 가 쓸모 있으려면 cVAE-GAN 처럼 encoder 가 정답에서 구한 정보를 $z$
+에 담아 generator 가 $z$ 를 보지 않고는 loss 를 줄일 수 없게 해야 한다.
+
+**확인 문제.** cVAE-GAN 의 encoder 가 한 차원에서 $\mu = 0.5$, $\sigma = 1$ 을 냈다. 이 차원의 KL 은 얼마이고, KL 의 weight 0.01 을 곱하면
+loss 에 얼마가 더해질까?
 
 <details><summary>답 보기</summary>
 
 1. KL: $\sigma^2 = 1$, $\log 1 = 0$ 이라 $\frac12(0.5^2 + 1 - 0 - 1) = \frac12 \times 0.25 = 0.125$
-2. $\beta$ 를 곱한 값: $10 \times 0.125 = 1.25$
+2. weight 를 곱한 값: $0.01 \times 0.125 = 0.00125$
 
 </details>
 
 ## 정리
 
-- MSE 로 정답 하나를 배운 모델은 갈라진 시연의 평균을 낸다. autoencoder 는 loss 에 $z$ 의 위치 제약이 없어서, 0 그림은 $-3$ 근처에 놓고
+- MSE 로 정답 하나를 배운 모델은 갈라진 정답의 평균을 낸다. 그래서 빨간 사과와 초록 사과를 반씩 배운 colorization 모델은 회색 사과를
+  칠한다. autoencoder 는 loss 에 $z$ 의 위치 제약이 없어서, 0 그림은 $-3$ 근처에 놓고
   1 그림은 4 근처에 놓으면 그 사이의 0.5 처럼 decoder 가 받아 본 적 없는 빈 곳이 남는다. VAE 의 encoder 는 그림마다 $\mu$ 와 logvar 를
   내서 그림을 범위로 만들고, 범위끼리 겹치게 해 빈 곳을 채운다
 - reparameterization trick $z = \mu + \sigma \odot \epsilon$ 은 무작위성을 $\epsilon$ 으로 옮긴다. 그러면 $\partial z / \partial \mu = 1$ 과
   $\partial z / \partial \sigma = \epsilon$ 이 정해져서 encoder 까지 gradient 가 전해진다
 - loss 는 reconstruction 항과 $\beta \cdot$ KL 의 합이고, $\beta = 1$ 이면 이 loss 를 줄이는 것이 ELBO 를 키우는 것과 같다. $\beta$ 가
-  0 이면 빈 곳이 다시 생기고, $\beta$ 가 너무 크거나 decoder 가 너무 강하면 posterior collapse 가 일어난다. ACT 는 $\beta = 10$ 인 CVAE
-  로 학습하고, 실행할 때는 encoder 를 버리고 $z = 0$ 으로 둔다
+  0 이면 빈 곳이 다시 생기고, $\beta$ 가 너무 크거나 decoder 가 너무 강하면 posterior collapse 가 일어난다. Stable Diffusion 이 쓰는
+  autoencoder 는 $\beta = 10^{-6}$ 으로 보통의 autoencoder 에 가깝게 두고, 새 latent 는 diffusion 으로 만든다
+- CVAE 는 encoder 와 decoder 에 조건 $c$ 를 함께 넣는다. 그림 변환의 cVAE-GAN 은 학습 때 encoder 가 정답 사진의 색과 무늬를 8 차원 $z$
+  에 담고, 실행 때 $\mathcal N(0, I)$ 에서 $z$ 를 뽑아 밑그림 한 장에서 색이 다른 그림 여러 장을 낸다. KL 을 빼면 뽑은 $z$ 가 빈 곳에
+  떨어져 그림이 망가진다
 
 VAE 는 decoder 한 번으로 sample 을 내서 빠르지만, decoder 가 겹친 범위에서 평균에 가까운 그림을 내기 때문에 sample 이 흐릿하다. 생성을
-수백 번의 작은 noise 제거 단계로 나눠 더 선명한 sample 을 만드는 방법은 [DDPM](../ddpm/README.md) 에서 다룬다. CVAE 로 시연의 움직임을
-latent 에 담아 양팔 로봇을 움직이는 policy 는 ACT 에서 다루고, 카메라 장면을 latent 로 줄인 뒤 그 latent 안에서 다음
-장면을 예측하는 모델은 World Model 에서 다룬다.
+수백 번의 작은 noise 제거 단계로 나눠 더 선명한 sample 을 만드는 방법은 [DDPM](../ddpm/README.md) 에서 다루고, VAE 로 줄인 latent 위에서
+diffusion 으로 그림을 만드는 Stable Diffusion 의 구성은 [Latent Diffusion](../latent-diffusion/README.md) 에서 다룬다.
 
 ## 참고 자료
 
@@ -654,15 +692,19 @@ latent 에 담아 양팔 로봇을 움직이는 policy 는 ACT 에서 다루고,
 - Carl Doersch, [Tutorial on Variational Autoencoders](https://arxiv.org/abs/1606.05908) — 수식보다 그림과 직관으로 VAE 를 설명하는 tutorial
 - Kihyuk Sohn, Honglak Lee, Xinchen Yan, [Learning Structured Output Representation using Deep Conditional Generative Models](https://proceedings.neurips.cc/paper/2015/hash/8d55a249e6baa5c06772297520da2051-Abstract.html)
   (2015) — CVAE 를 제안한 논문
-- Tony Z. Zhao 외, [Learning Fine-Grained Bimanual Manipulation with Low-Cost Hardware](https://arxiv.org/abs/2304.13705) (2023) — ACT
-  논문. CVAE 학습과 $z = 0$ 추론(IV-B 절), CVAE 를 뺀 실험(VI-B 절), $\beta = 10$ 을 적은 hyperparameter 표(부록 D)를 본다
+- Richard Zhang, Phillip Isola, Alexei A. Efros, [Colorful Image Colorization](https://arxiv.org/abs/1603.08511) (2016) — colorization
+  에서 제곱 오차가 색의 평균을 골라 회색에 가까운 결과를 내는 이유(2.1 절)
+- Jun-Yan Zhu 외, [Toward Multimodal Image-to-Image Translation](https://arxiv.org/abs/1711.11586) (2017) — cVAE-GAN 과 BicycleGAN.
+  pix2pix + noise·cAE-GAN·cVAE-GAN 의 비교(3 절, 5 절)와 $|z| = 8$, L1 weight 10, KL weight 0.01 설정(4 절)
 - Samuel R. Bowman 외, [Generating Sentences from a Continuous Space](https://arxiv.org/abs/1511.06349) (2016) — 강한 decoder 때문에 KL 이
   0 으로 떨어지는 문제와 KL annealing
 - PyTorch, [examples/vae](https://github.com/pytorch/examples/tree/main/vae) — 784 → 400 → 20 MNIST VAE 공식 예제. reparameterization 과
   BCE·KL 의 합을 몇 줄의 코드로 확인할 수 있다
-- LeRobot, [`modeling_act.py`](https://github.com/huggingface/lerobot/blob/main/src/lerobot/policies/act/modeling_act.py) 와
-  [`configuration_act.py`](https://github.com/huggingface/lerobot/blob/main/src/lerobot/policies/act/configuration_act.py) — 학습 때 $z$ 를
-  뽑고 추론 때 0 으로 두는 ACT 구현과 `latent_dim = 32`·`kl_weight = 10` 기본값
+- diffusers, [`autoencoders/vae.py`](https://github.com/huggingface/diffusers/blob/main/src/diffusers/models/autoencoders/vae.py) —
+  Stable Diffusion 의 VAE 가 쓰는 `DiagonalGaussianDistribution`. $\mu$ 와 logvar 로 나누기, $z = \mu + \sigma \epsilon$, KL 의 합
+- CompVis, [`contperceptual.py`](https://github.com/CompVis/latent-diffusion/blob/main/ldm/modules/losses/contperceptual.py) 와
+  [`kl-f8/config.yaml`](https://github.com/CompVis/latent-diffusion/blob/main/models/first_stage_models/kl-f8/config.yaml) — L1·LPIPS 와
+  KL 을 더하는 LDM autoencoder 의 loss 와 `kl_weight: 1.0e-06`·`resolution: 256` 설정
 - Lilian Weng, [From Autoencoder to Beta-VAE](https://lilianweng.github.io/posts/2018-08-12-vae/) — autoencoder 에서 VAE 를 거쳐
   $\beta$ 를 조절하는 β-VAE 로 이어지는 흐름을 정리한 블로그
 

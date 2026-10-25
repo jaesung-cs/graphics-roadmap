@@ -4,7 +4,7 @@ title: Flow Matching
 branch: generative
 requires: [ddpm]
 hours: 2
-summary: noise 와 데이터를 잇는 직선 위의 속도를 network 가 맞히게 학습하고, 그 속도로 Euler step 몇 번만 밟아 sample 을 만드는 생성 방법. target velocity, step 수와 품질, diffusion 과의 비교, π0·GR00T N1 의 action 생성
+summary: noise 와 데이터를 잇는 직선 위의 속도를 network 가 맞히게 학습하고, 그 속도로 Euler step 몇 번만 밟아 sample 을 만드는 생성 방법. target velocity, step 수와 품질, diffusion 과의 비교, Stable Diffusion 3 의 rectified flow
 papers:
   - title: "Flow Matching for Generative Modeling"
     authors: Yaron Lipman, Ricky T. Q. Chen, Heli Ben-Hamu, Maximilian Nickel, Matt Le
@@ -22,26 +22,21 @@ papers:
     authors: Yaron Lipman et al.
     year: 2024
     url: https://arxiv.org/abs/2412.06264
-  - title: "π0: A Vision-Language-Action Flow Model for General Robot Control"
-    authors: Kevin Black et al.
+  - title: "Scaling Rectified Flow Transformers for High-Resolution Image Synthesis"
+    authors: Patrick Esser et al.
     year: 2024
-    url: https://arxiv.org/abs/2410.24164
-  - title: "GR00T N1: An Open Foundation Model for Generalist Humanoid Robots"
-    authors: NVIDIA et al.
-    year: 2025
-    url: https://arxiv.org/abs/2503.14734
+    url: https://arxiv.org/abs/2403.03206
 ---
 
 # Flow Matching
 
-[DDPM](../ddpm/README.md) 으로 로봇 행동을 만드는 Diffusion Policy 는 noise 를 100 단계에 걸쳐 걷어 내도록 학습하지만, 실제 로봇에서는 100
-단계를 다 밟을 시간이 없어서 DDIM 이라는 계산으로 10 단계만 밟는다. 그렇게 줄여도 NVIDIA RTX 3080 GPU 에서 행동 한 덩어리를 만드는 데
-0.1 초가 걸린다. 학습은 100 단계로 하고 쓸 때만 계산을 고쳐 단계를 건너뛰는 방식인데, 처음부터 몇 단계 만에 noise 에서 행동까지 가도록
-학습할 수는 없을까?
+Stable Diffusion v1.5 의 U-Net 은 [DDPM](../ddpm/README.md) 처럼 noise 를 1000 단계에 걸쳐 걷어 내도록 학습했지만, 그림을 만들 때
+1000 단계를 다 밟으면 너무 오래 걸려서 diffusers 의 pipeline 은 기본으로 50 단계만 밟는다. 학습은 1000 단계로 하고 쓸 때만 계산을 고쳐
+단계를 건너뛰는 방식인데, 처음부터 몇 단계 만에 noise 에서 그림까지 가도록 학습할 수는 없을까?
 
 2022 년에 발표된 flow matching 은 noise 와 데이터를 직선으로 잇고 그 직선을 따라 움직이는 속도를 network 가 맞히게 하는 방법이라, 경로가
-곧은 만큼 큰 step 몇 번만으로도 데이터에 닿는다. Physical Intelligence 의 VLA 모델 π0 는 1 초에 명령을 50 번 보내는 로봇의 1 초 분량인
-action 50 개를 flow matching 으로 network 계산 10 번 만에 만드는데, RTX 4090 에서 그 10 번에 27 ms 가 걸린다.
+곧은 만큼 큰 step 몇 번만으로도 데이터에 닿는다. Stability AI 의 Stable Diffusion 3(2024)는 이 방법으로 학습했고, diffusers 의 Stable
+Diffusion 3 pipeline 은 기본으로 28 단계만 밟는다.
 
 ## 학습 목표
 
@@ -50,7 +45,7 @@ action 50 개를 flow matching 으로 network 계산 10 번 만에 만드는데,
 - Euler 법으로 sample 을 만드는 과정과, 경로가 곧을수록 적은 step 으로도 정확한 이유를 설명할 수 있다
 - 정답이 여럿인 데이터에서 step 이 너무 적으면 sample 이 평균으로 몰리는 이유와, flow matching 이 diffusion 보다 적은 step 으로 되는 이유를
   설명할 수 있다
-- π0 와 GR00T N1 이 flow matching 으로 action chunk 를 만드는 방식(step 수, $\tau$ 의 방향, 정답 속도의 부호)을 설명할 수 있다
+- Stable Diffusion 3 가 flow matching 을 쓰는 방식(시각의 방향, 정답 속도의 부호, 학습할 때 $t$ 를 뽑는 분포)을 설명할 수 있다
 
 ## DDPM sampling 의 step 수
 
@@ -147,11 +142,12 @@ $$
 ![noise ε 와 데이터 x₁ 을 잇는 직선 경로의 예 두 개. ε = −1, x₁ = 2 인 직선은 속도가 늘 3 이고, ε = 0.5, x₁ = −2 인 직선은 속도가 늘 −2.5 다](figures/straight-path.svg)
 
 데이터가 숫자 여러 개를 묶은 vector 이면 noise 도 같은 개수의 숫자를 따로 뽑고 자리마다 같은 계산을 한다. $\epsilon = (0.5, -1)$,
-$x_1 = (2, 0)$ 이면 target velocity 는 $(2 - 0.5,\ 0 - (-1)) = (1.5,\ 1)$ 이다. 로봇의 action chunk 는 숫자가 수백 개인 vector 지만, 이처럼
-자리마다 직선을 따로 그어 계산한다.
+$x_1 = (2, 0)$ 이면 target velocity 는 $(2 - 0.5,\ 0 - (-1)) = (1.5,\ 1)$ 이다. Stable Diffusion v1 의 $64 \times 64 \times 4$ latent 는
+숫자가 16,384 개인 vector 지만, 이처럼 자리마다 직선을 따로 그어 계산한다.
 
-**흔한 오해.** DDPM 에서는 $x_0$ 이 원래 데이터였고 아래첨자가 클수록 noise 가 많았으니, 여기서도 $x_0$ 을 데이터로 읽기 쉽다. 이 강의는 Lipman 등의 논문과 π0 논문을 따라 noise 를 $x_0 = \epsilon$ 으로 적고 데이터를 $x_1$ 로 적어서, $t$ 가 커질수록 데이터에
-가까워진다. π0 의 공개 구현처럼 $t = 1$ 을 noise 로 두는 코드도 있으므로, 다른 자료를 읽을 때는 어느 쪽이 noise 인지부터 확인한다.
+**흔한 오해.** DDPM 에서는 $x_0$ 이 원래 데이터였고 아래첨자가 클수록 noise 가 많았으니, 여기서도 $x_0$ 을 데이터로 읽기 쉽다. 이 강의는 Lipman 등의 논문을 따라 noise 를 $x_0 = \epsilon$ 으로 적고 데이터를 $x_1$ 로 적어서, $t$ 가 커질수록 데이터에
+가까워진다. [Stable Diffusion 3](#stable-diffusion-3-의-rectified-flow) 의 논문과 diffusers 처럼 $t = 1$ 을 noise 로 두는 자료도 있으므로,
+다른 자료를 읽을 때는 어느 쪽이 noise 인지부터 확인한다.
 
 <details><summary><b>심화: DDPM 의 섞는 식과의 차이</b></summary>
 
@@ -415,8 +411,8 @@ Euler 법으로 만든 sample 은 아래 그림처럼 step 수에 따라 달라�
 $\hat x_1 = 1.52$ 가 그대로 sample 이 된다. $n = 1$ 이면 마지막 step 이 $t = 0$ 에서 시작하고 $t = 0$ 의 $\hat x_1$ 은 두 데이터의 평균
 0 이라서, 출발점과 상관없이 sample 이 모두 0 이다. Liu 등도 rectified flow 를 Euler step 한 번으로 풀면 데이터 분포의 평균이 나온다고 적었다.
 
-0 은 데이터 어디에도 없는 값이라서, 상자를 왼쪽으로 비켜 간 시연과 오른쪽으로 비켜 간 시연이 반반 섞인 로봇 데이터라면 1 step 으로 만든
-action 은 두 길의 평균인 상자 정면으로 향한다. 정답 분포에 봉우리가 여럿인 이런 데이터를 multimodal 이라고 한다.
+0 은 데이터 어디에도 없는 값이다. [VAE](../vae/README.md) 의 colorization 예처럼 빨간 사과($+1$)와 초록 사과($-1$)가 반반인 데이터라면
+1 step 으로 칠한 사과는 두 색의 평균인 회색이 된다. 정답 분포에 봉우리가 여럿인 이런 데이터를 multimodal 이라고 한다.
 
 ![noise 20000 개를 Euler 법으로 옮겨 계산한 결과의 histogram. 1 step 이면 모두 0 에 모인다. 봉우리 ±2 에서 0.3 넘게 벗어난 sample 의 비율은 step 수 2·4·10 에서 각각 47%·1%·0% 다](figures/step-hist.svg)
 
@@ -524,102 +520,93 @@ flow matching 은 새 noise 를 더하지 않아 두 번 모두 같은 경로로
 
 </details>
 
-## π0 의 action expert
+## Stable Diffusion 3 의 rectified flow
 
-π0 는 Physical Intelligence 가 2024 년에 발표한 VLA(Vision-Language-Action) 모델로, 카메라 이미지와 글로 된 지시를 받아 로봇의 action 을
-낸다. 저자들은 이미지와 지시를 읽는 VLM(vision-language model) PaliGemma(weight 30 억 개) 옆에, flow matching 으로 action 을 만드는
-**action expert**(weight 3 억 개)를 붙였다. action expert 는 앞으로 $H = 50$ step 의 action 을 묶은 action chunk 를 한꺼번에 만드는데,
-1 초에 명령을 50 번 보내는 로봇에서는 1 초 분량이다. 이런 로봇에서 π0 는 그중 25 개(0.5 초)를 실행한 뒤 새 chunk 를 만든다.
+Stability AI 의 Esser 등이 2024 년에 발표한 Stable Diffusion 3(이하 SD3)는 [Latent Diffusion](../latent-diffusion/README.md) 처럼 autoencoder 로
+줄인 latent 위에서 그림을 만들되, DDPM 대신 flow matching 으로 학습했다. 저자들은 직선 경로를 쓰는 이 방식을 rectified flow 라고 부르고, 속도를
+내는 network 로는 [ViT](../vit/README.md) 에서 본 DiT 를 고친 Transformer 를 쓴다.
 
-π0 논문은 이 강의의 $t$ 를 $\tau$("타우")로 적고, 데이터 자리에 시연의 action chunk $A_t$ 를 넣는다. 아래첨자 $t$ 는 로봇 제어에서
-지금이 몇 번째 시점인지를 나타내고, flow matching 의 시각은 위첨자 $\tau$ 로 적는다.
+이 논문과 diffusers 의 구현은 시각의 방향이 이 강의와 반대라서, $t = 0$ 이 데이터이고 $t = 1$ 이 noise 다. 이 표기에서는 데이터를 $x_0$ 로 적고 섞은 점을
+$z_t$ 로 적는다. 두 표기를 나란히 놓으면 아래와 같다.
 
-$$
-A_t^\tau = \tau\,A_t + (1 - \tau)\,\epsilon, \qquad
-\text{target velocity} = A_t - \epsilon, \qquad
-A_t^{\tau + \delta} = A_t^\tau + \delta\,v_\theta(A_t^\tau, o_t)
-$$
+| 항목 | 이 강의 | Stable Diffusion 3 논문·diffusers |
+| --- | --- | --- |
+| noise 의 자리 | $t = 0$ | $t = 1$ |
+| 데이터의 자리 | $t = 1$ ($x_1$) | $t = 0$ ($x_0$) |
+| 섞는 식 | $x_t = (1 - t)\,\epsilon + t\,x_1$ | $z_t = (1 - t)\,x_0 + t\,\epsilon$ |
+| 정답 속도 | $x_1 - \epsilon$ | $\epsilon - x_0$ |
+| sampling 의 시각 | 0 에서 1 로, step 길이 $+\frac{1}{n}$ | 1 에서 0 으로, step 길이 $-\frac{1}{n}$ |
 
-이 강의의 식에서 $x_1$ 자리에 $A_t$ 를 넣고 $t$ 자리에 $\tau$ 를 넣은 것과 같고, $\tau = 0$ 이 noise 라는 방향도 같다. $\delta$ 는 $\Delta t$
-에 해당하는 한 step 의 길이로, π0 는 $\delta = 0.1$ 로 Euler step 을 10 번 밟는다. $o_t$ 는 이미지·지시문·관절 각도를 합친
-관측(observation)인데, network 가 $o_t$ 를 함께 받으므로 같은 noise 에서 출발해도 장면과 지시가 다르면 다른 chunk 가 나온다.
+섞는 식에서 $z_t$ 는 $t$ 가 늘어난 양의 $\epsilon - x_0$ 배만큼 변하므로, 이 표기에서는 그 값이 정답 속도다. diffusers 의 SD3 학습 예제도
+섞은 점을 `(1.0 - sigmas) * model_input + sigmas * noise` 로 만들고 정답을 `noise - model_input` 으로 둔다. sampling 을 맡는
+`FlowMatchEulerDiscreteScheduler` 는 시각을 1 에서 0 으로 줄여 가며, 음수인 step 길이 `dt = sigma_next - sigma` 를 network 의 출력에 곱해
+더한다.
 
-![π0 가 action 을 만드는 과정. action expert 가 VLM 의 결과와 로봇 상태, noise 가 섞인 action chunk 를 받아 속도를 내고, 속도에 0.1 을 곱해 chunk 에 더하는 일을 10 번 되풀이하면 앞으로 50 step 동안의 action 이 나온다](figures/pi0-action.svg)
+[직선 경로와 target velocity](#직선-경로와-target-velocity) 의 예 $\epsilon = -1$, 데이터 2 를 이 표기로 4 step 걸어 보자. 정답 속도는
+$\epsilon - x_0 = -1 - 2 = -3$ 이고 step 길이는 $-0.25$ 라서, step 마다 $-0.25 \times (-3) = 0.75$ 씩 움직인다.
 
-10 번의 Euler step 동안 바뀌는 것은 noise 가 섞인 action 과 $\tau$ 뿐이라서, VLM 이 관측을 읽는 계산은 chunk 하나에 한 번만 하고 결과를
-저장해 둔 채 step 마다 작은 action expert 만 다시 계산한다. 논문이 RTX 4090 에서 카메라 3 대로 잰 추론 시간은 아래와 같다.
+| SD3 의 시각 $t$ | 1 | 0.75 | 0.5 | 0.25 | 0 |
+| --- | --- | --- | --- | --- | --- |
+| $z_t$ | $-1$ | $-0.25$ | 0.5 | 1.25 | 2 |
+| 이 강의의 시각 | 0 | 0.25 | 0.5 | 0.75 | 1 |
 
-| 계산 | 시간 |
-| --- | --- |
-| 이미지 encoder | 14 ms |
-| VLM 이 관측을 읽는 계산 | 32 ms |
-| action expert 10 번 (flow matching 10 step) | 27 ms |
-| 합계 | 73 ms |
+시각의 방향과 속도의 부호가 함께 뒤집혀서, 두 표기는 같은 자리를 같은 순서로 지나 데이터 2 에 닿는다.
 
-flow matching 한 step 은 약 $27 \div 10 = 2.7$ ms 이고, 실행하는 action 25 개가 0.5 초 분량이라서 73 ms 짜리 계산은 그 안에 넉넉히
-끝난다.
+![같은 직선 경로를 두 표기로 읽은 모습. 이 강의는 t = 0 의 noise −1 에서 속도 +3 으로 t = 1 의 데이터 2 로 가고, Stable Diffusion 3 는 t = 1 의 noise −1 에서 속도 −3 에 음수 step 길이를 곱해 t = 0 의 데이터 2 로 간다](figures/sd3-direction.svg)
 
-학습할 때 $\tau$ 는 0 과 1 사이에서 고르게 뽑지 않고 noise 쪽을 더 자주 뽑는다. LeRobot 의 π0 구현도 논문과 같이 기본값이 chunk 50 개이고
-추론 step 은 10 번이다.
+**흔한 오해.** 정답 속도를 "데이터 − noise" 로 외워 두면 SD3 의 섞는 식에도 그대로 쓰기 쉽다. 섞는 식과 sampling 의 방향을 SD3 표기로 둔 채
+정답만 $x_0 - \epsilon$ 으로 학습하면, 음수 step 길이를 곱할 때 데이터에서 멀어지는 쪽으로 움직인다. 정답 속도의 부호는 외우지 말고, 섞는
+식에서 $t$ 가 늘 때 섞은 점이 변하는 양으로 구한다.
 
-<details><summary><b>심화: π0 의 τ 분포와 openpi 의 부호</b></summary>
-
-π0 는 noise 가 많은 쪽($\tau$ 가 작은 쪽)을 더 자주 뽑는 beta 분포 $p(\tau) = \text{Beta}\big(\tfrac{s - \tau}{s};\ 1.5,\ 1\big)$,
-$s = 0.999$ 에서 $\tau$ 를 뽑는다. noise 가 많은 자리에서 network 는 관측에 맞는 평균 행동을 맞혀야 하는데, 논문은 관측이 가능한 행동을
-크게 좁히는 만큼 이 일이 어려워서 그 자리를 더 많이 학습한다고 설명했다.
-
-공개 구현 openpi 의 코드에서 섞는 식은 `time * noise + (1 - time) * actions` 이고 정답 속도는 `noise - actions` 라서, 시각 변수 `time` 이
-1 이면 noise 다. sampling 은 `time` 을 1 에서 시작해 step 마다 `dt = -1/num_steps`(10 step 이면 $-0.1$)만큼 줄이고, 속도에도 이 음수
-step 길이를 곱해 더한다. 시각의 방향과 정답 속도의 부호가 함께 뒤집혀 있어서 논문의 식과 같은 경로를 따라가므로, 코드를 읽을 때는
-방향부터 확인한다.
-
-</details>
-
-**확인 문제.** π0 식으로 $A = -1.0$, $\epsilon = 1.0$, $\tau = 0.5$ 다. $A^\tau$ 와 target velocity 는? network 가 정답 속도를 낸다면 Euler
-10 step 뒤의 값은?
+**확인 문제.** SD3 표기로 데이터 $x_0 = 0.5$, noise $\epsilon = 1.5$ 다. 정답을 $\epsilon - x_0$ 으로 학습한 network 와, 부호를 잘못 써서
+$x_0 - \epsilon$ 으로 학습한 network 로 각각 $t = 1$ 에서 4 step 을 밟으면 어디에 닿을까? network 는 학습한 정답을 그대로 낸다고 하자.
 
 <details><summary>답 보기</summary>
 
-① $A^{0.5} = 0.5 \times (-1.0) + 0.5 \times 1.0 = 0$ 이다.
-
-② target velocity 는 $A - \epsilon = -1.0 - 1.0 = -2.0$ 이다.
-
-③ step 마다 $0.1 \times (-2.0) = -0.2$ 씩 움직이므로 10 step 뒤는 $1.0 + 10 \times (-0.2) = -1.0$ 이다.
-
-답: $A^{0.5} = 0$, target velocity $-2.0$, 10 step 뒤 $-1.0$ 으로 시연 값에 닿는다.
-
-</details>
-
-## GR00T N1 과 step 수의 선택
-
-NVIDIA 가 2025 년에 발표한 humanoid 용 모델 GR00T N1 도 같은 flow matching 으로 action 을 만든다. 속도를 내는 network $V_\theta$ 는
-diffusion transformer 로, VLM 출력 $\phi_t$ 와 섞은 점 $A_t^\tau$, 로봇 상태 $q_t$ 를 받는다. 섞는 식 $A_t^\tau = \tau A_t + (1 - \tau)\epsilon$
-과 $\tau$ 를 뽑는 beta 분포는 π0 와 같다. chunk 길이는 $H = 16$ 이고 Euler step 은 $K = 4$ 번인데, 논문은 $K = 4$ 가 실험한 모든 로봇에서
-잘 동작했다고 적었다. L40 GPU 에서 action 16 개를 만드는 데는 63.9 ms 가 걸렸다.
-
-**흔한 오해.** GR00T N1 논문의 식 (1) 에 정답 속도가 $\epsilon - A_t$ 로 적혀 있어서 그대로 따라 쓰기 쉽다. 그런데 같은 논문의 Euler 식
-$A_t^{\tau + 1/K} = A_t^\tau + \frac{1}{K} V_\theta$ 는 $\tau = 0$ 의 noise 에서 출발해 속도를 더해 가므로, 시연 쪽으로 가려면 속도가
-$A_t - \epsilon$ 이어야 한다. 섞는 식에서 $\tau$ 가 1 늘 때 $A_t^\tau$ 가 변하는 양도 $A_t - \epsilon$ 이고, π0 논문도
-$A_t - \epsilon$ 으로 적었다.
-
-![action chunk 하나를 만들 때 network 를 쓰는 횟수. Diffusion Policy 는 100 번을 DDIM 으로 10 번으로 줄여 RTX 3080 에서 0.1 초가 걸린다. π0 는 10 번이고(action 50 개, RTX 4090 에서 73 ms), GR00T N1 은 4 번이다(action 16 개, L40 에서 63.9 ms)](figures/robot-steps.svg)
-
-LeRobot 의 SmolVLA 도 기본값이 chunk 50 개이고 Euler step 은 10 번이다. 이렇게 적은 step 으로 되는 것은 관측이 주어지면 정답 행동의
-봉우리가 대개 몇 개로 좁혀져서 경로의 휘는 구간이 짧기 때문이다. 로봇 제어에서는 실행 중인 chunk 가 끝나기 전에 다음 chunk 가 나와야 로봇이 멈추지 않으므로, 이
-계산 시간이 step 수를 정하는 실제 조건이다.
-
-**확인 문제.** 시연 값이 $A = 0.5$, noise 가 $\epsilon = 1.5$ 다. 정답 속도를 $A - \epsilon$ 으로 학습한 network 와, 부호를 잘못 써서
-$\epsilon - A$ 로 학습한 network 로 각각 Euler 4 step 을 밟으면 어디에 닿을까? network 는 학습한 정답을 그대로 낸다고 하자.
-
-<details><summary>답 보기</summary>
-
-| 정답 속도 | 속도 | step 마다 $0.25 \times$ 속도 | 4 step 뒤 |
+| 정답 속도 | 속도 | step 마다 $-0.25 \times$ 속도 | 4 step 뒤 |
 | --- | --- | --- | --- |
-| $A - \epsilon$ | $0.5 - 1.5 = -1$ | $-0.25$ | $1.5 + 4 \times (-0.25) = 0.5$ |
-| $\epsilon - A$ | $1.5 - 0.5 = 1$ | $0.25$ | $1.5 + 4 \times 0.25 = 2.5$ |
+| $\epsilon - x_0$ | $1.5 - 0.5 = 1$ | $-0.25$ | $1.5 + 4 \times (-0.25) = 0.5$ |
+| $x_0 - \epsilon$ | $0.5 - 1.5 = -1$ | $0.25$ | $1.5 + 4 \times 0.25 = 2.5$ |
 
-답: $A - \epsilon$ 은 시연 값 0.5 에 닿고, $\epsilon - A$ 는 2.5 에 닿아 시연에서 멀어진다. 섞는 식이 $\tau = 0$ 을 noise 로 두고 Euler
-step 이 속도를 더해 가는 한, 정답 속도는 데이터 − noise 여야 한다.
+답: $\epsilon - x_0$ 은 데이터 0.5 에 닿고, $x_0 - \epsilon$ 은 2.5 에 닿아 데이터에서 멀어진다.
+
+</details>
+
+## 학습할 때 t 를 뽑는 분포
+
+이 강의의 학습 순서는 $t$ 를 0 과 1 사이에서 고르게 뽑았다. SD3 저자들은 양 끝보다 가운데의 $t$ 를 더 자주 뽑았다. 논문의 설명에 따르면 양
+끝에서는 network 가 낼 가장 좋은 답이 noise 나 데이터 한쪽 분포의 평균으로 정해지지만, 가운데에서는 그렇지 않아 속도를 맞히기가 더 어렵다.
+이 강의의 1 차원 예에서도 noise 쪽 끝 $t = 0$ 의 $\hat x_1$ 은 두 데이터의 평균 0 이었다. 그래서 저자들은 network 가 가운데 자리를 더 자주 연습하게 했다.
+
+뽑는 방법은 $\mathcal N(0, 1)$ 에서 $u$ 를 뽑아 $t = \frac{1}{1 + e^{-u}}$ 로 바꾸는 것이다. 이 함수(logistic sigmoid)는 어떤 $u$ 든 0 과
+1 사이의 값으로 바꾸고, $u = 0$ 을 0.5 로 보낸다. 이렇게 만든 $t$ 의 분포를 **logit-normal** 분포라고 한다.
+
+| 뽑은 $u$ | $-2$ | $-1$ | 0 | 1 | 2 |
+| --- | --- | --- | --- | --- | --- |
+| $t = 1 \div (1 + e^{-u})$ | 0.119 | 0.269 | 0.5 | 0.731 | 0.881 |
+
+$u$ 는 0 근처가 가장 자주 나오므로 $t$ 는 0.5 근처가 가장 자주 나온다. 직접 계산하면 $t$ 가 0.25 ~ 0.75 에 들어갈 확률은 고르게 뽑을 때
+50% 이고 이 분포에서는 약 73% 다. $t$ 가 0.1 보다 작을 확률은 고르게 뽑을 때 10% 이고 이 분포에서는 약 1.4% 다.
+
+![0 과 1 사이에서 t 를 뽑는 두 분포. 고르게 뽑으면 높이가 1 로 평평하고, logit-normal 분포는 t = 0.5 에서 1.60 으로 가장 높고 양 끝으로 갈수록 낮아진다. 0.25 ~ 0.75 구간에 들어갈 확률은 각각 50% 와 약 73% 다](figures/t-density.svg)
+
+저자들은 $t$ 의 분포와 섞는 식을 바꾼 61 가지 학습 방식을 같은 조건에서 비교했다. 이 logit-normal 분포($u$ 의 평균 0, 표준편차 1)로 학습한
+rectified flow 가 여러 지표에서 꾸준히 좋았고, rectified flow 방식들은 다른 방식보다 sampling step 을 줄일 때 품질이 덜 떨어졌다. diffusers 의
+SD3 학습 예제도 기본값이 `weighting_scheme: logit_normal`, `logit_mean: 0.0`, `logit_std: 1.0` 이다.
+
+생성할 때 diffusers 의 Stable Diffusion 3 pipeline 은 `num_inference_steps` 의 기본값이 28 이라, 기본값이 50 인 Stable Diffusion v1.5 의
+pipeline 보다 network 를 적게 쓴다. [step 수와 sample 품질](#step-수와-sample-품질) 에서 본 것처럼 경로는 대부분 곧고 휘는 구간이 짧아서, 그 구간만 몇 step 으로
+따라가면 된다. 다만 1 차원 예에서처럼 1 step 은 데이터의 평균을 내므로, step 수를 1 까지 줄일 수는 없다.
+
+**확인 문제.** logit-normal 분포로 $t$ 를 뽑으려고 $\mathcal N(0, 1)$ 에서 $u = 1$ 과 $u = -1$ 을 뽑았다. 두 $t$ 는 각각 얼마이고, 둘의 합은?
+
+<details><summary>답 보기</summary>
+
+① $u = 1$ 이면 $t = 1 \div (1 + e^{-1}) = 1 \div (1 + 0.368) \approx 0.731$ 이다.
+
+② $u = -1$ 이면 $t = 1 \div (1 + e^{1}) = 1 \div (1 + 2.718) \approx 0.269$ 다.
+
+답: 0.731 과 0.269 이고 합은 1 이다. $u$ 의 부호를 바꾸면 $t$ 는 0.5 를 가운데 두고 반대쪽으로 같은 거리만큼 간다.
 
 </details>
 
@@ -631,13 +618,15 @@ step 이 속도를 더해 가는 한, 정답 속도는 데이터 − noise 여�
 - 데이터가 여럿이면 직선들이 엇갈리는 자리에서 network 가 정답 속도의 평균을 배워 생성 경로가 휘고, 1 step 은 데이터의 평균을 낸다.
   $\pm 2$ 데이터로 계산하면 봉우리를 벗어난 sample 의 비율이 step 1·2·4·10 에서 각각 100%·47%·1%·0% 였고, 같은 조건의 DDPM 은 4 step 에서
   29% 였다
-- π0 는 action 50 개를 $\delta = 0.1$ 의 Euler 10 step 으로 만들고, GR00T N1 은 action 16 개를 4 step 으로 만든다. 두 논문 모두 $\tau = 0$
-  이 noise 이므로 정답 속도는 $A_t - \epsilon$ 이어야 한다. openpi 코드는 방향을 뒤집어 `time` = 1 을 noise 로 두고 정답 속도도
-  noise − actions 로 둔다
+- Stable Diffusion 3 는 latent 위에서 rectified flow 로 학습한다. 논문과 diffusers 는 $t = 1$ 을 noise 로 두어 섞는 식이
+  $z_t = (1 - t)\,x_0 + t\,\epsilon$ 이고 정답 속도가 $\epsilon - x_0$ 이며, sampling 은 음수 step 길이로 1 에서 0 으로 간다. 방향과 부호가
+  함께 뒤집혀 이 강의와 같은 경로를 지난다
+- SD3 는 학습할 때 $u \sim \mathcal N(0, 1)$ 을 $t = 1 \div (1 + e^{-u})$ 로 바꾼 logit-normal 분포로 $t$ 를 뽑아 0.25 ~ 0.75 를 약 73% 의
+  확률로 연습하고, diffusers pipeline 은 기본으로 28 step 을 밟는다
 
-이 강의의 flow matching 은 숫자 하나나 몇 개를 조건 없이 만들었을 뿐, 카메라 이미지나 지시문에 맞는 action 을 내지는 않았다. 이미지와
-지시문을 VLM 으로 읽어 조건으로 넣는 attention 구조와, 그 계산을 10 번의 step 동안 다시 쓰며 실시간으로 실행하는 방법은
-π0 에서 다룬다.
+이 강의의 flow matching 은 숫자 하나나 몇 개를 조건 없이 만들었을 뿐, 글에 맞는 그림을 내지는 않았다. 그림을 latent 로 줄여 그 위에서
+생성하는 방법은 [Latent Diffusion](../latent-diffusion/README.md) 에서, 글을 조건으로 넣는 방법은
+[Cross-Attention](../cross-attention/README.md) 에서 다룬다.
 
 ## 참고 자료
 
@@ -652,11 +641,11 @@ step 이 속도를 더해 가는 한, 정답 속도는 데이터 − noise 여�
   [노트](https://diffusion.csail.mit.edu/). 3 장이 conditional·marginal vector field 와 flow matching loss 를 차례로 설명한다
 - Cambridge MLG, [An introduction to Flow Matching](https://mlg.eng.cam.ac.uk/blog/2024/01/20/flow-matching.html) — 쌍마다 정한 속도와 그
   평균인 velocity field 의 관계를 그림으로 설명한 블로그
-- Kevin Black 등, [π0: A Vision-Language-Action Flow Model for General Robot Control](https://arxiv.org/abs/2410.24164) (2024) — 4 절의
-  flow matching 식과 Euler 10 step, 부록 B 의 $\tau$ 분포, 부록 D 의 추론 시간 표
-- Physical Intelligence, [openpi `pi0.py`](https://github.com/Physical-Intelligence/openpi/blob/main/src/openpi/models/pi0.py) — π0 의 loss 와
-  10 step sampling 코드. 시각의 방향이 논문과 반대라서 `time` 이 1 이면 noise 다
-- NVIDIA, [GR00T N1: An Open Foundation Model for Generalist Humanoid Robots](https://arxiv.org/abs/2503.14734) (2025) — 2.1 절의 flow
-  matching 식 (1), $K = 4$ step 과 $H = 16$
-- Cheng Chi 등, [Diffusion Policy](https://arxiv.org/abs/2303.04137) (2023) — DDPM 100 단계로 학습하고 DDIM 10 단계로 sampling 해 RTX 3080 에서
-  0.1 초가 걸린다는 설정
+- Patrick Esser 등, [Scaling Rectified Flow Transformers for High-Resolution Image Synthesis](https://arxiv.org/abs/2403.03206) (2024) —
+  Stable Diffusion 3 논문. 3 절의 섞는 식 (13), 3.1 절의 logit-normal 분포와 가운데 $t$ 를 강조하는 이유, 5.1 절의 61 가지 학습 방식 비교
+- diffusers, [`scheduling_flow_match_euler_discrete.py`](https://github.com/huggingface/diffusers/blob/main/src/diffusers/schedulers/scheduling_flow_match_euler_discrete.py)
+  와 [`pipeline_stable_diffusion_3.py`](https://github.com/huggingface/diffusers/blob/main/src/diffusers/pipelines/stable_diffusion_3/pipeline_stable_diffusion_3.py)
+  — 음수 step 길이 `dt = sigma_next - sigma` 로 더하는 Euler step 과 `num_inference_steps = 28`
+- diffusers, [`train_dreambooth_sd3.py`](https://github.com/huggingface/diffusers/blob/main/examples/dreambooth/train_dreambooth_sd3.py) 와
+  [`training_utils.py`](https://github.com/huggingface/diffusers/blob/main/src/diffusers/training_utils.py) — SD3 학습의 섞는 식과 정답
+  `noise - model_input`, logit-normal 로 $t$ 를 뽑는 `compute_density_for_timestep_sampling`

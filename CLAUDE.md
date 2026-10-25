@@ -38,12 +38,11 @@ frontmatter 를 읽어 선수 관계 지도를 그린다. 공부하는 법은 [R
 - 숫자뿐 아니라 논문이 밝힌 결과의 이유도 원문으로 확인한다
 - 서술이 직관과 다르다는 지적을 받으면 원문을 찾아 "강의 서술 | 원문 근거 | 판정" 표로 대조한 뒤 고친다
 - frontmatter `papers` 와 `## 참고 자료` 에는 직접 열어 본 자료만 싣는다
-- 여러 강의에 걸쳐 나오는 사실은 다른 강의의 서술과 맞춘다. 원본에서 이미 원문으로 확인해 고친 예(남긴 강의에도 나온다):
-  - ACT 는 실행할 때 CVAE 의 z 를 prior 평균 0 으로 고정하므로, 반반 갈린 시연에서 봉우리 하나를 고른다는 보장이 없다
-    ([arXiv 2304.13705](https://arxiv.org/abs/2304.13705))
-  - GR00T N1 논문 식 (1) 의 target 은 같은 논문의 섞는 식·Euler 식과 맞추면 ε − Aₜ 가 아니라 Aₜ − ε 다
-    ([arXiv 2503.14734](https://arxiv.org/abs/2503.14734))
-  - OpenVLA 가 action bin 을 vocabulary 에 매핑하는 방식은 단정하지 않는다
+- 여러 강의에 걸쳐 나오는 사실은 다른 강의의 서술과 맞춘다. 원문으로 확인해 여러 강의에서 맞춘 예:
+  - flow matching 강의는 Lipman 등을 따라 t = 0 을 noise 로 두어 정답 속도가 x₁ − ε 이고, Stable Diffusion 3 논문과 diffusers 는
+    t = 1 을 noise 로 두어 ε − x₀ 이며 sampling 의 step 길이가 음수다([arXiv 2403.03206](https://arxiv.org/abs/2403.03206))
+  - Stable Diffusion 이 쓰는 autoencoder 의 KL weight 는 LDM `kl-f8` 설정의 `kl_weight: 1.0e-06` 이다(vae, latent-diffusion)
+  - Stable Diffusion v1.5 의 noise schedule 은 `scaled_linear`(0.00085 ~ 0.012, T = 1000)이고 √ᾱ₁₀₀₀ ≈ 0.068 이다(ddpm, latent-diffusion)
 
 ## 설명 방식
 
@@ -60,7 +59,7 @@ frontmatter 를 읽어 선수 관계 지도를 그린다. 공부하는 법은 [R
 ## 작업 범위
 
 - 강의 하나를 고칠 때는 그 강의 폴더만 바꾼다. `lessons/branches.yaml` 이나 `site/` 를 바꾸면 `npm test` 로 지도 레이아웃 검사까지 통과시킨다
-- 원본에서 가져온 강의의 로봇 예시는 사용자가 요청할 때만 이미지 예시로 바꾼다
+- 원본에서 가져온 강의의 로봇 예시는 모두 이미지 예시로 바꿨다. 새로 드는 예시도 사진·그림·그래픽에서 고른다
 - `progress/` 는 fork 에서만 커밋하는 퀴즈 기록이다. 원본 리포에는 커밋하지 않는다
 - 사이트의 튜닝값과 경로는 `site/src/config.ts` 의 `CONFIG` 한 곳에 두고, 환경변수를 새로 읽지 않는다
 - 커밋 메시지는 영어로 쓴다

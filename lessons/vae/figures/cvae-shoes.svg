@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>cVAE-GAN 의 학습과 실행. 학습 때는 encoder 가 정답 사진으로 μ, σ 를 내고 z = μ + σ ⊙ ε 를 밑그림과 함께 generator 에 넣는다. 실행 때는 N(0, I) 에서 뽑은 z 세 개로 같은 밑그림에서 색이 다른 신발 세 켤레를 낸다</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+    <path id="shoe" d="M-26,8 L-26,-10 L-14,-10 C-12,-4 -4,-2 4,-3 L12,-2 C20,0 26,3 26,8 z"/>
+  </defs>
+  <rect x="1" y="1" width="718" height="418" rx="12" fill="#0b1220" stroke="#1e293b"/>
+
+  <text x="24" y="32" fill="#e2e8f0" font-size="15" font-weight="600">학습</text>
+  <rect x="24" y="44" width="672" height="176" rx="10" fill="#0e1628" stroke="#1e293b"/>
+  <!-- 정답 사진 -->
+  <rect x="40" y="70" width="88" height="64" rx="6" fill="#111a2e" stroke="#94a3b8"/>
+  <use href="#shoe" x="84" y="102" fill="#f87171" stroke="#e2e8f0" stroke-width="1.2"/>
+  <text x="84" y="152" fill="#e2e8f0" font-size="12" text-anchor="middle">정답 사진 x</text>
+  <line x1="130" y1="102" x2="158" y2="102" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <rect x="160" y="80" width="84" height="44" rx="8" fill="#13233d" stroke="#38bdf8" stroke-width="1.8"/>
+  <text x="202" y="107" fill="#38bdf8" font-size="13" text-anchor="middle">encoder</text>
+  <line x1="246" y1="102" x2="270" y2="102" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="292" y="98" fill="#e2e8f0" font-size="13" text-anchor="middle">μ, σ</text>
+  <text x="292" y="114" fill="#94a3b8" font-size="11" text-anchor="middle">8 개씩</text>
+  <line x1="314" y1="102" x2="338" y2="102" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <rect x="340" y="80" width="118" height="44" rx="8" fill="#1f1a33" stroke="#a78bfa" stroke-width="1.8"/>
+  <text x="399" y="100" fill="#a78bfa" font-size="13" text-anchor="middle">z = μ + σ ⊙ ε</text>
+  <text x="399" y="116" fill="#94a3b8" font-size="11" text-anchor="middle">ε ~ N(0, I)</text>
+  <line x1="460" y1="102" x2="484" y2="102" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <rect x="486" y="80" width="96" height="44" rx="8" fill="#10291f" stroke="#34d399" stroke-width="1.8"/>
+  <text x="534" y="107" fill="#34d399" font-size="13" text-anchor="middle">generator</text>
+  <!-- 밑그림 -->
+  <rect x="490" y="150" width="88" height="56" rx="6" fill="#111a2e" stroke="#94a3b8"/>
+  <use href="#shoe" x="534" y="178" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="440" y="186" fill="#e2e8f0" font-size="12" text-anchor="middle">밑그림 c</text>
+  <line x1="534" y1="150" x2="534" y2="126" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <line x1="584" y1="102" x2="604" y2="102" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <rect x="606" y="70" width="78" height="64" rx="6" fill="#111a2e" stroke="#94a3b8"/>
+  <use href="#shoe" x="645" y="102" fill="#f87171" stroke="#e2e8f0" stroke-width="1.2"/>
+  <text x="645" y="152" fill="#e2e8f0" font-size="12" text-anchor="middle">만든 그림</text>
+  <text x="645" y="190" fill="#f59e0b" font-size="12" text-anchor="middle">L1 × 10</text>
+  <text x="645" y="206" fill="#f59e0b" font-size="12" text-anchor="middle">+ KL × 0.01</text>
+  <text x="40" y="190" fill="#94a3b8" font-size="12">encoder 는 밑그림에 없는 색과 무늬를 z 에 담는다</text>
+  <text x="40" y="208" fill="#94a3b8" font-size="12">(진짜와 가짜를 가리는 GAN 항도 더한다)</text>
+
+  <text x="24" y="250" fill="#e2e8f0" font-size="15" font-weight="600">실행 (정답 사진 없음)</text>
+  <rect x="24" y="262" width="672" height="144" rx="10" fill="#0e1628" stroke="#1e293b"/>
+  <rect x="40" y="300" width="88" height="56" rx="6" fill="#111a2e" stroke="#94a3b8"/>
+  <use href="#shoe" x="84" y="328" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="84" y="374" fill="#e2e8f0" font-size="12" text-anchor="middle">밑그림 c</text>
+  <text x="200" y="300" fill="#a78bfa" font-size="13" text-anchor="middle">z₁, z₂, z₃</text>
+  <text x="200" y="318" fill="#94a3b8" font-size="12" text-anchor="middle">N(0, I) 에서 뽑음</text>
+  <line x1="130" y1="334" x2="290" y2="334" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <line x1="200" y1="324" x2="200" y2="332" stroke="#94a3b8" stroke-width="1.5"/>
+  <rect x="292" y="312" width="96" height="44" rx="8" fill="#10291f" stroke="#34d399" stroke-width="1.8"/>
+  <text x="340" y="339" fill="#34d399" font-size="13" text-anchor="middle">generator</text>
+  <line x1="390" y1="334" x2="420" y2="334" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <rect x="424" y="300" width="80" height="56" rx="6" fill="#111a2e" stroke="#94a3b8"/>
+  <use href="#shoe" x="464" y="330" fill="#f87171" stroke="#e2e8f0" stroke-width="1.2"/>
+  <text x="464" y="374" fill="#e2e8f0" font-size="12" text-anchor="middle">z₁ → 빨강</text>
+  <rect x="514" y="300" width="80" height="56" rx="6" fill="#111a2e" stroke="#94a3b8"/>
+  <use href="#shoe" x="554" y="330" fill="#38bdf8" stroke="#e2e8f0" stroke-width="1.2"/>
+  <text x="554" y="374" fill="#e2e8f0" font-size="12" text-anchor="middle">z₂ → 파랑</text>
+  <rect x="604" y="300" width="80" height="56" rx="6" fill="#111a2e" stroke="#94a3b8"/>
+  <use href="#shoe" x="644" y="330" fill="#f59e0b" stroke="#e2e8f0" stroke-width="1.2"/>
+  <text x="644" y="374" fill="#e2e8f0" font-size="12" text-anchor="middle">z₃ → 노랑</text>
+  <text x="40" y="396" fill="#94a3b8" font-size="12">encoder 는 쓰지 않는다. z 를 다시 뽑을 때마다 색이 다른 신발이 나온다</text>
+</svg>

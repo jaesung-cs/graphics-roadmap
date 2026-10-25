@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>같은 직선 경로를 두 표기로 읽은 모습. 이 강의는 t = 0 의 noise −1 에서 속도 +3 으로 t = 1 의 데이터 2 로 가고, Stable Diffusion 3 는 t = 1 의 noise −1 에서 속도 −3 에 step 길이 −0.25 를 곱해 t = 0 의 데이터 2 로 간다</title>
+  <defs><marker id="a-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="a-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="a-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker></defs>
+  <rect x="1" y="1" width="718" height="328" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="40" y="52" fill="#38bdf8" font-size="14" text-anchor="start" font-weight="600">이 강의: xₜ = (1 − t) ε + t x₁, 정답 속도 x₁ − ε = +3</text>
+  <line x1="120.0" y1="110" x2="600.0" y2="110" stroke="#475569" stroke-width="1.5"/>
+  <line x1="180.0" y1="106" x2="180.0" y2="114" stroke="#475569" stroke-width="1.5"/>
+  <text x="180.0" y="156" fill="#94a3b8" font-size="11" text-anchor="middle">−1</text>
+  <line x1="300.0" y1="106" x2="300.0" y2="114" stroke="#475569" stroke-width="1.5"/>
+  <text x="300.0" y="156" fill="#94a3b8" font-size="11" text-anchor="middle">0</text>
+  <line x1="420.0" y1="106" x2="420.0" y2="114" stroke="#475569" stroke-width="1.5"/>
+  <text x="420.0" y="156" fill="#94a3b8" font-size="11" text-anchor="middle">1</text>
+  <line x1="540.0" y1="106" x2="540.0" y2="114" stroke="#475569" stroke-width="1.5"/>
+  <text x="540.0" y="156" fill="#94a3b8" font-size="11" text-anchor="middle">2</text>
+  <path d="M187.0,102 Q225.0,76 263.0,102" fill="none" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#a-blue)"/>
+  <path d="M277.0,102 Q315.0,76 353.0,102" fill="none" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#a-blue)"/>
+  <path d="M367.0,102 Q405.0,76 443.0,102" fill="none" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#a-blue)"/>
+  <path d="M457.0,102 Q495.0,76 533.0,102" fill="none" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#a-blue)"/>
+  <circle cx="180.0" cy="110" r="6" fill="#38bdf8"/>
+  <text x="180.0" y="134" fill="#e2e8f0" font-size="12" text-anchor="middle">t = 0</text>
+  <circle cx="270.0" cy="110" r="6" fill="#38bdf8"/>
+  <text x="270.0" y="134" fill="#e2e8f0" font-size="12" text-anchor="middle">t = 0.25</text>
+  <circle cx="360.0" cy="110" r="6" fill="#38bdf8"/>
+  <text x="360.0" y="134" fill="#e2e8f0" font-size="12" text-anchor="middle">t = 0.5</text>
+  <circle cx="450.0" cy="110" r="6" fill="#38bdf8"/>
+  <text x="450.0" y="134" fill="#e2e8f0" font-size="12" text-anchor="middle">t = 0.75</text>
+  <circle cx="540.0" cy="110" r="6" fill="#38bdf8"/>
+  <text x="540.0" y="134" fill="#e2e8f0" font-size="12" text-anchor="middle">t = 1</text>
+  <text x="180.0" y="88" fill="#94a3b8" font-size="12" text-anchor="middle">noise</text>
+  <text x="540.0" y="88" fill="#34d399" font-size="12" text-anchor="middle">데이터</text>
+  <text x="360.0" y="70" fill="#94a3b8" font-size="12" text-anchor="middle">step 마다 +0.25 × (+3) = +0.75</text>
+  <text x="40" y="192" fill="#f59e0b" font-size="14" text-anchor="start" font-weight="600">Stable Diffusion 3: zₜ = (1 − t) x₀ + t ε, 정답 속도 ε − x₀ = −3</text>
+  <line x1="120.0" y1="250" x2="600.0" y2="250" stroke="#475569" stroke-width="1.5"/>
+  <line x1="180.0" y1="246" x2="180.0" y2="254" stroke="#475569" stroke-width="1.5"/>
+  <text x="180.0" y="296" fill="#94a3b8" font-size="11" text-anchor="middle">−1</text>
+  <line x1="300.0" y1="246" x2="300.0" y2="254" stroke="#475569" stroke-width="1.5"/>
+  <text x="300.0" y="296" fill="#94a3b8" font-size="11" text-anchor="middle">0</text>
+  <line x1="420.0" y1="246" x2="420.0" y2="254" stroke="#475569" stroke-width="1.5"/>
+  <text x="420.0" y="296" fill="#94a3b8" font-size="11" text-anchor="middle">1</text>
+  <line x1="540.0" y1="246" x2="540.0" y2="254" stroke="#475569" stroke-width="1.5"/>
+  <text x="540.0" y="296" fill="#94a3b8" font-size="11" text-anchor="middle">2</text>
+  <path d="M187.0,242 Q225.0,216 263.0,242" fill="none" stroke="#f59e0b" stroke-width="1.8" marker-end="url(#a-amber)"/>
+  <path d="M277.0,242 Q315.0,216 353.0,242" fill="none" stroke="#f59e0b" stroke-width="1.8" marker-end="url(#a-amber)"/>
+  <path d="M367.0,242 Q405.0,216 443.0,242" fill="none" stroke="#f59e0b" stroke-width="1.8" marker-end="url(#a-amber)"/>
+  <path d="M457.0,242 Q495.0,216 533.0,242" fill="none" stroke="#f59e0b" stroke-width="1.8" marker-end="url(#a-amber)"/>
+  <circle cx="180.0" cy="250" r="6" fill="#f59e0b"/>
+  <text x="180.0" y="274" fill="#e2e8f0" font-size="12" text-anchor="middle">t = 1</text>
+  <circle cx="270.0" cy="250" r="6" fill="#f59e0b"/>
+  <text x="270.0" y="274" fill="#e2e8f0" font-size="12" text-anchor="middle">t = 0.75</text>
+  <circle cx="360.0" cy="250" r="6" fill="#f59e0b"/>
+  <text x="360.0" y="274" fill="#e2e8f0" font-size="12" text-anchor="middle">t = 0.5</text>
+  <circle cx="450.0" cy="250" r="6" fill="#f59e0b"/>
+  <text x="450.0" y="274" fill="#e2e8f0" font-size="12" text-anchor="middle">t = 0.25</text>
+  <circle cx="540.0" cy="250" r="6" fill="#f59e0b"/>
+  <text x="540.0" y="274" fill="#e2e8f0" font-size="12" text-anchor="middle">t = 0</text>
+  <text x="180.0" y="228" fill="#94a3b8" font-size="12" text-anchor="middle">noise</text>
+  <text x="540.0" y="228" fill="#34d399" font-size="12" text-anchor="middle">데이터</text>
+  <text x="360.0" y="210" fill="#94a3b8" font-size="12" text-anchor="middle">step 마다 −0.25 × (−3) = +0.75</text>
+  <text x="360.0" y="318" fill="#94a3b8" font-size="12" text-anchor="middle">시각의 방향과 속도의 부호가 함께 뒤집혀 두 표기는 같은 자리 −1, −0.25, 0.5, 1.25, 2 를 지난다</text>
+</svg>

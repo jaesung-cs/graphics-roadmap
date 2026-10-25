@@ -4,7 +4,7 @@ title: DDPM
 branch: generative
 requires: [vae, cnn]
 hours: 2
-summary: 데이터에 noise 를 조금씩 섞는 과정을 거꾸로 밟아 sample 을 만드는 diffusion model. noise schedule, ε 예측 loss, reverse sampling, step 수와 DDIM, 봉우리가 여럿인 action 을 고르는 Diffusion Policy
+summary: 데이터에 noise 를 조금씩 섞는 과정을 거꾸로 밟아 sample 을 만드는 diffusion model. noise schedule, ε 예측 loss, reverse sampling, step 수와 DDIM, 큰 모양에서 세부로 그림을 정해 가는 sampling
 papers:
   - title: "Deep Unsupervised Learning using Nonequilibrium Thermodynamics"
     authors: Jascha Sohl-Dickstein, Eric A. Weiss, Niru Maheswaranathan, Surya Ganguli
@@ -22,29 +22,26 @@ papers:
     authors: Alex Nichol, Prafulla Dhariwal
     year: 2021
     url: https://arxiv.org/abs/2102.09672
-  - title: "Diffusion Policy: Visuomotor Policy Learning via Action Diffusion"
-    authors: Cheng Chi, Zhenjia Xu, Siyuan Feng, Eric Cousineau, Yilun Du, Benjamin Burchfiel, Russ Tedrake, Shuran Song
-    year: 2023
-    url: https://arxiv.org/abs/2303.04137
 ---
 
 # DDPM
 
-상자를 왼쪽으로 비켜 간 시연과 오른쪽으로 비켜 간 시연을 반반 모아, 출력과 정답의 차이를 제곱해 줄이는 MSE 로 policy 를 학습시키면
-policy 는 두 길의 평균인 가운데 길을 내서 상자에 그대로 부딪힌다. 같은 데이터를 VAE 로 학습해도 sample 의 일부는 두 길 사이로
-번진다. 정답이 둘로 갈라진 데이터에서 평균 대신 둘 중 한 길을 또렷하게 뽑아내려면 무엇이 달라져야 할까?
+빨간 사과 사진과 초록 사과 사진을 반반 모아, 출력과 정답의 차이를 제곱해 줄이는 MSE 로 흑백 사진에 색을 칠하는 모델을 학습시키면
+모델은 두 색의 평균인 회색 사과를 낸다. 같은 데이터를 VAE 로 학습해도 sample 의 일부는 두 색 사이로 번지고 그림이 흐릿하다. 정답이 둘로
+갈라진 데이터에서 평균 대신 둘 중 하나를 또렷하게 뽑아내려면 무엇이 달라져야 할까?
 
 DDPM(Denoising Diffusion Probabilistic Model)은 sample 을 한 번에 만들지 않고, 무작위 숫자에서 출발해 noise 를 조금씩 걷어 내는 작은
-step 을 수십에서 천 번 밟아 만든다. step 하나 안에서는 평균을 내도 괜찮고, 어느 길로 갈지는 여러 step 에 걸쳐 정해진다. Chi 등의
-Diffusion Policy(2023)는 이 방법으로 앞으로 16 step 동안의 로봇 action 을 한꺼번에 만들어, 네 개의 benchmark 에서 이전 방법보다 성공률을 평균
-46.9% 높였다.
+step 을 수십에서 천 번 밟아 만든다. step 하나 안에서는 평균을 내도 괜찮고, 어느 봉우리로 갈지는 여러 step 에 걸쳐 정해진다. Ho 등은
+이 방법으로 $32 \times 32$ 그림 dataset CIFAR-10 에서 조건 없이 그림을 만드는 모델 가운데 당시 가장 좋은 FID 3.17 을 얻었다. FID 는 만든 그림과 실제 그림의
+통계가 얼마나 다른지 잰 값이라 낮을수록 좋다. 그림을 줄였다가 다시 키우는 network 인 Stable Diffusion 의 U-Net 도 1000 step 짜리
+noise schedule 위에서 섞인 noise 를 맞히도록 학습한 DDPM 의 network 다.
 
 ## 학습 목표
 
 - forward process 와 noise schedule 로 어느 step 의 값이든 원래 데이터에서 한 번에 만드는 식을 숫자로 계산할 수 있다
 - network 가 섞인 noise $\epsilon$ 을 맞히도록 학습하는 이유와 그 loss, noise 에서 한 step 씩 거꾸로 걸어 sample 을 만드는 계산을 설명할 수 있다
 - step 수와 sampling 시간의 관계, DDIM 이 같은 network 로 step 을 건너뛰는 방식을 설명할 수 있다
-- 봉우리가 여럿인 데이터에서 DDPM 이 봉우리 하나를 고르는 이유와, Diffusion Policy 가 이 성질로 action 을 만드는 방식을 설명할 수 있다
+- 봉우리가 여럿인 데이터에서 DDPM 이 봉우리 하나를 고르는 이유와, 그림을 만들 때 큰 모양이 먼저 정해지고 세부가 나중에 정해지는 과정을 설명할 수 있다
 
 ## 한 번에 만드는 생성과 나눠 만드는 생성
 
@@ -244,9 +241,9 @@ noise 의 표준편차가 $\sqrt{0.02} \approx 0.14$ 라 한 step 의 변화가 
 
 ![T = 1000 의 linear·cosine schedule 에서 x₀ 에 곱하는 √ᾱ_t(실선)와 noise 에 곱하는 √(1 − ᾱ_t)(점선). cosine 이 원래 값을 더 천천히 지운다](figures/schedule.svg)
 
-로봇에서는 $T$ 를 더 작게 잡는데, Diffusion Policy 는 cosine schedule 을 $T = 100$ 으로 썼다. LeRobot 의 Diffusion Policy 설정도 기본으로
-`num_train_timesteps: 100` 과 cosine schedule 인 `beta_schedule: squaredcos_cap_v2` 를 쓴다. 이 schedule 을 계산하면 $t = 50$ 에서 $\sqrt{\bar\alpha_{50}} \approx 0.70$
-으로, step 수만 줄었을 뿐 $T = 1000$ cosine 의 $t = 500$ 과 같은 모양이다.
+Stable Diffusion v1.5 의 scheduler 설정은 $T = 1000$ 에 $\beta$ 를 0.00085 에서 0.012 까지 늘리는 `scaled_linear` 다. 직접 계산하면
+$\sqrt{\bar\alpha_{500}} \approx 0.53$, $\sqrt{\bar\alpha_{1000}} \approx 0.068$ 이라 위 표의 linear(0.280, 0.006)보다 원래 값을 천천히
+지운다. 이 schedule 이 마지막 step 에 원래 값을 조금 남기는 문제는 [Latent Diffusion](../latent-diffusion/README.md) 에서 다룬다.
 
 이미지에 쓸 때는 pixel 밝기를 $-1$ ~ $+1$ 로 바꾼 뒤 pixel 마다 $\epsilon$ 을 따로 뽑아 같은 식을 쓴다.
 
@@ -290,7 +287,7 @@ $t = 3$ 이면 $1.42 = 0.71 \times 2 + 0.70 \times \epsilon$ 에서 $\epsilon = 
 
 network 의 출력은 언제나 입력 $x_t$ 와 모양이 같다. 숫자 하나나 2 차원 점에는 MLP 를 쓰고, 그림에는 [CNN](../cnn/README.md) 에서 본
 convolution 층으로 그림을 줄였다가 다시 키워 pixel 마다 출력을 내는 U-Net 을 쓴다. step 번호 $t$ 는 정해진 계산으로 숫자 수십 개짜리
-vector(time embedding)로 늘려 넣는다. Diffusion Policy 가 action 에 쓰는 1D U-Net 은 Diffusion Policy 에서 다룬다.
+vector(time embedding)로 늘려 넣는다. Stable Diffusion 이 쓰는 U-Net 의 구조는 [U-Net](../unet/README.md) 에서 다룬다.
 
 ![숫자 하나와 2 차원 점은 MLP 에 넣고 32×32 이미지는 U-Net 에 넣는다. 어느 network 든 t 를 함께 받아 입력과 같은 모양의 noise 를 낸다](figures/network-io.svg)
 
@@ -333,8 +330,8 @@ vector(time embedding)로 늘려 넣는다. Diffusion Policy 가 action 에 쓰�
 - 정답은 $t$ 가 1 이든 1000 이든 $\mathcal N(0, 1)$ 에서 뽑은 숫자라서, 한 network 가 모든 step 의 출력 크기를 똑같이 맞추면 된다
 - Ho 등의 실험에서는 reverse step 의 평균을 직접 맞히게 했을 때보다 noise 를 맞히게 했을 때 그림이 더 좋았다
 
-LeRobot 의 Diffusion Policy 도 기본으로는 `prediction_type: epsilon` 으로 noise 를 맞히며, `sample` 로 바꾸면 깨끗한 action 을 직접
-맞힌다.
+diffusers 의 `DDPMScheduler` 도 `prediction_type` 의 기본값이 `epsilon` 이라 network 가 noise 를 맞힌다고 보고, `sample` 로 바꾸면
+깨끗한 그림을 직접 맞힌다고 본다. Stable Diffusion v1.5 의 scheduler 설정에는 이 값이 적혀 있지 않아 기본값 `epsilon` 을 쓴다.
 
 **흔한 오해.** 학습이 잘 되면 loss 가 0 까지 내려간다고 생각하기 쉽지만, 같은 입력에 정답이 여럿이면 그럴 수 없다. 데이터가 $+2$ 와
 $-2$ 이고 $t = 5$ 에서 $x_5 = 0.2$ 를 받았다면, 원래 값이 $+2$ 일 때 섞인 noise 는 $(0.2 - 0.78) \div 0.92 \approx -0.63$ 이고 $-2$ 일 때는
@@ -449,10 +446,9 @@ $$
 학습은 예 하나에 network 를 한 번 쓰지만, sampling 은 정답 noise 를 모르는 채 $t = T$ 부터 1 까지 모든 step 을 차례로 밟으므로 sample 하나에
 network 를 $T$ 번 쓴다.
 
-DDIM 논문에 따르면 Nvidia 2080 Ti GPU 에서 DDPM 으로 $32 \times 32$ 그림 5 만 장을 만드는 데 약 20 시간이 걸리고, 한 번에 그림을 만드는
-GAN 으로는 1 분도 걸리지 않는다. 로봇은 sampling 이 끝나야 action 을 받으므로 이 시간만큼 반응이 늦어진다. Diffusion Policy 의 실물
-실험에서는 로봇에 명령을 0.1 초마다 보냈는데, network 한 번에 0.01 초가 걸린다고 하면 $T = 1000$ 은 sample 하나에 10 초가 걸리고 $T = 100$
-도 1 초가 걸린다.
+DDIM 논문에 따르면 Nvidia 2080 Ti GPU 에서 DDPM 으로 $32 \times 32$ 그림 5 만 장을 만드는 데 약 20 시간이 걸리고, network 한 번으로 그림을
+만드는 GAN(generative adversarial network)으로는 1 분도 걸리지 않는다. 글을 넣어 그림을 만드는 사람은 sampling 이 끝나야 그림을 받는다. network 한 번에 0.05 초가
+걸린다고 하면 $T = 1000$ step 을 모두 밟는 그림 한 장에 50 초가 걸리고, 50 step 이면 2.5 초가 걸린다.
 
 reverse step 식은 직전 값이 봉우리 하나짜리 종 모양으로 퍼져 있다고 가정하고 만든 식이다. 이 식을 그대로 두고 10 step 씩 건너뛰면 한 번에
 건너뛰는 변화가 커져 직전 값이 여러 무리로 갈라지므로, [T 와 β 의 크기](#t-와-β-의-크기) 에서 본 문제가 다시 생긴다.
@@ -502,9 +498,9 @@ DDIM 논문의 CIFAR-10 실험 결과는 아래와 같다. 숫자는 만든 그�
 | DDIM | 13.36 | 6.84 | 4.67 | 4.16 | 4.04 |
 | DDPM 식으로 건너뜀 | 41.07 | 18.36 | 8.01 | 5.78 | 4.73 |
 
-DDIM 은 20 ~ 100 step 만으로 1000 step 과 비슷한 품질을 내고, 저자들은 이를 원래 DDPM 보다 10 ~ 50 배 빠르다고 적었다. Diffusion Policy
-논문 본문에 따르면 저자들은 실물 로봇에서 100 step schedule 로 학습한 network 로 DDIM 10 step 만 밟아, Nvidia RTX 3080 에서 action 을 0.1 초
-만에 만들었다. 다만 같은 논문의 부록(A.2 절과 표 7)에는 실물 실험의 sampling step 수가 16 으로 적혀 있다.
+DDIM 은 20 ~ 100 step 만으로 1000 step 과 비슷한 품질을 내고, 저자들은 이를 원래 DDPM 보다 10 ~ 50 배 빠르다고 적었다. Stable Diffusion
+도 1000 step schedule 로 학습한 U-Net 을 쓰지만, diffusers 의 Stable Diffusion pipeline 은 `num_inference_steps` 의 기본값이 50 이라 network
+를 50 번만 쓴다. 이렇게 step 을 건너뛰는 여러 sampler 는 [Samplers](../samplers/README.md) 에서 비교한다.
 
 <details><summary><b>심화: DDIM 의 일반 식</b></summary>
 
@@ -622,40 +618,52 @@ DDPM 은 봉우리 사이에 sample 을 거의 남기지 않지만, 그 대가�
 
 </details>
 
-## Diffusion Policy
+## 큰 모양에서 세부로
 
-로봇의 policy 는 카메라 이미지나 관절 위치 같은 관측을 받아 action 을 내는 network 다. 상자를 왼쪽과 오른쪽으로 비켜 간 시연이 섞여 있으면 정답
-action 의 분포에 봉우리가 둘 생기는데, 이렇게 봉우리가 여럿인 분포를 **multimodal** 이라고 한다.
+그림 데이터에서는 서로 다른 그림 하나하나가 봉우리다. 얼굴 사진 dataset 이라면 안경을 쓴 얼굴과 쓰지 않은 얼굴, 왼쪽을 본 얼굴과 오른쪽을
+본 얼굴이 모두 다른 봉우리이고, MSE 로 정답 하나를 배우는 모델은 이 얼굴들을 겹친 흐릿한 평균 얼굴을 낸다. DDPM 은
+[1 차원 두 봉우리](#1-차원-두-봉우리) 에서처럼 이 선택을 여러 step 에 나눠 한다.
 
-![상자를 비켜 가는 시연이 왼쪽과 오른쪽 반반일 때 MSE policy 는 가운데 길로 상자에 부딪히고, Diffusion Policy 는 한쪽 길을 뽑는다](figures/policy-paths.svg)
+Ho 등은 sampling 도중 step 마다 network 가 맞힌 noise 로 원래 그림의 추정 $\hat x_0$ 를 계산해 차례로 늘어놓았다. 큰 $t$ 의 $\hat x_0$ 는
+여러 그림을 가능성으로 섞은 평균이라 흐릿한 얼룩이고, $t$ 가 작아질수록 또렷해진다. 저자들은 이 과정에서 그림의 큰 모양이 먼저 나타나고
+세부는 마지막에 나타난다고 적었다.
 
-Diffusion Policy 는 그림 대신 앞으로 여러 step 동안의 action 을 묶은 **action chunk** 를 $x_0$ 로 삼는다. 책상 위의 T 자 블록을 밀어 정해진
-자리에 놓는 PushT 과제에서는 손끝이 갈 평면 위치 $(x, y)$ 16 개를 이어 붙인 숫자 32 개가 $x_0$ 다. network 는 noise 가 섞인 action chunk 와 $t$ 에 더해
-최근 관측 2 개를 함께 받아 섞인 noise 를 맞힌다. 조건을 함께 넣는 방식은 [VAE](../vae/README.md) 에서 본 CVAE 의 decoder 와 같다. 논문의
-PushT 실험에서는 같은 장면에서 손끝이 블록의 왼쪽으로 돌아갈 수도 있고 오른쪽으로 돌아갈 수도 있었는데, Diffusion Policy 는 두 방식을 모두
-배우고 한 번의 실행 안에서는 한쪽만 끝까지 따랐다.
+저자들은 같은 논문에서 선택이 언제 정해지는지도 실험했다. CelebA-HQ 의 $256 \times 256$ 얼굴 사진으로 학습한 network 로 reverse process 하나를 밟다가,
+$t = 1000$, 750, 500, 250 에서 그때의 $x_t$ 를 그대로 둔 채 나머지 step 을 여러 번 따로 밟아 그림 여러 장을 만들었다. 남은 step 에서 더하는
+새 noise $z$ 가 매번 달라서 그림도 달라진다.
 
-![Diffusion Policy 의 PushT 설정. 관측 2 개를 조건으로 noise 16 × 2 를 걷어 내 손끝 목표 16 개짜리 action chunk 를 만들고, 앞 8 개만 실행한 뒤 다시 만든다](figures/dp-pipeline.svg)
+| 갈라진 자리 | 같은 $x_t$ 에서 만든 그림들 (논문의 서술) |
+| --- | --- |
+| $t = 1000$ | 출발점의 noise 만 같아서 그림이 크게 다르다 |
+| $t = 750$ 이후 | 성별, 머리색, 안경, 채도, 자세, 표정 같은 큰 성질을 함께 갖는다 |
+| 작은 $t$ | 작은 세부만 다르고 나머지는 거의 같다 |
 
-simulation 실험에서는 $T = 100$ 으로 학습한 network 로 sampling 에서도 100 step 을 모두 밟았고, 실물 실험에서는 [DDIM](#ddim) 으로 step 을
-줄였다. 실물 PushT 에서는 policy 가 0.1 초마다 손끝 목표를 냈고, 그 사이를 보간한 명령을 1초에 125 번씩 UR5 팔에 보냈다.
+![같은 reverse process 를 t = 1000, 750, 250 에서 갈라 남은 step 을 따로 밟은 개념도. t = 1000 에서 가른 얼굴들은 머리색과 안경이 제각각이고, t = 750 에서 가른 얼굴들은 머리색·안경·자세·표정이 같고 주근깨 같은 세부만 다르며, t = 250 에서 가른 얼굴들은 거의 같다](figures/split-chain.svg)
 
-LeRobot 에 올라 있는 PushT 용 Diffusion Policy(`lerobot/diffusion_pusht`)의 설정은 `horizon: 16`, `n_action_steps: 8`, `n_obs_steps: 2`,
-`num_train_timesteps: 100` 으로 논문의 simulation 설정과 같다. 다만 sampling 설정은 `noise_scheduler_type: DDPM` 이고
-`num_inference_steps` 가 비어 있어서 학습 step 수와 같은 100 step 을 밟는다. 논문의 실물 로봇처럼 sampling 시간을 줄이려면
-`noise_scheduler_type: DDIM` 과 `num_inference_steps: 10` 으로 바꾸면 되고, 다시 학습할 필요는 없다.
+사람 눈에는 $x_{750}$ 이 noise 로만 보이지만, 저자들은 이 결과를 $x_{750}$ 같은 중간 값에 이미 이런 성질들이 담겨 있다는 뜻으로
+해석했다. 이 해석은 1 차원 예의 계산으로도 확인할 수 있다. 큰 $t$ 에서는 여러 봉우리의 분포가 크게 겹쳐 어느 봉우리에서 왔는지가 반반에 가깝고, $t$ 가 작아질수록
+한 봉우리의 가능성이 커진다. [1 차원 두 봉우리](#1-차원-두-봉우리) 의 표에서 같은 $x_t = 0.2$ 라도 $+2$ 쪽 가능성은 $t = 5$ 에서 0.59 였고
+$t = 2$ 에서 0.92 였다. 그림에서는 머리색처럼 넓은 영역을 차지하는 성질이 먼저 이렇게 한쪽으로 기울고, 머리카락 한 올 같은 세부는 마지막
+step 들에서 정해진다.
 
-**확인 문제.** 컵을 집는 시연의 절반은 손잡이를 왼쪽에서 잡았고, 나머지 절반은 오른쪽에서 잡았다. MSE policy 와 Diffusion Policy 는 각각
-어떤 손 위치를 낼 가능성이 클까?
+Stable Diffusion 이 밑그림에서 새 그림을 만드는 img2img 도 이 성질을 쓴다. 밑그림에 noise 를 조금 섞고 거기서부터 reverse process 를
+밟으면 밑그림의 구도와 색이 남고 세부만 새로 그려진다. 많이 섞으면 큰 모양까지 다시 정해진다. 섞는 양을 정하는 방법은
+[Latent Diffusion](../latent-diffusion/README.md) 에서 다룬다.
+
+**흔한 오해.** 큰 $t$ 의 step 에서는 noise 만 많고 그림이 보이지 않으니 하는 일이 없다고 생각하기 쉽다. 위 실험에서 $t = 750$ 의 $x_t$ 는
+사람 눈에 noise 로만 보였지만, 거기서 만든 그림들은 이미 같은 머리색과 자세를 가졌다. 큰 모양을 정하는 일이 이 step 들에서 일어난다.
+
+**확인 문제.** 얼굴 사진으로 학습한 DDPM 으로 reverse process 하나를 밟다가 한 번은 $t = 900$ 에서, 한 번은 $t = 100$ 에서 갈라 그림을 두
+장씩 만든다. 어느 쪽 두 그림이 더 닮았을까?
 
 <details><summary>답 보기</summary>
 
-① MSE policy 는 같은 관측에 대한 정답들의 평균을 내므로, 왼쪽에서 잡는 손 위치와 오른쪽에서 잡는 손 위치의 가운데를 낸다. 시연에 없던
-위치다.
+① $t = 100$ 의 $x_t$ 는 noise 가 적어 어느 봉우리(어떤 얼굴)에서 왔는지가 거의 정해져 있다. 남은 100 step 은 작은 세부만 바꾼다.
 
-② Diffusion Policy 는 sampling 할 때마다 왼쪽에서 잡는 위치나 오른쪽에서 잡는 위치 중 하나에 가까운 값을 낸다.
+② $t = 900$ 의 $x_t$ 는 여러 얼굴의 분포가 크게 겹친 자리라서, 남은 900 step 의 새 noise 에 따라 머리색이나 표정 같은 큰 성질까지
+달라질 수 있다.
 
-답: MSE policy 는 두 위치의 가운데를 내고, Diffusion Policy 는 둘 중 한 위치를 낸다.
+답: $t = 100$ 에서 가른 두 그림이 더 닮았다.
 
 </details>
 
@@ -665,29 +673,29 @@ LeRobot 에 올라 있는 PushT 용 Diffusion Policy(`lerobot/diffusion_pusht`)�
   만든 학습 예에서 섞인 noise $\epsilon$ 을 맞히도록 network 를 학습한다. 정답 noise 는 학습 예를 만들 때 직접 뽑은 값이라 따로 달 필요가 없다
 - sampling 은 $\mathcal N(0, 1)$ 에서 출발해 network 가 맞힌 noise 의 몫을 빼고 새 noise 를 더하는 reverse step 을 $T$ 번 밟는다. $T$ 가
   sampling 시간을 정하므로, 같은 network 로 $\hat x_0$ 를 어림해 step 을 건너뛰는 DDIM 을 쓴다. DDIM 은 20 ~ 100 step 으로 1000 step 과
-  비슷한 품질을 내고, Diffusion Policy 는 실물 로봇에서 10 step 만 밟는다
+  비슷한 품질을 내고, diffusers 의 Stable Diffusion pipeline 은 기본으로 50 step 만 밟는다
 - network 는 MSE 로 학습해 평균을 내지만, 그 평균은 각 step 의 작은 이동에만 쓰이고 봉우리의 선택은 여러 step 에 나뉘어 일어난다. $\pm 2$
-  데이터로 만든 sample 4000 개 가운데 봉우리 사이($-1.5$ ~ 1.5)에서 끝난 것은 하나도 없었고, Diffusion Policy 도 같은 이유로 봉우리가 여럿인
-  시연에서 가운데 길 대신 시연에 있던 action chunk 하나를 고른다
+  데이터로 만든 sample 4000 개 가운데 봉우리 사이($-1.5$ ~ 1.5)에서 끝난 것은 하나도 없었다. 그림에서는 큰 $t$ 에서 머리색·자세 같은
+  큰 성질이 먼저 정해지고, 작은 $t$ 에서 세부가 정해진다
 
-DDIM 으로 줄여도 Diffusion Policy 는 action 을 만들 때마다 network 를 10 번 쓴다. noise 에서 데이터로 가는 경로를 처음부터 곧게 학습해 몇
-step 만에 sample 을 만드는 방법은 [Flow Matching](../flow-matching/README.md) 에서 다루고, 관측을 조건으로 넣는 network 와 action chunk 를
-실행하는 방식은 Diffusion Policy 에서 다룬다.
+DDIM 으로 줄여도 그림 한 장에 network 를 수십 번 쓴다. noise 에서 데이터로 가는 경로를 처음부터 곧게 학습해 몇 step 만에 sample 을
+만드는 방법은 [Flow Matching](../flow-matching/README.md) 에서 다루고, 그림을 VAE 의 latent 로 줄여 그 위에서 DDPM 으로 그림을 만드는
+Stable Diffusion 의 구성은 [Latent Diffusion](../latent-diffusion/README.md) 에서 다룬다.
 
 ## 참고 자료
 
 - Jonathan Ho, Ajay Jain, Pieter Abbeel, [Denoising Diffusion Probabilistic Models](https://arxiv.org/abs/2006.11239) (2020) — DDPM 의 원
-  논문. Algorithm 1(학습)과 Algorithm 2(sampling)가 이 강의의 학습 순서와 sampling 식이고, 4 절에 $T = 1000$ 과 linear schedule 이 있다
+  논문. Algorithm 1(학습)과 Algorithm 2(sampling)가 이 강의의 학습 순서와 sampling 식이고, 4 절에 $T = 1000$ 과 linear schedule 이 있다.
+  4.3 절과 부록 D 에 큰 모양에서 세부로 정해지는 sampling(그림 6, 7)이 있다
 - Jiaming Song, Chenlin Meng, Stefano Ermon, [Denoising Diffusion Implicit Models](https://arxiv.org/abs/2010.02502) (2020) — 같은 network 로
   step 을 건너뛰는 DDIM. DDPM 의 sampling 시간(서론)과 step 수별 FID(표 1)를 본다
 - Alex Nichol, Prafulla Dhariwal, [Improved Denoising Diffusion Probabilistic Models](https://arxiv.org/abs/2102.09672) (2021) — 3.2 절의
   cosine schedule 과 linear schedule 의 $\bar\alpha_t$ 비교 그림
-- Cheng Chi 등, [Diffusion Policy: Visuomotor Policy Learning via Action Diffusion](https://arxiv.org/abs/2303.04137) (2023) — DDPM 으로 action
-  chunk 를 만드는 policy. DDIM 10 step 과 0.1 초(3.4 절), PushT 의 두 방식(그림 3), $T_o$·$T_a$·$T_p$ 와 실물 실험의 sampling step 수(부록 표 7)를
-  본다
-- LeRobot, [configuration_diffusion.py](https://github.com/huggingface/lerobot/blob/main/src/lerobot/policies/diffusion/configuration_diffusion.py) —
-  Diffusion Policy 설정의 기본값과 각 parameter 의 설명. pretrained PushT 모델의 설정은
-  [lerobot/diffusion_pusht](https://huggingface.co/lerobot/diffusion_pusht) 에 있다
+- Stable Diffusion v1.5, [`scheduler/scheduler_config.json`](https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5/blob/main/scheduler/scheduler_config.json)
+  — `num_train_timesteps: 1000`, `beta_schedule: scaled_linear`, `beta_start: 0.00085`, `beta_end: 0.012`
+- diffusers, [`scheduling_ddpm.py`](https://github.com/huggingface/diffusers/blob/main/src/diffusers/schedulers/scheduling_ddpm.py) 와
+  [`pipeline_stable_diffusion.py`](https://github.com/huggingface/diffusers/blob/main/src/diffusers/pipelines/stable_diffusion/pipeline_stable_diffusion.py)
+  — `scaled_linear` 의 계산, `prediction_type` 의 기본값 `epsilon`, pipeline 의 `num_inference_steps = 50`
 - Jascha Sohl-Dickstein 등, [Deep Unsupervised Learning using Nonequilibrium Thermodynamics](https://arxiv.org/abs/1503.03585) (2015) — 데이터를
   noise 로 흩뜨렸다가 되돌리는 생성 모델을 처음 제안한 논문
 - Calvin Luo, [Understanding Diffusion Models: A Unified Perspective](https://arxiv.org/abs/2208.11970) — VAE 의 ELBO 에서 출발해 DDPM 의 loss 와

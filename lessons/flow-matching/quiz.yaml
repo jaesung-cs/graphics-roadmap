@@ -74,15 +74,15 @@
     - question: |
         이 loss 에 'conditional' 이라는 이름이 붙은 이유는 무엇인가?
       choices:
-        - '관측이나 지시문 같은 조건 입력을 network 에 넣어야만 쓸 수 있는 loss 이기 때문이다'
+        - '글이나 class label 같은 조건 입력을 network 에 넣어야만 쓸 수 있는 loss 이기 때문이다'
         - '학습 데이터 가운데 특정 조건을 만족하는 sample 에서만 loss 를 계산하기 때문이다'
         - 'loss 값이 0 보다 클 때만 gradient 를 계산하고, 0 이면 그 예를 건너뛰기 때문이다'
         - '정답 속도 $x_1 - \epsilon$ 이 noise 와 데이터 쌍 하나를 조건으로 정해야 계산되기 때문이다'
       answer: 3
       explanation: |
         target velocity $x_1 - \epsilon$ 은 쌍 $(\epsilon, x_1)$ 하나를 정해 둔 상태에서만 계산된다. 이렇게 쌍 하나를 조건으로 둔 직선의
-        속도를 맞히므로 conditional flow matching loss 라고 부른다. 관측을 조건으로 받는 것은 π0 같은 policy 의 설계이고, 조건 없는 생성
-        에도 같은 loss 를 쓴다. 특정 조건을 만족하는 데이터만 골라 loss 를 계산하는 규칙은 없다. loss 값에 따라 gradient 를 거르는 규칙도
+        속도를 맞히므로 conditional flow matching loss 라고 부른다. 글을 조건으로 받는 것은 Stable Diffusion 3 같은 모델의 설계이고, 조건 없는
+        생성에도 같은 loss 를 쓴다. 특정 조건을 만족하는 데이터만 골라 loss 를 계산하는 규칙은 없다. loss 값에 따라 gradient 를 거르는 규칙도
         이 이름과 관계없다.
 
 - topic: euler
@@ -182,30 +182,30 @@
         향한다. 그래서 마지막 step 의 결과가 평균이 된다. 봉우리 하나를 고르려면 휘는 구간을 따라갈 step 이 필요하다. 1 step 도 속도만큼
         움직이므로 noise 가 그대로 남지 않는다. 적은 step 은 오히려 평균 쪽으로 몰린 sample 을 낸다.
     - question: |
-        로봇 시연에서 같은 장면에 상자를 왼쪽으로 비켜 간 시연과 오른쪽으로 비켜 간 시연이 반반 있다. flow matching policy 의
-        sampling step 이 너무 적으면 어떤 행동이 나올 위험이 있는가?
+        흑백 사과 사진에 색을 칠하는 모델을 flow matching 으로 학습했다. 학습 사진의 절반은 빨간 사과이고 절반은 초록 사과다. sampling
+        step 이 너무 적으면 어떤 결과가 나올 위험이 있는가?
       choices:
-        - '시연에 있던 왼쪽 길 하나만 고르는 행동'
-        - '움직임을 적게 나눠 시연보다 빠르게 움직이는 행동'
-        - 'step 이 모자라 아무 action 도 내지 않는 행동'
-        - '두 길의 평균인 상자 정면으로 향하는 행동'
+        - '학습 사진에 있던 빨간 사과 하나만 고르는 결과'
+        - '색을 적게 나눠 칠해 학습 사진보다 진한 색이 나오는 결과'
+        - 'step 이 모자라 아무 색도 칠하지 못하는 결과'
+        - '두 색의 평균인 회색에 가까운 사과가 나오는 결과'
       answer: 3
       explanation: |
-        step 이 너무 적으면 어느 쪽으로 갈지 정하는 휘어진 구간을 따라가지 못하고, 마지막 step 이 정답 행동들의 평균을 내서 상자 정면으로
-        향한다. 왼쪽 길만 고르는 행동은 충분한 step 에서 나오는 정상적인 결과이고 위험이 아니다. step 수는 action 이 어느 길로 향하는지를
-        바꿀 뿐, 시연보다 빠르게 움직이게 하지는 않는다. step 이 적어도 Euler step 은 속도만큼 움직이므로 action 이 아예 나오지 않는 일은
+        step 이 너무 적으면 어느 색으로 갈지 정하는 휘어진 구간을 따라가지 못하고, 마지막 step 이 정답 색들의 평균을 내서 회색에 가까운
+        사과가 나온다. 빨간 사과 하나를 고르는 것은 충분한 step 에서 나오는 정상적인 결과이고 위험이 아니다. step 수는 어느 봉우리로 가는지를
+        바꿀 뿐, 학습 사진보다 진한 색을 만들지는 않는다. step 이 적어도 Euler step 은 속도만큼 움직이므로 색이 아예 칠해지지 않는 일은
         없다.
     - question: |
         flow matching 의 sampling step 수를 정할 때 고려하는 것으로 가장 알맞은 것은?
       choices:
-        - '갈리는 구간을 따라갈 만큼 쓰되, network 계산 시간이 제어 주기 안에 들어오게 한다'
+        - '갈리는 구간을 따라갈 만큼 쓰되, network 계산 시간이 기다릴 수 있는 시간 안에 들어오게 한다'
         - '학습 데이터 개수와 같게 두어, step 마다 데이터 하나씩을 거쳐 가게 한다'
         - '경로가 직선이라 step 수는 결과에 영향이 없으므로, 계산 시간을 아끼려고 언제나 1 로 둔다'
         - '학습 때 뽑은 시각 $t$ 의 개수와 같게 두어, network 가 본 시각만 쓰게 한다'
       answer: 0
       explanation: |
-        경로가 휘는 구간이 짧아도 그 구간을 따라갈 step 은 필요하고, step 을 늘린 만큼 network 계산 시간이 늘어난다. 로봇에서는 다음
-        chunk 가 늦으면 멈추므로 이 시간이 실제 조건이 된다. step 수는 데이터 개수와 관계없다. 봉우리가 여럿이면 1 step 은 평균을 낸다.
+        경로가 휘는 구간이 짧아도 그 구간을 따라갈 step 은 필요하고, step 을 늘린 만큼 network 계산 시간이 늘어난다. 그림을 기다리는 사람이
+        있으면 이 시간이 실제 조건이 되고, diffusers 의 Stable Diffusion 3 pipeline 은 기본으로 28 step 을 밟는다. step 수는 데이터 개수와 관계없다. 봉우리가 여럿이면 1 step 은 평균을 낸다.
         학습의 $t$ 는 연속 값으로 뽑으므로 sampling step 수를 거기에 맞출 필요가 없다.
 
 - topic: vs-diffusion
@@ -238,91 +238,86 @@
         flow matching 이 학습 데이터를 더 쓰는 것도 아니고, 같은 데이터에서도 경로의 모양이 다르다. 충분한 step 의 flow matching 은 평균이
         아니라 여러 봉우리에 고루 닿는다.
     - question: |
-        Diffusion Policy 는 DDPM 100 단계로 학습하고 실제 로봇에서는 DDIM 으로 10 단계만 밟고, π0 는 flow matching 으로 10 step 을
-        밟는다. 두 방식의 차이로 옳은 것은?
+        Stable Diffusion v1.5 는 DDPM 1000 단계로 학습했지만 diffusers 에서는 기본으로 50 단계만 밟는다. Stable Diffusion 3 는 flow
+        matching 으로 학습해 기본으로 28 step 을 밟는다. 두 모델의 차이로 옳은 것은?
       choices:
-        - '두 방식 모두 학습한 단계 수를 그대로 밟고, 두 방식의 차이는 network 크기뿐이다'
-        - 'π0 는 DDIM 으로 단계를 건너뛰고, Diffusion Policy 는 Euler 법으로 10 step 을 밟는다'
-        - 'Diffusion Policy 는 action 을 한 시점씩 만들어서, 여러 시점을 묶은 chunk 를 만들지 않는다'
-        - 'Diffusion Policy 는 학습한 단계를 별도 계산으로 건너뛰고, π0 는 속도를 배워 Euler 10 step 을 밟는다'
+        - '두 모델 모두 학습한 단계 수를 그대로 밟고, 두 모델의 차이는 network 크기뿐이다'
+        - 'SD3 는 DDIM 으로 단계를 건너뛰고, SD v1.5 는 Euler 법으로 속도를 따라 28 step 을 밟는다'
+        - 'SD v1.5 는 그림을 pixel 위에서 만들고, SD3 만 autoencoder 의 latent 위에서 그림을 만든다'
+        - 'SD v1.5 는 학습한 단계를 sampler 로 건너뛰고, SD3 는 속도를 배워 Euler 법으로 step 을 밟는다'
       answer: 3
       explanation: |
-        DDPM 의 reverse step 은 작은 step 을 가정해서, 단계를 줄이려면 DDIM 같은 계산으로 바꿔야 했다. flow matching 은 학습 때부터 속도를
-        배우므로 step 수만 정해 같은 Euler 법으로 따라간다. Diffusion Policy 는 실제 로봇에서 학습한 100 단계를 다 밟지 않는다. 두 모델의
-        sampling 방법을 서로 바꿔 적은 보기는 틀렸다. Diffusion Policy 도 여러 시점의 action 을 묶은 chunk 를 한꺼번에 만든다.
+        DDPM 의 reverse step 은 작은 step 을 가정해서, 단계를 줄이려면 DDIM 같은 sampler 계산으로 바꿔야 했다. flow matching 은 학습 때부터
+        속도를 배우므로 step 수만 정해 Euler 법으로 따라간다. SD v1.5 는 학습한 1000 단계를 다 밟지 않는다. 두 모델의 sampling 방법을 서로
+        바꿔 적은 보기는 틀렸다. 두 모델 모두 autoencoder 로 줄인 latent 위에서 그림을 만든다.
 
-- topic: pi0-action-expert
-  title: π0 의 action expert
+- topic: sd3-timestep
+  title: Stable Diffusion 3 가 t 를 뽑는 분포
   variants:
     - question: |
-        π0 는 action chunk 하나를 만들 때 Euler step 을 10 번 밟는다. 이미지와 지시문을 읽는 큰 VLM 은 몇 번 계산하는가?
+        Stable Diffusion 3 는 학습할 때 시각 $t$ 를 0 과 1 사이에서 고르게 뽑지 않는다. 어떻게 뽑으며, 그 이유는 무엇인가?
       choices:
-        - '관측과 noise 가 섞인 action 이 함께 바뀌므로, step 마다 한 번씩 10 번 계산한다'
-        - '처음 step 에서 관측을 읽고, 마지막 step 에서 결과를 확인하느라 두 번 계산한다'
-        - 'action 50 개를 하나씩 만드느라, action 마다 한 번씩 모두 50 번 계산한다'
-        - '관측이 그대로라 한 번만 계산해 두고, step 마다 action expert 만 다시 계산한다'
-      answer: 3
-      explanation: |
-        10 번의 step 동안 바뀌는 것은 noise 가 섞인 action 과 $\tau$ 뿐이고 관측은 그대로라서, VLM 의 계산은 한 번만 하고 그 결과를 저장해
-        다시 쓴다. 논문의 RTX 4090 측정에서 VLM 이 관측을 읽는 계산은 32 ms 였고 action expert 10 번은 27 ms 였다. step 마다 VLM 을 다시
-        계산하면 같은 계산을 되풀이할 뿐이다. 처음과 마지막 step 에서만 VLM 을 계산한다는 규칙은 없다. action 50 개는 하나씩이 아니라
-        chunk 하나로 한꺼번에 만들므로 VLM 을 50 번 계산하지 않는다.
-    - question: |
-        π0 의 flow matching 에서 시연 action chunk 를 $A_t$, noise 를 $\epsilon$, 시각을 $\tau$ 라 하면, 학습에 쓰는 섞은 점과 정답 속도는
-        무엇인가? $\tau = 0$ 이 noise 쪽이다.
-      choices:
-        - '섞은 점은 $\tau\,\epsilon + (1 - \tau)\,A_t$ 이고 정답 속도는 $A_t - \epsilon$ 이다'
-        - '섞은 점은 $\tau\,A_t + (1 - \tau)\,\epsilon$ 이고 정답 속도는 $\epsilon$ 이다'
-        - '섞은 점은 $\tau\,A_t + (1 - \tau)\,\epsilon$ 이고 정답 속도는 $A_t - \epsilon$ 이다'
-        - '섞은 점은 $A_t + \epsilon$ 이고 정답 속도는 $A_t$ 이다'
-      answer: 2
-      explanation: |
-        $\tau = 0$ 이 noise 이므로 섞은 점은 $\tau\,A_t + (1 - \tau)\,\epsilon$ 이고, $\tau$ 가 1 늘 때 이 점이 변하는 양 $A_t - \epsilon$ 이 정답
-        속도다. 첫 보기의 섞은 점은 $\tau = 0$ 이 데이터라서 조건과 맞지 않는다. 정답 속도를 $\epsilon$ 으로 둔 보기는 noise 자체를 맞히는
-        DDPM 의 정답이다. 마지막 보기는 $\tau$ 가 없어 직선 경로가 아니다.
-    - question: |
-        π0 는 학습할 때 flow matching 의 시각 $\tau$ 를 0 과 1 사이에서 고르게 뽑지 않는다. 어떻게 뽑으며, 그 이유는 무엇인가?
-      choices:
-        - '$\tau = 1$ 근처만 뽑는다. 데이터에 가까운 자리는 고칠 양이 작고 세밀해서 가장 어렵기 때문이다'
-        - 'noise 쪽($\tau$ 가 작은 쪽)을 더 자주 뽑는다. 관측에 맞는 평균 행동을 맞히기 어렵기 때문이다'
-        - '$\tau = 0.5$ 하나만 뽑는다. 한 시각만 학습하면 계산이 가장 빠르기 때문이다'
-        - '정수 1 ~ 1000 중에서 뽑는다. DDPM 으로 학습한 network 를 그대로 쓰기 때문이다'
+        - '0 과 1 사이에서 고르게 뽑는다. 어느 시각이든 속도를 맞히기 어려운 정도가 같기 때문이다'
+        - 'logit-normal 분포로 가운데를 자주 뽑는다. 가운데 시각의 속도가 가장 맞히기 어렵기 때문이다'
+        - '$t = 1$ 근처만 뽑는다. noise 에 가까울수록 고칠 양이 커서 속도를 맞히기 가장 어렵기 때문이다'
+        - '정수 1 ~ 1000 중에서 뽑는다. DDPM 으로 학습한 U-Net 을 그대로 이어서 학습하기 때문이다'
       answer: 1
       explanation: |
-        π0 는 noise 쪽을 강조하는 beta 분포 $\text{Beta}\big(\tfrac{s - \tau}{s}; 1.5, 1\big)$, $s = 0.999$ 에서 $\tau$ 를 뽑는다. 논문은 관측이
-        정답 행동을 많이 좁혀 주므로 noise 가 많은 자리에서 관측에 맞는 평균 행동을 맞히는 일이 어렵다고 설명했다. 데이터 쪽만 뽑으면 noise 근처의 속도를
-        배우지 못한다. 한 시각만 뽑으면 다른 시각의 속도를 배우지 못한다. flow matching 의 $\tau$ 는 0 과 1 사이 실수다.
+        SD3 는 $\mathcal N(0, 1)$ 에서 뽑은 $u$ 를 logistic sigmoid 로 0 과 1 사이의 $t$ 로 바꾸는 logit-normal 분포를 쓴다. 논문에 따르면 양 끝에서는
+        가장 좋은 답이 noise 나 데이터 한쪽 분포의 평균으로 정해지지만, 가운데에서는 그렇지 않아 속도를 맞히기가 더 어렵다. 고르게 뽑는 것은 원래
+        rectified flow 의 방식이다. 한쪽 끝만 뽑으면 나머지 시각의 속도를 배우지 못한다. flow matching 의 $t$ 는 0 과 1 사이의 실수다.
+    - question: |
+        logit-normal 분포로 $t$ 를 뽑으려고 $\mathcal N(0, 1)$ 에서 $u = 0$ 과 $u = 2$ 를 뽑았다. 두 $t$ 는 각각 얼마인가?
+      choices:
+        - '0 과 2 다. $u$ 를 그대로 $t$ 로 쓴다'
+        - '0.5 와 약 0.881 이다'
+        - '0.5 와 약 0.119 다'
+        - '0 과 약 0.881 이다'
+      answer: 1
+      explanation: |
+        $t = 1 \div (1 + e^{-u})$ 이므로 $u = 0$ 이면 $1 \div (1 + 1) = 0.5$ 이고, $u = 2$ 이면 $1 \div (1 + e^{-2}) = 1 \div 1.135 \approx 0.881$
+        이다. $u$ 를 그대로 쓰면 0 과 1 사이를 벗어난다. 0.119 는 $u = -2$ 의 값이다. $u = 0$ 은 0 이 아니라 가운데 0.5 로 간다.
+    - question: |
+        $t$ 가 0.25 ~ 0.75 에 들어갈 확률은 고르게 뽑으면 50% 이고, SD3 의 logit-normal 분포에서는 약 73% 다. 이 차이가 학습에 주는 효과는?
+      choices:
+        - 'network 가 가운데 시각의 속도를 더 자주 연습하고, 양 끝 시각은 덜 자주 연습한다'
+        - '가운데 시각만 연습하므로, 양 끝 시각에서는 network 가 속도를 전혀 배우지 못한다'
+        - 'sampling 도 같은 분포를 따라야 해서, 가운데 시각에서만 Euler step 을 밟게 된다'
+        - '가운데 시각을 많이 뽑으면 batch 하나가 커져서, 한 번의 학습 step 이 느려진다'
+      answer: 0
+      explanation: |
+        뽑는 분포는 각 시각을 얼마나 자주 연습하는지만 바꾼다. 가운데를 더 자주 뽑으면 그 자리의 loss 를 더 자주 줄인다. 양 끝도 뽑힐
+        확률이 0 은 아니어서, 직접 계산하면 $t < 0.1$ 이 약 1.4% 의 확률로 뽑힌다. sampling 은 1 에서 0 까지 모든 구간을 step 으로 따라가야
+        데이터에 닿는다. batch 의 크기는 학습 설정으로 정하며 $t$ 를 뽑는 분포와 관계없다.
 
 - topic: sign-convention
   title: 시각의 방향과 정답 속도의 부호
   variants:
     - question: |
-        GR00T N1 논문은 섞는 식을 $A_t^\tau = \tau A_t + (1 - \tau)\epsilon$ 으로 두고, $\tau = 0$ 의 noise 에서 출발해
-        $A^{\tau + 1/K} = A^\tau + \tfrac{1}{K} V_\theta$ 로 Euler step 을 밟는다. 이와 맞으려면 network 가 맞힐 정답 속도는 무엇이어야 하는가?
+        Stable Diffusion 3 의 저자들은 섞는 식을 $z_t = (1 - t)\,x_0 + t\,\epsilon$ 으로 두어서 $t = 1$ 이 noise 다. 이 식과 맞으려면 network 가 맞힐
+        정답 속도는 무엇이어야 하는가?
       choices:
-        - '$A_t - \epsilon$'
-        - '$\epsilon - A_t$'
+        - '$x_0 - \epsilon$'
+        - '$\epsilon - x_0$'
         - '$\epsilon$'
-        - '$A_t + \epsilon$'
-      answer: 0
-      explanation: |
-        $\tau$ 가 0 에서 1 로 늘며 속도를 더해 가므로 noise 에서 시연 쪽으로 가려면 속도가 $A_t - \epsilon$ 이어야 하고, $\tau$ 가 1 늘 때
-        섞은 점이 변하는 양도 $A_t - \epsilon$ 이다. 논문의 식 (1) 은 $\epsilon - A_t$ 로 적었지만, 그 부호로는 같은 Euler 식이 시연에서
-        멀어진다. $\epsilon$ 은 noise 자체를 맞히는 DDPM 의 정답이다. $A_t + \epsilon$ 은 섞는 식에서 나오지 않는 값이다.
-    - question: |
-        openpi 의 π0 코드는 시각 변수 time 이 1 일 때 noise 이고 0 일 때 데이터이며, 정답 속도를 noise − actions 로 둔다. 10 step
-        으로 sampling 할 때 어떻게 해야 데이터에 닿는가?
-      choices:
-        - 'time 을 0 에서 시작해 step 마다 0.1 씩 늘리며, 논문처럼 속도에 0.1 을 곱해 더한다'
-        - 'time 을 1 에서 시작해 0.1 씩 줄이고, 속도에 음수 step 길이 −0.1 을 곱해 더한다'
-        - 'time 을 1 에 고정해 noise 자리에 두고, 속도에 0.1 을 곱해 10 번 더한다'
-        - 'time 을 1 에서 0.1 씩 줄이되, 속도에는 양수인 0.1 을 곱해 더한다'
+        - '$x_0 + \epsilon$'
       answer: 1
       explanation: |
-        noise 가 time = 1 쪽이므로 1 에서 출발해 0 으로 가야 한다. 이때 속도 noise − actions 에 음수 step 길이를 곱해 더하면 actions − noise
-        방향으로 움직여 데이터에 닿는다. 시각의 방향과 정답 속도의 부호가 함께 뒤집혀 있어 논문의 식과 같은 경로를 따라간다. time 을 0 에서
-        시작하면 데이터 쪽에서 출발하게 되어 순서가 맞지 않는다. time 을 고정하면 network 가 매 step 같은 시각만 본다. 부호를 무시하면
-        데이터에서 멀어진다.
+        섞는 식에서 $z_t$ 는 $t$ 가 늘어난 양의 $\epsilon - x_0$ 배만큼 변하므로 정답 속도는 $\epsilon - x_0$ 이다. diffusers 의 SD3 학습 예제도 정답을
+        `noise - model_input` 으로 둔다. $x_0 - \epsilon$ 은 $t = 0$ 을 noise 로 두는 이 강의의 표기에서 맞는 부호인데, SD3 의 섞는 식에 쓰면
+        sampling 이 데이터에서 멀어진다. $\epsilon$ 은 noise 자체를 맞히는 DDPM 의 정답이다. $x_0 + \epsilon$ 은 섞는 식에서 나오지 않는 값이다.
+    - question: |
+        diffusers 의 SD3 는 $t = 1$ 이 noise 이고 정답 속도가 noise − 데이터다. 28 step 으로 sampling 할 때 어떻게 해야 데이터에 닿는가?
+      choices:
+        - '$t$ 를 0 에서 시작해 step 마다 늘리며, 속도에 양수 step 길이를 곱해 더한다'
+        - '$t$ 를 1 에서 0 으로 줄이고, 속도에 음수인 step 길이를 곱해 더해 간다'
+        - '$t$ 를 1 에 고정해 noise 자리에 두고, 속도에 1/28 을 곱해 28 번 더한다'
+        - '$t$ 를 1 에서 0 으로 줄이되, 속도에는 양수인 step 길이를 곱해 더한다'
+      answer: 1
+      explanation: |
+        noise 가 $t = 1$ 쪽이므로 1 에서 출발해 0 으로 가야 한다. 이때 속도 noise − 데이터에 음수 step 길이를 곱해 더하면 데이터 − noise 방향으로
+        움직여 데이터에 닿는다. diffusers 의 `FlowMatchEulerDiscreteScheduler` 가 이렇게 계산한다. $t$ 를 0 에서 시작하면 데이터 쪽에서 출발하게
+        되어 순서가 맞지 않는다. $t$ 를 고정하면 network 가 매 step 같은 시각만 본다. 양수 step 길이를 곱하면 데이터에서 멀어진다.
     - question: |
         새 flow matching 코드를 읽을 때 가장 먼저 확인해야 할 것으로 알맞은 것은?
       choices:
