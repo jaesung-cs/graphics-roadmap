@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>Stable Diffusion v1 U-Net 의 attention block 16 개에 self-attention 과 cross-attention 의 q, k, v, out 행렬 128 개가 있고, rank 4 LoRA 를 붙이면 parameter 797,184 개로 U-Net 전체 859,520,964 개의 0.093% 다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="718" height="298" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="24.0" y="34.0" fill="#94a3b8" font-size="13" text-anchor="start">attention block 하나 (모두 16 개)</text>
+  <rect x="24.0" y="50.0" width="230.0" height="110.0" rx="8" fill="#111a2e" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="139.0" y="74.0" fill="#e2e8f0" font-size="13" text-anchor="middle">self-attention</text>
+  <rect x="36.0" y="92.0" width="48.0" height="50.0" rx="6" fill="#111a2e" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="60.0" y="114.0" fill="#e2e8f0" font-size="11" text-anchor="middle">to_q</text>
+  <text x="60.0" y="132.0" fill="#f59e0b" font-size="9" text-anchor="middle">+ LoRA</text>
+  <rect x="90.0" y="92.0" width="48.0" height="50.0" rx="6" fill="#111a2e" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="114.0" y="114.0" fill="#e2e8f0" font-size="11" text-anchor="middle">to_k</text>
+  <text x="114.0" y="132.0" fill="#f59e0b" font-size="9" text-anchor="middle">+ LoRA</text>
+  <rect x="144.0" y="92.0" width="48.0" height="50.0" rx="6" fill="#111a2e" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="168.0" y="114.0" fill="#e2e8f0" font-size="11" text-anchor="middle">to_v</text>
+  <text x="168.0" y="132.0" fill="#f59e0b" font-size="9" text-anchor="middle">+ LoRA</text>
+  <rect x="198.0" y="92.0" width="48.0" height="50.0" rx="6" fill="#111a2e" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="222.0" y="114.0" fill="#e2e8f0" font-size="11" text-anchor="middle">to_out</text>
+  <text x="222.0" y="132.0" fill="#f59e0b" font-size="9" text-anchor="middle">+ LoRA</text>
+  <rect x="274.0" y="50.0" width="230.0" height="110.0" rx="8" fill="#111a2e" stroke="#34d399" stroke-width="1.5"/>
+  <text x="389.0" y="74.0" fill="#e2e8f0" font-size="13" text-anchor="middle">cross-attention</text>
+  <rect x="286.0" y="92.0" width="48.0" height="50.0" rx="6" fill="#111a2e" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="310.0" y="114.0" fill="#e2e8f0" font-size="11" text-anchor="middle">to_q</text>
+  <text x="310.0" y="132.0" fill="#f59e0b" font-size="9" text-anchor="middle">+ LoRA</text>
+  <rect x="340.0" y="92.0" width="48.0" height="50.0" rx="6" fill="#111a2e" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="364.0" y="114.0" fill="#e2e8f0" font-size="11" text-anchor="middle">to_k</text>
+  <text x="364.0" y="132.0" fill="#f59e0b" font-size="9" text-anchor="middle">+ LoRA</text>
+  <rect x="394.0" y="92.0" width="48.0" height="50.0" rx="6" fill="#111a2e" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="418.0" y="114.0" fill="#e2e8f0" font-size="11" text-anchor="middle">to_v</text>
+  <text x="418.0" y="132.0" fill="#f59e0b" font-size="9" text-anchor="middle">+ LoRA</text>
+  <rect x="448.0" y="92.0" width="48.0" height="50.0" rx="6" fill="#111a2e" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="472.0" y="114.0" fill="#e2e8f0" font-size="11" text-anchor="middle">to_out</text>
+  <text x="472.0" y="132.0" fill="#f59e0b" font-size="9" text-anchor="middle">+ LoRA</text>
+  <rect x="524.0" y="50.0" width="172.0" height="110.0" rx="8" fill="#111a2e" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <text x="610.0" y="92.0" fill="#94a3b8" font-size="12" text-anchor="middle">feed-forward</text>
+  <text x="610.0" y="112.0" fill="#94a3b8" font-size="11" text-anchor="middle">LoRA 없음</text>
+  <text x="24.0" y="196.0" fill="#e2e8f0" font-size="14" text-anchor="start">16 block × 2 attention × 4 행렬 = 128 개</text>
+  <rect x="24.0" y="216.0" width="620.0" height="28.0" rx="0" fill="#38bdf8" stroke="none" stroke-width="1" fill-opacity="0.25"/>
+  <rect x="24.0" y="216.0" width="620.0" height="28.0" rx="0" fill="none" stroke="#38bdf8" stroke-width="1"/>
+  <rect x="24.0" y="216.0" width="2.0" height="28.0" rx="0" fill="#f59e0b" stroke="none" stroke-width="1"/>
+  <text x="36.0" y="235.0" fill="#e2e8f0" font-size="12" text-anchor="start">U-Net 859,520,964</text>
+  <text x="24.0" y="270.0" fill="#f59e0b" font-size="13" text-anchor="start">rank 4 LoRA: 797,184 개 (0.093%) · 16 bit 로 약 1.6 MB</text>
+</svg>

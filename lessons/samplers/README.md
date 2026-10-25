@@ -338,7 +338,8 @@ sampler 는 step 을 늘리면 같은 그림에 점점 가까워지지만, ances
 
 이 강의로 Stable Diffusion 의 부품이 모두 모였다. 글은 CLIP text encoder 가 $77 \times 768$ 로 바꾸고, U-Net 은 $64 \times 64 \times 4$ latent 위에서
 cross-attention 으로 글을 읽으며 noise 를 맞힌다. classifier-free guidance 가 두 예측을 섞으면 sampler 가 20 ~ 50 step 동안 latent 를 고치고,
-마지막에 VAE 의 decoder 가 $512 \times 512$ 그림으로 되살린다.
+마지막에 VAE 의 decoder 가 $512 \times 512$ 그림으로 되살린다. 이렇게 학습한 Stable Diffusion 에 새 그림체를 가르칠 때 U-Net 전체를 다시 학습하지
+않고 parameter 0.1% 만 학습하는 방법은 [LoRA](../lora/README.md) 에서 다룬다.
 
 ## 참고 자료
 

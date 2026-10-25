@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>DreamBooth 의 학습. 대상 사진 3 ~ 5 장은 a [V] dog 와 짝지어 L_대상 을, 학습 전 model 이 만든 a dog 그림은 a dog 와 짝지어 L_prior 를 구하고, L = L_대상 + λ L_prior 를 줄인다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="718" height="278" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <rect x="24.0" y="40.0" width="180.0" height="60.0" rx="8" fill="#111a2e" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="114.0" y="64.0" fill="#e2e8f0" font-size="13" text-anchor="middle">대상 사진 3 ~ 5 장</text>
+  <text x="114.0" y="84.0" fill="#f59e0b" font-size="11" text-anchor="middle">글: a [V] dog</text>
+  <rect x="24.0" y="170.0" width="180.0" height="60.0" rx="8" fill="#111a2e" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="114.0" y="194.0" fill="#e2e8f0" font-size="12" text-anchor="middle">학습 전 model 이 만든 그림</text>
+  <text x="114.0" y="214.0" fill="#38bdf8" font-size="11" text-anchor="middle">글: a dog</text>
+  <line x1="206.0" y1="70.0" x2="276.0" y2="112.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="206.0" y1="200.0" x2="276.0" y2="158.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="280.0" y="105.0" width="150.0" height="60.0" rx="8" fill="#111a2e" stroke="#34d399" stroke-width="1.5"/>
+  <text x="355.0" y="130.0" fill="#e2e8f0" font-size="12" text-anchor="middle">미세조정하는</text>
+  <text x="355.0" y="148.0" fill="#e2e8f0" font-size="12" text-anchor="middle">U-Net (또는 LoRA)</text>
+  <line x1="432.0" y1="120.0" x2="500.0" y2="76.0" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow-amber)"/>
+  <line x1="432.0" y1="150.0" x2="500.0" y2="194.0" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow-blue)"/>
+  <rect x="504.0" y="50.0" width="100.0" height="44.0" rx="8" fill="#111a2e" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="554.0" y="77.0" fill="#e2e8f0" font-size="13" text-anchor="middle">L_대상</text>
+  <rect x="504.0" y="172.0" width="100.0" height="44.0" rx="8" fill="#111a2e" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="554.0" y="199.0" fill="#e2e8f0" font-size="13" text-anchor="middle">L_prior</text>
+  <text x="660.0" y="128.0" fill="#e2e8f0" font-size="13" text-anchor="middle">L = L_대상</text>
+  <text x="660.0" y="148.0" fill="#e2e8f0" font-size="13" text-anchor="middle">+ λ L_prior</text>
+  <text x="360.0" y="262.0" fill="#94a3b8" font-size="12" text-anchor="middle">prior 그림은 "dog" 가 그 강아지 하나로 굳는 language drift 를 막는다</text>
+</svg>

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>LoRA 를 붙인 층. 입력 x 는 고정한 W₀ 를 지나는 길과, A(r × k)로 숫자 r 개까지 줄였다가 B(d × r)로 늘리는 길로 나뉘고, 두 출력을 더한다. x = (2, 1, 1) 이면 A x = 2, B A x = (2, 4, 0, −2) 다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="718" height="298" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <rect x="24.0" y="120.0" width="110.0" height="56.0" rx="8" fill="#111a2e" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="79.0" y="144.0" fill="#e2e8f0" font-size="13" text-anchor="middle">입력 x</text>
+  <text x="79.0" y="162.0" fill="#94a3b8" font-size="11" text-anchor="middle">(2, 1, 1)</text>
+  <line x1="136.0" y1="140.0" x2="216.0" y2="86.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="136.0" y1="156.0" x2="216.0" y2="214.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="220.0" y="56.0" width="200.0" height="60.0" rx="8" fill="#111a2e" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 3"/>
+  <text x="320.0" y="82.0" fill="#e2e8f0" font-size="14" text-anchor="middle">W₀ (d × k)</text>
+  <text x="320.0" y="102.0" fill="#94a3b8" font-size="11" text-anchor="middle">고정 · 학습하지 않음</text>
+  <rect x="220.0" y="186.0" width="90.0" height="60.0" rx="8" fill="#111a2e" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="265.0" y="212.0" fill="#e2e8f0" font-size="12" text-anchor="middle">A (r × k)</text>
+  <text x="265.0" y="230.0" fill="#f59e0b" font-size="11" text-anchor="middle">A x = 2</text>
+  <line x1="312.0" y1="216.0" x2="328.0" y2="216.0" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow-amber)"/>
+  <rect x="330.0" y="186.0" width="90.0" height="60.0" rx="8" fill="#111a2e" stroke="#34d399" stroke-width="1.5"/>
+  <text x="375.0" y="212.0" fill="#e2e8f0" font-size="12" text-anchor="middle">B (d × r)</text>
+  <text x="375.0" y="230.0" fill="#34d399" font-size="11" text-anchor="middle">처음엔 0</text>
+  <text x="320.0" y="268.0" fill="#34d399" font-size="12" text-anchor="middle">BA x = (2, 4, 0, −2)</text>
+  <line x1="422.0" y1="86.0" x2="504.0" y2="140.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="422.0" y1="216.0" x2="504.0" y2="158.0" stroke="#34d399" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <circle cx="520.0" cy="150.0" r="16" fill="#111a2e" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="520.0" y="156.0" fill="#e2e8f0" font-size="18" text-anchor="middle">+</text>
+  <line x1="538.0" y1="150.0" x2="576.0" y2="150.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="580.0" y="122.0" width="120.0" height="56.0" rx="8" fill="#111a2e" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="640.0" y="146.0" fill="#e2e8f0" font-size="13" text-anchor="middle">출력 h</text>
+  <text x="640.0" y="164.0" fill="#94a3b8" font-size="11" text-anchor="middle">W₀x + BAx</text>
+  <text x="320.0" y="36.0" fill="#94a3b8" font-size="12" text-anchor="middle">원래의 길</text>
+  <text x="462.0" y="268.0" fill="#f59e0b" font-size="11" text-anchor="start">학습하는 것은 A 와 B 뿐</text>
+</svg>

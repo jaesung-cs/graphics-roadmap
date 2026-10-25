@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>같은 층에 그림체 LoRA 와 인물 LoRA 를 함께 붙이면 W = W₀ + 0.8 × B₁A₁ + 0.5 × B₂A₂ 로 두 변화량을 각자의 세기로 더한다. 세기 0 은 원래 model, 1 은 학습한 그대로다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="718" height="258" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <rect x="24.0" y="80.0" width="130.0" height="60.0" rx="8" fill="#111a2e" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="89.0" y="106.0" fill="#e2e8f0" font-size="15" text-anchor="middle">W₀</text>
+  <text x="89.0" y="126.0" fill="#94a3b8" font-size="11" text-anchor="middle">원래 weight</text>
+  <text x="176.0" y="116.0" fill="#e2e8f0" font-size="20" text-anchor="middle">+</text>
+  <rect x="200.0" y="80.0" width="170.0" height="60.0" rx="8" fill="#111a2e" stroke="#34d399" stroke-width="1.5"/>
+  <text x="285.0" y="106.0" fill="#e2e8f0" font-size="14" text-anchor="middle">0.8 × B₁A₁</text>
+  <text x="285.0" y="126.0" fill="#94a3b8" font-size="11" text-anchor="middle">그림체 LoRA</text>
+  <text x="392.0" y="116.0" fill="#e2e8f0" font-size="20" text-anchor="middle">+</text>
+  <rect x="416.0" y="80.0" width="170.0" height="60.0" rx="8" fill="#111a2e" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="501.0" y="106.0" fill="#e2e8f0" font-size="14" text-anchor="middle">0.5 × B₂A₂</text>
+  <text x="501.0" y="126.0" fill="#94a3b8" font-size="11" text-anchor="middle">인물 LoRA</text>
+  <text x="608.0" y="116.0" fill="#e2e8f0" font-size="18" text-anchor="start">= W</text>
+  <text x="24.0" y="186.0" fill="#94a3b8" font-size="13" text-anchor="start">세기 s</text>
+  <line x1="90.0" y1="182.0" x2="600.0" y2="182.0" stroke="#94a3b8" stroke-width="1"/>
+  <circle cx="90.0" cy="182.0" r="5" fill="#38bdf8" stroke="none" stroke-width="1"/>
+  <text x="90.0" y="206.0" fill="#94a3b8" font-size="11" text-anchor="middle">0 · 원래 model</text>
+  <circle cx="290.0" cy="182.0" r="5" fill="#38bdf8" stroke="none" stroke-width="1"/>
+  <text x="290.0" y="206.0" fill="#94a3b8" font-size="11" text-anchor="middle">0.5</text>
+  <circle cx="490.0" cy="182.0" r="5" fill="#38bdf8" stroke="none" stroke-width="1"/>
+  <text x="490.0" y="206.0" fill="#94a3b8" font-size="11" text-anchor="middle">1 · 학습한 그대로</text>
+  <text x="360.0" y="240.0" fill="#94a3b8" font-size="12" text-anchor="middle">fuse_lora 로 합쳐 두면 그림을 만들 때 계산이 늘지 않는다</text>
+</svg>
