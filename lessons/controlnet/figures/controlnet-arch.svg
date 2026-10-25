@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 470" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>ControlNet 을 붙인 Stable Diffusion. 회색의 고정한 U-Net 옆에 파란 encoder 복사본이 있고, 복사본이 내는 값 13 개는 흰 zero convolution 을 지나 U-Net 의 skip connection 12 개와 가장 아래 block 출력에 더해진다</title>
+  <defs><marker id="a-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="a-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="a-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="a-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="a-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="758" height="468" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="24" y="32" fill="#e2e8f0" font-size="14" text-anchor="start" font-weight="600">Stable Diffusion U-Net (고정) 과 ControlNet (학습)</text>
+  <rect x="40" y="70" width="150" height="46" rx="8" fill="#1e293b" stroke="#64748b" stroke-width="1.6"/>
+  <text x="115" y="90" fill="#cbd5e1" font-size="12" text-anchor="middle">encoder 1 단계</text>
+  <text x="115" y="106" fill="#94a3b8" font-size="11" text-anchor="middle">64×64</text>
+  <rect x="230" y="70" width="150" height="46" rx="8" fill="#1e293b" stroke="#64748b" stroke-width="1.6"/>
+  <text x="305" y="90" fill="#cbd5e1" font-size="12" text-anchor="middle">decoder 1 단계</text>
+  <text x="305" y="106" fill="#94a3b8" font-size="11" text-anchor="middle">64×64</text>
+  <rect x="560" y="70" width="160" height="46" rx="8" fill="#13233d" stroke="#38bdf8" stroke-width="1.6"/>
+  <text x="640" y="90" fill="#38bdf8" font-size="12" text-anchor="middle">복사본 1 단계</text>
+  <text x="640" y="106" fill="#94a3b8" font-size="11" text-anchor="middle">64×64</text>
+  <line x1="190" y1="93" x2="228" y2="93" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <rect x="430" y="80" width="70" height="26" rx="5" fill="#f8fafc" fill-opacity="0.08" stroke="#e2e8f0" stroke-width="1.3"/>
+  <text x="465" y="98" fill="#e2e8f0" font-size="11" text-anchor="middle">zero ×3</text>
+  <line x1="558" y1="93" x2="502" y2="93" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#a-b)"/>
+  <line x1="430" y1="93" x2="382" y2="93" stroke="#e2e8f0" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <line x1="115" y1="116" x2="115" y2="138" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <line x1="305" y1="140" x2="305" y2="118" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <line x1="640" y1="116" x2="640" y2="138" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#a-b)"/>
+  <rect x="40" y="140" width="150" height="46" rx="8" fill="#1e293b" stroke="#64748b" stroke-width="1.6"/>
+  <text x="115" y="160" fill="#cbd5e1" font-size="12" text-anchor="middle">encoder 2 단계</text>
+  <text x="115" y="176" fill="#94a3b8" font-size="11" text-anchor="middle">32×32</text>
+  <rect x="230" y="140" width="150" height="46" rx="8" fill="#1e293b" stroke="#64748b" stroke-width="1.6"/>
+  <text x="305" y="160" fill="#cbd5e1" font-size="12" text-anchor="middle">decoder 2 단계</text>
+  <text x="305" y="176" fill="#94a3b8" font-size="11" text-anchor="middle">32×32</text>
+  <rect x="560" y="140" width="160" height="46" rx="8" fill="#13233d" stroke="#38bdf8" stroke-width="1.6"/>
+  <text x="640" y="160" fill="#38bdf8" font-size="12" text-anchor="middle">복사본 2 단계</text>
+  <text x="640" y="176" fill="#94a3b8" font-size="11" text-anchor="middle">32×32</text>
+  <line x1="190" y1="163" x2="228" y2="163" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <rect x="430" y="150" width="70" height="26" rx="5" fill="#f8fafc" fill-opacity="0.08" stroke="#e2e8f0" stroke-width="1.3"/>
+  <text x="465" y="168" fill="#e2e8f0" font-size="11" text-anchor="middle">zero ×3</text>
+  <line x1="558" y1="163" x2="502" y2="163" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#a-b)"/>
+  <line x1="430" y1="163" x2="382" y2="163" stroke="#e2e8f0" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <line x1="115" y1="186" x2="115" y2="208" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <line x1="305" y1="210" x2="305" y2="188" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <line x1="640" y1="186" x2="640" y2="208" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#a-b)"/>
+  <rect x="40" y="210" width="150" height="46" rx="8" fill="#1e293b" stroke="#64748b" stroke-width="1.6"/>
+  <text x="115" y="230" fill="#cbd5e1" font-size="12" text-anchor="middle">encoder 3 단계</text>
+  <text x="115" y="246" fill="#94a3b8" font-size="11" text-anchor="middle">16×16</text>
+  <rect x="230" y="210" width="150" height="46" rx="8" fill="#1e293b" stroke="#64748b" stroke-width="1.6"/>
+  <text x="305" y="230" fill="#cbd5e1" font-size="12" text-anchor="middle">decoder 3 단계</text>
+  <text x="305" y="246" fill="#94a3b8" font-size="11" text-anchor="middle">16×16</text>
+  <rect x="560" y="210" width="160" height="46" rx="8" fill="#13233d" stroke="#38bdf8" stroke-width="1.6"/>
+  <text x="640" y="230" fill="#38bdf8" font-size="12" text-anchor="middle">복사본 3 단계</text>
+  <text x="640" y="246" fill="#94a3b8" font-size="11" text-anchor="middle">16×16</text>
+  <line x1="190" y1="233" x2="228" y2="233" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <rect x="430" y="220" width="70" height="26" rx="5" fill="#f8fafc" fill-opacity="0.08" stroke="#e2e8f0" stroke-width="1.3"/>
+  <text x="465" y="238" fill="#e2e8f0" font-size="11" text-anchor="middle">zero ×3</text>
+  <line x1="558" y1="233" x2="502" y2="233" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#a-b)"/>
+  <line x1="430" y1="233" x2="382" y2="233" stroke="#e2e8f0" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <line x1="115" y1="256" x2="115" y2="278" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <line x1="305" y1="280" x2="305" y2="258" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <line x1="640" y1="256" x2="640" y2="278" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#a-b)"/>
+  <rect x="40" y="280" width="150" height="46" rx="8" fill="#1e293b" stroke="#64748b" stroke-width="1.6"/>
+  <text x="115" y="300" fill="#cbd5e1" font-size="12" text-anchor="middle">encoder 4 단계</text>
+  <text x="115" y="316" fill="#94a3b8" font-size="11" text-anchor="middle">8×8</text>
+  <rect x="230" y="280" width="150" height="46" rx="8" fill="#1e293b" stroke="#64748b" stroke-width="1.6"/>
+  <text x="305" y="300" fill="#cbd5e1" font-size="12" text-anchor="middle">decoder 4 단계</text>
+  <text x="305" y="316" fill="#94a3b8" font-size="11" text-anchor="middle">8×8</text>
+  <rect x="560" y="280" width="160" height="46" rx="8" fill="#13233d" stroke="#38bdf8" stroke-width="1.6"/>
+  <text x="640" y="300" fill="#38bdf8" font-size="12" text-anchor="middle">복사본 4 단계</text>
+  <text x="640" y="316" fill="#94a3b8" font-size="11" text-anchor="middle">8×8</text>
+  <line x1="190" y1="303" x2="228" y2="303" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <rect x="430" y="290" width="70" height="26" rx="5" fill="#f8fafc" fill-opacity="0.08" stroke="#e2e8f0" stroke-width="1.3"/>
+  <text x="465" y="308" fill="#e2e8f0" font-size="11" text-anchor="middle">zero ×3</text>
+  <line x1="558" y1="303" x2="502" y2="303" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#a-b)"/>
+  <line x1="430" y1="303" x2="382" y2="303" stroke="#e2e8f0" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <rect x="40" y="360" width="340" height="46" rx="8" fill="#1e293b" stroke="#64748b" stroke-width="1.6"/>
+  <text x="210" y="388" fill="#cbd5e1" font-size="12" text-anchor="middle">가장 아래 block (8×8)</text>
+  <rect x="560" y="360" width="160" height="46" rx="8" fill="#13233d" stroke="#38bdf8" stroke-width="1.6"/>
+  <text x="640" y="388" fill="#38bdf8" font-size="12" text-anchor="middle">복사본 가장 아래</text>
+  <rect x="430" y="370" width="70" height="26" rx="5" fill="#f8fafc" fill-opacity="0.08" stroke="#e2e8f0" stroke-width="1.3"/>
+  <text x="465" y="388" fill="#e2e8f0" font-size="11" text-anchor="middle">zero ×1</text>
+  <line x1="558" y1="383" x2="502" y2="383" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#a-b)"/>
+  <line x1="430" y1="383" x2="382" y2="383" stroke="#e2e8f0" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <line x1="115" y1="326" x2="115" y2="358" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <line x1="305" y1="360" x2="305" y2="328" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <line x1="640" y1="326" x2="640" y2="358" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#a-b)"/>
+  <text x="115" y="58" fill="#94a3b8" font-size="11" text-anchor="middle">latent zₜ</text>
+  <text x="305" y="58" fill="#94a3b8" font-size="11" text-anchor="middle">예측한 noise</text>
+  <text x="640" y="58" fill="#38bdf8" font-size="11" text-anchor="middle">latent zₜ + 작은 encoder 를 지난 조건 그림</text>
+  <text x="400" y="438" fill="#94a3b8" font-size="12" text-anchor="middle">복사본의 값 12 + 1 개가 zero convolution 을 지나 skip connection 12 개와 가장 아래 block 출력에 더해진다</text>
+  <text x="400" y="458" fill="#94a3b8" font-size="12" text-anchor="middle">회색은 weight 고정, 파랑과 흰색은 학습한다. 글과 step 번호는 양쪽 모두에 들어간다</text>
+</svg>

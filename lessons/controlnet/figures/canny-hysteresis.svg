@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>한 줄의 pixel 7 개에 문턱값 100 과 200 을 쓴 hysteresis thresholding. 240 은 200 을 넘어 확실한 윤곽선이고, 이어진 160 과 150 은 남는다. 60 과 30 은 100 에 못 미쳐 버리고, 170 과 130 은 사이에 있지만 확실한 윤곽선에 이어지지 않아 버린다</title>
+  <defs><marker id="a-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="a-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="a-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="a-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="a-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="718" height="328" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="24" y="32" fill="#e2e8f0" font-size="14" text-anchor="start" font-weight="600">hysteresis thresholding: 작은 문턱값 100, 큰 문턱값 200</text>
+  <line x1="70" y1="103.84615384615384" x2="690" y2="103.84615384615384" stroke="#f87171" stroke-width="1.4" stroke-dasharray="6 5"/>
+  <text x="690" y="97.84615384615384" fill="#f87171" font-size="11" text-anchor="end">200 (확실한 윤곽선)</text>
+  <line x1="70" y1="176.9230769230769" x2="690" y2="176.9230769230769" stroke="#f59e0b" stroke-width="1.4" stroke-dasharray="6 5"/>
+  <text x="690" y="170.9230769230769" fill="#f59e0b" font-size="11" text-anchor="end">100 (버림 기준)</text>
+  <rect x="98" y="74.61538461538461" width="44" height="175.3846153846154" fill="#34d399" fill-opacity="0.85" rx="3"/>
+  <text x="120" y="68.61538461538461" fill="#e2e8f0" font-size="12" text-anchor="middle">240</text>
+  <text x="120" y="268" fill="#94a3b8" font-size="11" text-anchor="middle">pixel 1</text>
+  <text x="120" y="286" fill="#34d399" font-size="12" text-anchor="middle">남김</text>
+  <rect x="178" y="133.07692307692307" width="44" height="116.92307692307693" fill="#34d399" fill-opacity="0.85" rx="3"/>
+  <text x="200" y="127.07692307692307" fill="#e2e8f0" font-size="12" text-anchor="middle">160</text>
+  <text x="200" y="268" fill="#94a3b8" font-size="11" text-anchor="middle">pixel 2</text>
+  <text x="200" y="286" fill="#34d399" font-size="12" text-anchor="middle">남김</text>
+  <rect x="258" y="140.38461538461542" width="44" height="109.61538461538458" fill="#34d399" fill-opacity="0.85" rx="3"/>
+  <text x="280" y="134.38461538461542" fill="#e2e8f0" font-size="12" text-anchor="middle">150</text>
+  <text x="280" y="268" fill="#94a3b8" font-size="11" text-anchor="middle">pixel 3</text>
+  <text x="280" y="286" fill="#34d399" font-size="12" text-anchor="middle">남김</text>
+  <rect x="338" y="206.15384615384616" width="44" height="43.84615384615384" fill="#475569" fill-opacity="0.6" rx="3"/>
+  <text x="360" y="200.15384615384616" fill="#e2e8f0" font-size="12" text-anchor="middle">60</text>
+  <text x="360" y="268" fill="#94a3b8" font-size="11" text-anchor="middle">pixel 4</text>
+  <text x="360" y="286" fill="#94a3b8" font-size="12" text-anchor="middle">버림</text>
+  <rect x="418" y="125.76923076923077" width="44" height="124.23076923076923" fill="#475569" fill-opacity="0.6" rx="3"/>
+  <text x="440" y="119.76923076923077" fill="#e2e8f0" font-size="12" text-anchor="middle">170</text>
+  <text x="440" y="268" fill="#94a3b8" font-size="11" text-anchor="middle">pixel 5</text>
+  <text x="440" y="286" fill="#94a3b8" font-size="12" text-anchor="middle">버림</text>
+  <rect x="498" y="155.0" width="44" height="95.0" fill="#475569" fill-opacity="0.6" rx="3"/>
+  <text x="520" y="149.0" fill="#e2e8f0" font-size="12" text-anchor="middle">130</text>
+  <text x="520" y="268" fill="#94a3b8" font-size="11" text-anchor="middle">pixel 6</text>
+  <text x="520" y="286" fill="#94a3b8" font-size="12" text-anchor="middle">버림</text>
+  <rect x="578" y="228.07692307692307" width="44" height="21.923076923076934" fill="#475569" fill-opacity="0.6" rx="3"/>
+  <text x="600" y="222.07692307692307" fill="#e2e8f0" font-size="12" text-anchor="middle">30</text>
+  <text x="600" y="268" fill="#94a3b8" font-size="11" text-anchor="middle">pixel 7</text>
+  <text x="600" y="286" fill="#94a3b8" font-size="12" text-anchor="middle">버림</text>
+  <line x1="70" y1="250" x2="690" y2="250" stroke="#475569" stroke-width="1.5"/>
+  <text x="360" y="314" fill="#94a3b8" font-size="12" text-anchor="middle">2·3 은 확실한 윤곽선 1 에 이어져 남고, 5·6 은 사이에 있지만 버려진 4 때문에 끊겨 버린다</text>
+</svg>
