@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>DALL·E 의 그림 생성. 설명 글은 BPE token 최대 256 개로 바뀌어 앞에 놓이고, Transformer 가 그림 token 을 하나씩 1,024 번 골라 32×32 격자를 채운다. 다 채운 격자를 dVAE decoder 가 256×256 그림으로 되살린다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="718" height="318" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="24.0" y="40.0" fill="#94a3b8" font-size="12" text-anchor="start">한 줄로 이은 token</text>
+  <rect x="24.0" y="54.0" width="56.0" height="32.0" rx="6" fill="#111a2e" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="52.0" y="75.0" fill="#e2e8f0" font-size="11" text-anchor="middle">a</text>
+  <rect x="86.0" y="54.0" width="56.0" height="32.0" rx="6" fill="#111a2e" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="114.0" y="75.0" fill="#e2e8f0" font-size="11" text-anchor="middle">cat</text>
+  <rect x="148.0" y="54.0" width="56.0" height="32.0" rx="6" fill="#111a2e" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="176.0" y="75.0" fill="#e2e8f0" font-size="11" text-anchor="middle">wearing</text>
+  <rect x="210.0" y="54.0" width="56.0" height="32.0" rx="6" fill="#111a2e" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="238.0" y="75.0" fill="#e2e8f0" font-size="11" text-anchor="middle">…</text>
+  <text x="140.0" y="106.0" fill="#38bdf8" font-size="11" text-anchor="middle">글 token (최대 256 개)</text>
+  <rect x="290.0" y="54.0" width="56.0" height="32.0" rx="6" fill="#111a2e" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="318.0" y="75.0" fill="#e2e8f0" font-size="11" text-anchor="middle">417</text>
+  <rect x="352.0" y="54.0" width="56.0" height="32.0" rx="6" fill="#111a2e" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="380.0" y="75.0" fill="#e2e8f0" font-size="11" text-anchor="middle">8031</text>
+  <rect x="414.0" y="54.0" width="56.0" height="32.0" rx="6" fill="#111a2e" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="442.0" y="75.0" fill="#e2e8f0" font-size="11" text-anchor="middle">…</text>
+  <rect x="476.0" y="54.0" width="56.0" height="32.0" rx="6" fill="#111a2e" stroke="#f87171" stroke-width="1.5"/>
+  <text x="504.0" y="75.0" fill="#e2e8f0" font-size="11" text-anchor="middle">?</text>
+  <text x="410.0" y="106.0" fill="#f59e0b" font-size="11" text-anchor="middle">그림 token (1,024 개, 8,192 가지)</text>
+  <rect x="150.0" y="140.0" width="300.0" height="60.0" rx="8" fill="#111a2e" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="300.0" y="166.0" fill="#e2e8f0" font-size="12" text-anchor="middle">Transformer (parameter 120 억 개)</text>
+  <text x="300.0" y="186.0" fill="#94a3b8" font-size="11" text-anchor="middle">다음 그림 token 의 확률표</text>
+  <line x1="300.0" y1="92.0" x2="300.0" y2="136.0" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <path d="M452,170 C520,170 520,120 503,92" fill="none" stroke="#f87171" stroke-width="1.6" marker-end="url(#arrow-red)"/>
+  <text x="530.0" y="140.0" fill="#f87171" font-size="11" text-anchor="start">고른 token 을 끝에 붙여</text>
+  <text x="530.0" y="156.0" fill="#f87171" font-size="11" text-anchor="start">1,024 번 되풀이</text>
+  <rect x="80.0" y="228.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="92.0" y="228.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="104.0" y="228.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="116.0" y="228.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="128.0" y="228.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="140.0" y="228.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="80.0" y="240.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="92.0" y="240.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="104.0" y="240.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="116.0" y="240.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="128.0" y="240.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="140.0" y="240.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="80.0" y="252.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="92.0" y="252.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="104.0" y="252.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="116.0" y="252.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="128.0" y="252.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="140.0" y="252.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="80.0" y="264.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="92.0" y="264.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="104.0" y="264.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="116.0" y="264.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="128.0" y="264.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="140.0" y="264.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="80.0" y="276.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="92.0" y="276.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="104.0" y="276.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="116.0" y="276.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="128.0" y="276.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="140.0" y="276.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="80.0" y="288.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="92.0" y="288.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="104.0" y="288.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="116.0" y="288.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="128.0" y="288.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <rect x="140.0" y="288.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="0.8"/>
+  <text x="116.0" y="312.0" fill="#f59e0b" font-size="11" text-anchor="middle">32×32 token 격자</text>
+  <line x1="165.0" y1="264.0" x2="225.0" y2="264.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="230.0" y="236.0" width="150.0" height="56.0" rx="8" fill="#111a2e" stroke="#34d399" stroke-width="1.5"/>
+  <text x="305.0" y="260.0" fill="#e2e8f0" font-size="12" text-anchor="middle">dVAE decoder</text>
+  <text x="305.0" y="278.0" fill="#94a3b8" font-size="11" text-anchor="middle">token → 그림</text>
+  <line x1="382.0" y1="264.0" x2="440.0" y2="264.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="446.0" y="232.0" width="64.0" height="64.0" rx="8" fill="#111a2e" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="478.0" y="268.0" fill="#e2e8f0" font-size="11" text-anchor="middle">그림</text>
+  <text x="478.0" y="312.0" fill="#38bdf8" font-size="11" text-anchor="middle">256×256</text>
+  <text x="620.0" y="250.0" fill="#94a3b8" font-size="11" text-anchor="middle">CLIP 으로 512 장 가운데</text>
+  <text x="620.0" y="266.0" fill="#94a3b8" font-size="11" text-anchor="middle">글과 가장 잘 맞는 그림을 고른다</text>
+</svg>

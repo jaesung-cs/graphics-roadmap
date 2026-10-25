@@ -128,16 +128,16 @@
         출력이 자리까지 그대로인 것은 invariance 이고, convolution 이 아니라 pooling 이 묶음 안의 작은 이동에 대해 주는 성질이다.
         이동은 값의 크기를 바꾸지 않는다.
     - question: |
-        ImageNet 의 224×224 사진으로 미리 학습한 ResNet-18 의 convolution 부분을 480×640 로봇 카메라 사진에 그대로 쓸 수 있는 이유는 무엇인가?
+        ImageNet 의 224×224 사진으로 미리 학습한 ResNet-18 의 convolution 부분을 512×512 사진에 그대로 쓸 수 있는 이유는 무엇인가?
       choices:
-        - '480×640 사진을 넣기 전에 반드시 224×224 로 잘라야 하므로 실제로는 같은 크기를 넣는다'
+        - '512×512 사진을 넣기 전에 반드시 224×224 로 잘라야 하므로 실제로는 같은 크기를 넣는다'
         - 'ResNet-18 은 입력 크기마다 다른 weight 묶음을 미리 저장해 두고, 사진 크기에 맞는 것을 골라 쓰기 때문이다'
         - 'filter 크기와 channel 수로만 parameter 가 정해져, 더 많은 자리에 대면 되기 때문이다'
         - '사진이 커지면 filter 도 자동으로 같은 비율로 커져서 사진의 같은 비율 영역을 보기 때문이다'
       answer: 2
       explanation: |
         conv layer 의 weight 는 사진 크기와 무관한 filter 몇 벌뿐이라서, 큰 사진에는 같은 filter 를 더 많은 자리에 대면 되고 출력 feature map 만
-        커진다. ACT 는 480×640 사진에서 15×20 feature map 을 얻는다. 입력 크기에 묶이는 것은 마지막 분류용 fully connected 층뿐이다.
+        커진다. 512×512 사진에서는 16×16 feature map 을 얻는다. 입력 크기에 묶이는 것은 마지막 분류용 fully connected 층뿐이다.
         사진을 224×224 로 꼭 자를 필요는 없다.
         입력 크기마다 다른 weight 를 저장하지 않는다.
         filter 크기는 고정이고 사진에 따라 바뀌지 않는다.
@@ -324,49 +324,44 @@
         출력이 작아져도 한 칸이 보는 입력 영역은 오히려 넓어진다.
         한 번에 사진 전체로 넓어지지는 않고 층을 지날 때마다 조금씩 넓어진다.
 
-- topic: robot-encoder
-  title: 로봇 image encoder 와 위치 정보
+- topic: generation-position
+  title: 자리를 지우는 분류와 자리를 지키는 생성
   variants:
     - question: |
-        로봇 팔 policy 의 image encoder 로 ImageNet 분류용 CNN 을 가져올 때, 마지막의 global average pooling 을 그대로 쓰면 어떤 문제가 생길 수
-        있는가?
+        그림의 noise 를 걷어 내는 network 를 만들면서 ImageNet 분류용 CNN 의 마지막 global average pooling 을 그대로 쓰면 어떤 문제가 생기는가?
       choices:
-        - '자리별 값을 평균 내 버려 물체가 어디 있는지 사라지고, 손을 뻗을 위치를 알기 어렵다'
-        - 'pooling 층의 parameter 가 너무 많아져 policy 학습이 느려진다'
-        - '출력이 1000 class 점수로 고정되어 관절 각도와 이어 붙일 수 없다'
+        - '자리별 값을 평균 내 버려, 어느 자리에 어떤 noise 가 있는지 자리마다 낼 수 없다'
+        - 'pooling 층의 parameter 가 너무 많아져 noise 를 맞히는 학습이 느려진다'
+        - '출력이 1000 class 점수로 고정되어 noise 의 숫자 개수와 맞출 방법이 없다'
         - '아무 문제가 없다. 평균은 feature map 의 모든 정보를 그대로 보존한다'
       answer: 0
       explanation: |
-        분류는 물체가 어디 있든 같은 답을 내야 해서 자리를 지우는 pooling 이 쓸모 있지만, 로봇 제어는 물체의 위치에 따라 행동이 정해진다. Levine
-        등(2016)은 이 이유로 pooling 을 쓰지 않았고, Diffusion Policy 는 global average pooling 을 spatial softmax 로 바꿨으며, ACT 는 15×20
-        feature map 을 그대로 쓴다.
+        분류는 물체가 어디 있든 같은 답을 내야 해서 자리를 지우는 pooling 이 쓸모 있지만, noise 를 걷어 내려면 자리마다 그 자리의 noise 를
+        맞혀야 한다. 그래서 Stable Diffusion 의 U-Net 은 64×64×4 를 받아 같은 64×64×4 를 낸다.
         global average pooling 은 parameter 가 없어서 parameter 를 늘리지 않는다.
         1000 class 점수는 그 뒤의 분류 층이 내는 것이고, 분류 층은 떼어 내면 된다.
         평균은 자리 정보를 버리므로 모든 정보를 보존하지 않는다.
     - question: |
-        spatial softmax 는 CNN 의 feature map 을 어떤 숫자로 바꾸는가?
+        Stable Diffusion 의 VAE encoder 는 그림의 가로세로를 8 배 줄이고 자리마다 숫자 4 개를 남긴다. 512×512×3 그림은 숫자 몇 개의 latent 가 되는가?
       choices:
-        - 'channel 마다 feature map 의 평균값 하나로 바꿔, 그 특징이 전체에 얼마나 있는지 남긴다'
-        - 'channel 마다 가장 큰 값 하나로 바꿔, 특징이 가장 강하게 나온 정도만 남긴다'
-        - 'channel 마다 자리별 softmax 확률로 좌표를 평균해 특징의 위치 (x, y) 로 바꾼다'
-        - '모든 channel 을 하나로 더한 뒤 softmax 로 class 확률로 바꾼다'
-      answer: 2
+        - '16,384 개. 64 × 64 자리에 숫자 4 개씩이다'
+        - '786,432 개. 그림의 숫자 개수가 그대로 남는다'
+        - '4,096 개. 64 × 64 자리에 숫자 하나씩이다'
+        - '98,304 개. 64 × 64 자리에 숫자 24 개씩이다'
+      answer: 0
       explanation: |
-        spatial softmax 는 channel 마다 feature map 전체에 softmax 를 걸어 자리별 확률을 만들고, 그 확률로 좌표의 평균을 낸다. 그래서 channel
-        하나가 그 특징이 사진 어디쯤 있는지 나타내는 숫자 두 개 $(x, y)$ 가 되고, 위치 정보가 policy 까지 남는다. 계산이 미분 가능해서 policy
-        loss 로 conv 층까지 함께 학습한다. 평균값 하나는 global average pooling 이라 자리를 잃는다. 가장 큰 값 하나는 global max pooling 이라
-        역시 자리를 잃는다. class 확률을 내는 계산이 아니다.
+        가로세로가 $512 \div 8 = 64$ 이고 자리마다 숫자 4 개라서 $64 \times 64 \times 4 = 16{,}384$ 개다. 그림의 숫자 786,432 개의 48 분의 1 이다.
+        786,432 개는 줄이기 전의 그림이고, 4,096 개는 channel 수를 빠뜨린 값이다. 98,304 개는 자리마다 숫자 4 개가 아니라 24 개로 센 값이다.
     - question: |
-        Dex-Net 2.0 의 GQ-CNN 은 grasp 후보마다 depth image 를 후보 중심에 맞춰 옮기고 gripper 축 방향에 맞춰 돌린 뒤 넣는다. 돌려서 넣는 이유는
-        무엇인가?
+        사진 분류용 ResNet-18 은 7×7 feature map 을 평균 내어 버리는데, Stable Diffusion 의 U-Net 은 64×64×4 를 받아 같은 64×64×4 를 낸다. 왜 출력의 크기가 입력과 같아야 하는가?
       choices:
-        - 'depth image 는 gripper 방향으로 돌리지 않으면 일부 값이 음수가 되어 계산이 깨지기 때문이다'
-        - '돌리면 사진의 빈 부분을 잘라 크기를 줄일 수 있어 network 의 parameter 가 줄기 때문이다'
-        - '돌리면 translation invariance 가 생겨 pooling 이 필요 없어지기 때문이다'
-        - 'convolution 은 회전에 equivariance 가 없어, 방향을 맞추면 회전마다 배울 필요가 없기 때문이다'
-      answer: 3
+        - 'convolution 은 입력과 출력의 크기가 늘 같아서, 크기를 바꿀 방법이 없기 때문이다'
+        - 'U-Net 은 latent 의 자리마다 섞인 noise 를 맞혀야 해서, 자리마다 값을 내야 하기 때문이다'
+        - '출력을 작게 만들면 parameter 가 늘어나 GPU memory 가 모자라기 때문이다'
+        - 'U-Net 은 pooling 을 쓸 수 없는 구조라서 어떤 층에서도 크기가 줄지 않기 때문이다'
+      answer: 1
       explanation: |
-        같은 filter 를 모든 자리에 쓰는 convolution 은 평행 이동에는 맞춰 반응하지만, 회전한 모양은 다른 모양으로 본다. 그래서 grasp 축을 늘
-        같은 방향(가로)에 오도록 돌려 넣으면 network 는 한 방향의 grasp 만 판단하면 된다. 논문에 따르면 이 정렬 덕분에 회전 invariance 를 따로
-        배울 필요가 없다. 회전은 depth 값의 부호를 바꾸지 않는다. 돌리기는 사진 크기나 parameter 수와 관계없고, 크기는 32×32 로 자르는 단계에서
-        정해진다. 회전 정렬은 평행 이동에 대한 invariance 를 만들지 않는다.
+        noise 를 걷어 내려면 어느 자리에 어떤 noise 가 섞였는지를 자리마다 알아야 하므로, 출력도 입력의 자리마다 값을 가져야 한다.
+        stride 를 쓴 convolution 은 출력 크기를 줄일 수 있다.
+        출력 크기는 parameter 수나 memory 때문에 정한 것이 아니다.
+        U-Net 은 중간에서 크기를 줄였다가 다시 키우므로, 모든 층에서 크기가 같은 것은 아니다.

@@ -4,41 +4,34 @@ title: ViT
 branch: vision
 requires: [resnet, transformer]
 hours: 2
-summary: 사진을 patch 로 잘라 token 으로 만드는 ViT. patch embedding, [CLS] token, position embedding, CNN 보다 데이터가 많이 필요한 이유, OpenVLA·π0·GR00T 의 ViT image encoder
+summary: 사진을 patch 로 잘라 token 으로 만드는 ViT. patch embedding, [CLS] token, position embedding, CNN 보다 데이터가 많이 필요한 이유, latent 를 patch 로 잘라 그림을 그리는 DiT
 papers:
   - title: "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale"
     authors: Alexey Dosovitskiy et al.
     year: 2020
     url: https://arxiv.org/abs/2010.11929
-  - title: "DINOv2: Learning Robust Visual Features without Supervision"
-    authors: Maxime Oquab et al.
-    year: 2023
-    url: https://arxiv.org/abs/2304.07193
-  - title: "PaliGemma: A versatile 3B VLM for transfer"
-    authors: Lucas Beyer et al.
-    year: 2024
-    url: https://arxiv.org/abs/2407.07726
-  - title: "OpenVLA: An Open-Source Vision-Language-Action Model"
-    authors: Moo Jin Kim et al.
-    year: 2024
-    url: https://arxiv.org/abs/2406.09246
+  - title: "Scalable Diffusion Models with Transformers"
+    authors: William Peebles, Saining Xie
+    year: 2022
+    url: https://arxiv.org/abs/2212.09748
 ---
 
 # ViT
 
-로봇 카메라가 찍은 224×224 컬러 사진 한 장은 pixel 마다 빨강·초록·파랑의 세기를 하나씩 적어서 숫자가 $3 \times 224 \times 224 = 150{,}528$ 개다.
-그런데 사진과 지시문을 받아 로봇 행동을 내는 OpenVLA·π0 같은 VLA 는 이 사진을 글 token 을 읽도록 만든 Transformer 에 넣는다. 단어도 글자도 아닌 숫자 격자를
+224×224 컬러 사진 한 장은 pixel 마다 빨강·초록·파랑의 세기를 하나씩 적어서 숫자가 $3 \times 224 \times 224 = 150{,}528$ 개다. 그런데 사진을
+분류하거나 그림을 그리는 최근 model 들은 이 사진을 글 token 을 읽도록 만든 Transformer 에 넣는다. 단어도 글자도 아닌 숫자 격자를
 Transformer 는 어떤 단위로 잘라 읽을까?
 
-2020 년 Google 이 발표한 ViT(Vision Transformer)는 224×224 사진을 16×16 pixel 조각 196 개로 잘라 조각 하나를 token 하나로 읽는다. π0 의 image
-encoder 인 SigLIP 도 같은 구조라서, 224×224 카메라 사진 한 장을 14×14 pixel 조각 256 개로 잘라 token 256 개로 만든다.
+2020 년 Google 이 발표한 ViT(Vision Transformer)는 224×224 사진을 16×16 pixel 조각 196 개로 잘라 조각 하나를 token 하나로 읽는다. 그림을
+그리는 DiT(Diffusion Transformer)도 같은 구조라서, 256×256 사진을 VAE 로 줄인 $32 \times 32 \times 4$ latent 를 2×2 조각 256 개로 잘라 token 256
+개로 만든다.
 
 ## 학습 목표
 
 - 사진을 patch 로 자르고 patch embedding 으로 token 을 만드는 과정을 설명하고, 사진 크기와 patch 크기로 token 수와 attention 계산량을 셀 수 있다
 - [CLS] token 과 position embedding 이 왜 필요한지 작은 숫자 예로 설명할 수 있다
 - CNN 의 inductive bias 와, 그 가정이 적은 ViT 가 데이터를 훨씬 많이 봐야 CNN 을 앞서는 이유를 설명할 수 있다
-- OpenVLA·π0·GR00T 의 image encoder 가 ViT 계열이고 [CLS] 하나 대신 patch token 전부를 넘기는 이유를 설명할 수 있다
+- 그림을 그리는 DiT 가 latent 를 patch 로 잘라 ViT 에 넣고, [CLS] 하나 대신 patch 출력 전부를 noise 로 되돌리는 이유를 설명할 수 있다
 
 ## pixel 과 patch
 
@@ -422,27 +415,14 @@ $4 \times 4 = 16$ 배가 된다. 실제로 $38{,}416 \div 2{,}401 = 16$ 이다. 
 
 ![224×224 사진의 patch 크기별 token 수. patch 32 → 49 개, 16 → 196 개, 8 → 784 개. patch 한 변을 절반으로 줄이면 token 은 4 배가 되고 점수 표의 칸은 16 배가 된다](figures/patch-count.svg)
 
-로봇에서는 token 수가 반응 시간을 좌우한다. π0 논문 부록의 표 I 에는 카메라 사진 3 장(사진마다 token 256 개)을 받는 π0 가 RTX 4090 GPU
-에서 행동 한 덩어리를 내는 데 걸린 시간이 단계별로 나와 있다.
-
-| 단계 | 시간 |
-| --- | --- |
-| image encoder (사진 3 장) | 14 ms |
-| 사진·지시문 token 의 언어 모델 계산 | 32 ms |
-| 행동 계산 10 번 | 27 ms |
-| 합 (로봇에 붙은 컴퓨터에서 실행) | 73 ms |
-
-1초에 명령을 50 번 받는 로봇에서 π0 는 행동 25 개를 실행한 뒤 다음 계산을 하므로, 0.5 초에 한 번 이 계산을 한다. 73 ms 중 46 ms 가
-사진 token 을 다루는 앞의 두 단계에 들고, 사진을 크게 넣거나 카메라를 늘리면 이 두 단계가 길어진다. PaliGemma 는 사진 크기를 224, 448,
-896 으로 바꾼 모델을 함께 냈다. 세 모델의 image token 은 각각 256, 1,024, 4,096 개라서 사진 한 변이 2 배가 될 때마다 4 배가 된다. OpenVLA
-저자들은 입력 사진을 224×224 와 384×384 로 비교했다. 로봇 작업 성공률은 차이가 없었지만 384×384 쪽은 학습 시간이 3 배 걸려서 224×224 를
-골랐다.
+token 수는 계산 시간을 좌우한다. ViT 논문도 ViT-L/16 과 ViT-L/32 처럼 같은 크기의 model 을 patch 크기만 바꿔 함께 실험했는데,
+parameter 는 거의 같아도 token 수가 4 배 차이 나서 계산 시간이 크게 다르다. 그림을 그리는 model 에서는 이 계산을 그림 한 장마다 수십 번
+되풀이하므로 token 수의 영향이 더 크다. patch 크기에 따라 계산량과 그림의 품질이 어떻게 바뀌는지는 뒤의 DiT 절에서 숫자로 본다.
 
 **흔한 오해.** "patch 를 작게 자를수록 좋은 모델이다." patch 를 작게 자르면 성능이 오르는 경우가 많지만, patch 한 변을 절반으로 줄일
-때마다 attention 계산이 16 배씩 는다. 그래서 1초에 여러 번 사진을 처리해야 하는 로봇에서는 patch 크기와 사진 크기를 계산 시간과 함께 따져
-정한다.
+때마다 attention 계산이 16 배씩 는다. 그래서 patch 크기와 사진 크기는 쓸 수 있는 계산 시간과 함께 따져 정한다.
 
-**확인 문제.** patch 14 를 쓰는 SigLIP 에 448×448 사진을 넣으면 image token 은 몇 개일까? 224×224 일 때와 비교해 attention 점수 표는 몇 배일까?
+**확인 문제.** patch 14 를 쓰는 ViT 에 448×448 사진을 넣으면 image token 은 몇 개일까? 224×224 일 때와 비교해 attention 점수 표는 몇 배일까?
 
 <details><summary>답 보기</summary>
 
@@ -490,9 +470,8 @@ ResNet 인 BiT 는 ImageNet 으로만 미리 학습하면 ViT 보다 높았고 �
 실험에서도 계산량이 비슷한 ViT-B/32 가 ResNet50 보다 900만 장에서는 훨씬 낮았고 9,000만 장 이상에서는 더 높았다. 저자들은 convolution 의
 inductive bias 가 작은 데이터에서는 쓸모 있지만 큰 데이터에서는 패턴을 데이터에서 바로 배우는 편이 낫다고 정리했다.
 
-로봇 policy 들의 image encoder 선택도 이 결과와 들어맞는다. ACT 는 과제마다 시연 50 개 정도로 학습하고, image encoder 로는 ImageNet
-으로 미리 학습한 ResNet-18 을 쓴다. 반면 VLA 는 인터넷의 사진과 글 수억 쌍 이상으로 미리 학습한 VLM 위에 만들기 때문에, image encoder 가 ViT
-구조다.
+사진과 설명 글 4 억 쌍으로 학습한 [CLIP](../clip/README.md) 에서도 같은 방향의 결과가 나왔다. CLIP 논문의 저자들은 이만큼 큰 데이터에서는
+CLIP 의 ViT 가 CLIP 의 ResNet 보다 같은 성능을 내는 데 계산이 약 3 배 덜 들었다고 보고했다.
 
 **흔한 오해.** "ViT 는 CNN 보다 언제나 좋다." ImageNet 130만 장만으로 미리 학습하면 CNN 인 BiT 가 ViT 를 앞선다. ViT 는 수천만 장 이상의
 사진으로 미리 학습할 수 있을 때 CNN 을 앞선다.
@@ -533,57 +512,44 @@ parameter 가 많은 ViT-L/16 이 데이터가 늘 때 더 많이 좋아진다.
 
 </details>
 
-## 로봇 policy 의 ViT encoder
+## 그림을 그리는 ViT: DiT
 
-VLA(Vision-Language-Action model)는 사진과 "빨간 컵 집어" 같은 지시문을 함께 받아 로봇 행동을 내는 모델이고, 대개 사진과 글을 함께 읽는
-VLM(Vision-Language Model) 위에 만든다. VLM 의 image encoder 로는 인터넷의 사진과 설명 글의 짝을 맞히며 학습한 SigLIP 을 많이 쓴다.
-SigLIP 의 구조는 이 강의의 ViT 그대로이고, 학습 방법은 [CLIP](../clip/README.md) 에서 다룬다.
+2022 년 Peebles 와 Xie 가 발표한 DiT(Diffusion Transformer)는 [Latent Diffusion](../latent-diffusion/README.md) 의 U-Net 자리에 ViT 를 넣었다.
+입력은 사진이 아니라 VAE 가 사진을 줄인 latent 다. 256×256 사진의 latent 는 가로세로 32, channel 4 인 $32 \times 32 \times 4$ 이고, DiT 는 이 latent
+를 $p \times p$ patch 로 잘라 token 으로 만든다. 논문은 이 첫 단계를 patchify 라고 부르는데, patchify 는 이 강의의 patch embedding 과 같은 계산이다.
 
-분류에서는 [CLS] 자리의 출력 하나만 head 에 넣었지만 VLA 는 patch 출력 전부를 넘긴다. 컵을 집으려면 컵이 사진의 어디에 있는지가 중요한데,
-[CLS] 하나로 요약하면 무엇이 있는지는 남아도 어디에 있는지가 흐려진다. patch token 은 저마다 사진의 한 구역에서 나왔기 때문에, 언어 모델이 "빨간
-컵" 이라는 지시문 token 과 컵이 있는 구역의 patch token 사이에 attention 점수를 매길 수 있다. OpenVLA 논문에서는 미리 학습한 ViT 의 patch
-출력을 token 으로 언어 모델에 넣는 이 방식을 patch-as-token 이라고 부르고, 새로 공개된 VLM 들이 대부분 이 방식을 쓰게 되었다고 설명한다.
+분류용 ViT 는 [CLS] 자리의 출력 하나만 head 에 넣었지만 DiT 는 patch 출력 전부를 쓴다. noise 를 걷어 내려면 latent 의 자리마다 섞인 noise 를
+맞혀야 하기 때문이다. 마지막 block 뒤에서 token 하나하나를 linear 층으로 $p \times p$ 크기의 noise 조각으로 바꾸고, 조각을 원래 자리에 다시
+늘어놓아 입력과 같은 $32 \times 32 \times 4$ 크기의 noise 를 낸다. 지금이 noise 를 걷어 내는 몇 번째 단계인지와 어떤 class 를 그릴지는 token 으로
+넣지 않고, block 안의 LayerNorm 이 쓰는 숫자를 바꾸는 방식(adaLN-Zero)으로 넣는다.
 
-![PaliGemma 를 바탕으로 한 VLA 의 사진 입력 처리. 224×224 사진을 14×14 pixel patch 256 개로 잘라 SigLIP(ViT 구조)에 넣고, 나온 256 개 vector 를 모두 image token 으로 언어 모델에 넘긴다. VLA 는 이 token 들을 지시문 token 과 함께 읽어 로봇 행동을 낸다](figures/vla-encoder.svg)
+![DiT 의 입력과 출력. 32×32×4 latent 를 2×2 patch 256 개로 잘라 token 256 개를 만들고, Transformer block 을 거친 token 256 개를 다시 2×2 noise 조각으로 바꿔 원래 자리에 늘어놓아 32×32×4 noise 를 낸다](figures/dit-patchify.svg)
 
-세 VLA 가 사진을 받아 token 으로 만드는 방식을 비교하면 아래와 같다.
+patch 크기를 바꾸면 앞 절에서 본 대로 token 수와 계산량이 함께 바뀐다. 저자들이 같은 크기의 DiT-XL 을 patch 크기만 바꿔 400K step 학습한
+결과(논문 부록 표 4)는 아래와 같다. FID 는 그린 그림이 실제 사진과 얼마나 다른지 재는 값이라 작을수록 좋다.
 
-| VLA | image encoder | 사진 크기 | 사진 한 장의 image token |
-| --- | --- | --- | --- |
-| OpenVLA | SigLIP So400m/14 와 DINOv2 ViT-L/14 | 224×224 | 256 |
-| π0 | PaliGemma 의 SigLIP So400m/14 | 224×224 | 256 |
-| GR00T N1 | Eagle-2 VLM 의 SigLIP-2 | 224×224 | 64 |
+| model | patch 크기 $p$ | token 수 $(32 \div p)^2$ | 계산량(Gflops) | parameter | FID (400K step) |
+| --- | --- | --- | --- | --- | --- |
+| DiT-XL/8 | 8 | 16 | 7.39 | 6.76 억 | 106.41 |
+| DiT-XL/4 | 4 | 64 | 29.05 | 6.75 억 | 43.01 |
+| DiT-XL/2 | 2 | 256 | 118.64 | 6.75 억 | 19.47 |
 
-So400m 은 층 수와 폭을 다듬은 parameter 약 4억 개의 ViT 이고, /14 는 patch 크기다. OpenVLA 와 π0 는 patch 출력 256 개를 그대로 넘기고,
-GR00T N1 은 이웃한 token 을 합치는 pixel shuffle 로 64 개까지 줄여 언어 모델의 계산을 덜어 준다.
+parameter 는 거의 그대로인데 patch 한 변을 절반으로 줄일 때마다 token 은 4 배가 되고 계산량은 약 4 배가 되었으며, FID 는 크게 좋아졌다. 저자들은 model 의
+품질을 정하는 것이 parameter 수보다 계산량이라고 정리했다. 이 DiT-XL/2 를 더 오래 학습하고 [classifier-free guidance](../classifier-free-guidance/README.md)
+를 쓰면 ImageNet 256×256 에서 FID 가 2.27 이 되어, 당시 U-Net 을 쓴 diffusion model 들보다 좋았다. Stable Diffusion 3 도 U-Net 대신 이런 Transformer 를
+쓴다.
 
-![세 VLA 의 사진 입력 처리. OpenVLA 는 224×224 사진을 SigLIP 과 DINOv2 에 따로 넣어 patch 256 개의 출력을 이어 붙이고, π0 는 카메라 3 대의 사진을 SigLIP 에 넣어 256 × 3 = 768 개를 넘기며, GR00T N1 은 SigLIP-2 출력을 pixel shuffle 로 사진 한 장당 64 개로 줄인다](figures/robot-encoders.svg)
-
-OpenVLA 가 함께 쓰는 DINOv2 는 2023 년 Meta 가 발표한 ViT image encoder 로, 설명 글 없이 사진 1억 4,200만 장만으로 학습했다. 학습
-방법은 사람이 단 정답 없이 사진에서 정답을 만들어 배우는 self-supervised learning 이다. DINOv2 는 같은 사진을 여러 방식으로 자르고 변형해도
-같은 사진으로 알아보도록 배우고, 가린 patch 의 출력도 맞히도록 배운다. OpenVLA 의 바탕인 Prismatic VLM 은 두 encoder 에서 모두 끝에서
-둘째 층의 출력을 꺼내, patch 마다 SigLIP 출력(숫자 1,152 개)과 DINOv2 출력(숫자 1,024 개)을 이어 붙인 숫자 2,176 개짜리 vector 를 만든다.
-Prismatic 논문의 저자들은 글과의 짝을 맞히며 배운 SigLIP 이 사진에 무엇이 있는지를 잘 담는 반면, DINOv2 의 patch 출력은 위치와 모양 같은
-낮은 수준의 공간 정보를 더 많이 담는다고 해석했다.
-
-![OpenVLA 의 image encoder. 224×224 사진의 같은 patch 가 SigLIP 과 DINOv2 를 각각 지나 숫자 1,152 개와 1,024 개의 출력이 되고, 둘을 이어 붙인 2,176 개짜리 vector 256 개가 MLP projector 를 지나 Llama 2 의 token 길이 4,096 으로 바뀐다](figures/dino-siglip.svg)
-
-OpenVLA 논문 부록의 실험을 보면 DINOv2 의 효과는 있지만 크지 않다. BridgeData V2 로만 학습한 모델에서 DINOv2 를 빼고 SigLIP 만 쓰자
-WidowX 로봇 과제 8 개의 평균 성공률이 45.6% 에서 40.6% 로 5%p 떨어졌다. 같은 표에서 여러 로봇의 데이터(Open X-Embodiment)를 학습에서
-뺐을 때 76.3% 에서 45.6% 로 30%p 넘게 떨어진 것에 비하면 작은 차이다. 더 큰 차이는 image encoder 를 학습 중에 고치느냐에서 나왔다. 두
-방법을 모두 시험한 과제들에서 image encoder 를 고정하면 평균 성공률이 46.7% 였고, 함께 fine-tuning 하면 80.0% 였다. 저자들은 인터넷 사진으로 미리 학습한 encoder 가 로봇을 정밀하게 움직이는 데 필요한
-장면의 세밀한 위치 정보를 충분히 담지 못하기 때문이라고 추측했다.
-
-**흔한 오해.** "미리 학습한 image encoder 는 고정해 두는 편이 낫다." Prismatic 논문에 따르면 VLM 을 만들 때는 encoder 를 고정하는 쪽이
-대개 더 좋았다. 하지만 로봇 행동을 배우는 OpenVLA 는 encoder 까지 fine-tuning 해야 성능이 났다.
-
-**확인 문제.** π0 가 카메라 2 대의 사진과 text token 16 개짜리 지시문을 받는다. 언어 모델에 들어가는 사진·지시문 token 은 모두 몇 개일까?
+**확인 문제.** 512×512 사진의 latent 는 $64 \times 64 \times 4$ 다. patch 크기 2 인 DiT 에 넣으면 token 은 몇 개이고, 256×256 사진일 때와 비교해
+attention 점수 표는 몇 배일까?
 
 <details><summary>답 보기</summary>
 
-1. 사진 한 장: 224×224 를 patch 14 로 자르면 $16 \times 16 = 256$ 개
-2. 사진 두 장: $2 \times 256 = 512$ 개
-3. 지시문을 더하면 $512 + 16 = 528$ 개
+| 사진 | latent | 한 변의 patch 수 | token 수 | 점수 표 |
+| --- | --- | --- | --- | --- |
+| 256×256 | $32 \times 32 \times 4$ | $32 \div 2 = 16$ | 256 | $256^2 = 65{,}536$ |
+| 512×512 | $64 \times 64 \times 4$ | $64 \div 2 = 32$ | 1,024 | $1{,}024^2 = 1{,}048{,}576$ |
+
+token 은 4 배이고 점수 표는 16 배다. 논문의 512×512 DiT-XL/2 도 token 1,024 개를 다룬다.
 
 </details>
 
@@ -594,28 +560,23 @@ WidowX 로봇 과제 8 개의 평균 성공률이 45.6% 에서 40.6% 로 5%p 떨
   개이고, patch 한 변을 절반으로 줄이면 attention 점수 표가 16 배가 된다
 - CNN 은 locality 와 translation equivariance 를 구조에 담아 데이터가 적을 때 유리하다. 이 가정이 적은 ViT 는 데이터가 많아야 한다. ViT-L/16 은
   ImageNet 130만 장으로 미리 학습하면 76.53% 에 그치지만 3억 장으로 미리 학습하면 87.12% 로 오르고, 이 정도 데이터에서는 ViT 가 CNN 을 앞선다
-- OpenVLA·π0·GR00T N1 의 image encoder 는 모두 ViT 계열(SigLIP, DINOv2, SigLIP-2)이고, 위치 정보를 지키려고 [CLS] 하나 대신 patch token
-  전부(224×224, patch 14 면 256 개)를 언어 모델에 넘긴다. OpenVLA 에서는 encoder 를 고정할 때 46.7% 이던 평균 성공률이 함께 fine-tuning 하자 80.0% 로 올랐다
+- DiT 는 VAE 가 줄인 latent 를 patch 로 잘라 ViT 에 넣고, [CLS] 하나 대신 patch 출력 전부를 noise 조각으로 되돌린다. 같은 DiT-XL 도 patch 를
+  8 → 4 → 2 로 줄이면 token 은 16 → 64 → 256 개로 늘고, 계산량은 7.39 → 29.05 → 118.64 Gflops 로 늘고, FID 는 106.41 → 43.01 → 19.47 로
+  좋아진다
 
-분류용으로 학습한 ViT 는 ImageNet 의 1,000 class 처럼 미리 정한 종류 안에서만 고를 수 있어서, "빨간 컵" 같은 새 개념을 알아보게 하려면
+분류용으로 학습한 ViT 는 ImageNet 의 1,000 class 처럼 미리 정한 종류 안에서만 고를 수 있어서, "빨간 우산" 같은 새 개념을 알아보게 하려면
 그 이름표를 단 사진이 다시 필요하다. image encoder 를 글을 vector 로 바꾸는 text encoder 와 함께 학습해 문장으로 개념을 지정하게 만드는 방법은
-[CLIP](../clip/README.md) 에서 다룬다. 이런 image encoder 를 언어 모델에 붙여 로봇 action 을 token 으로 내는 VLA 는
-RT-2 → OpenVLA 에서 다루고, PaliGemma 위에 action expert 를 붙인 VLA 는 π0 에서 다룬다.
+[CLIP](../clip/README.md) 에서 다룬다. Stable Diffusion 이 그 text encoder 의 출력으로 그림을 글에 맞추는 방법은 [Cross-Attention](../cross-attention/README.md)
+에서 다룬다.
 
 ## 참고 자료
 
 - Alexey Dosovitskiy et al., [An Image is Worth 16x16 Words](https://arxiv.org/abs/2010.11929) (2020) — ViT 논문. 3.1 절의 식 (1) ~ (4) 와
   "Inductive bias" 문단, 4.3 절의 데이터 양 실험, 부록 표 5(데이터별 정확도)·D.3([CLS] 와 평균)·D.4(position embedding 비교)를 본다
-- Maxime Oquab et al., [DINOv2: Learning Robust Visual Features without Supervision](https://arxiv.org/abs/2304.07193) (2023) — 설명 글 없이
-  사진 1억 4,200만 장으로 학습한 ViT image encoder. 3 절의 데이터 구성과 4 절의 학습 방법을 본다
-- Lucas Beyer et al., [PaliGemma: A versatile 3B VLM for transfer](https://arxiv.org/abs/2407.07726) (2024) — SigLIP-So400m 과 Gemma-2B 로
-  만든 VLM. 3.1 절의 구조와 사진 크기별 image token 수(256, 1,024, 4,096)를 본다
-- Moo Jin Kim et al., [OpenVLA: An Open-Source Vision-Language-Action Model](https://arxiv.org/abs/2406.09246) (2024) — SigLIP 과 DINOv2 를
-  합친 image encoder 를 쓰는 VLA. 2 절의 patch-as-token, 3.4 절의 사진 크기와 encoder fine-tuning, 부록 D.2·D.3 의 실험을 본다
-- Kevin Black et al., [π0: A Vision-Language-Action Flow Model for General Robot Control](https://arxiv.org/abs/2410.24164) (2024) — 부록 A-D 의
-  표 I 에 카메라 3 대 입력의 단계별 계산 시간이 있다
-- NVIDIA, [GR00T N1: An Open Foundation Model for Generalist Humanoid Robots](https://arxiv.org/abs/2503.14734) (2025) — 2.1 절에 224×224 사진을
-  pixel shuffle 로 token 64 개로 줄이는 Eagle-2 VLM 의 설명이 있다
+- William Peebles, Saining Xie, [Scalable Diffusion Models with Transformers](https://arxiv.org/abs/2212.09748) (2022) — DiT 논문. 3.2 절의
+  patchify 와 linear decoder, 부록 표 4 의 patch 크기별 계산량·parameter·FID, 표 2 의 FID 2.27 을 본다
+- Alec Radford et al., [Learning Transferable Visual Models From Natural Language Supervision](https://arxiv.org/abs/2103.00020) (2021) — CLIP
+  논문. 3.2 절에서 CLIP 의 ViT 가 CLIP 의 ResNet 보다 계산 효율이 약 3 배 좋다고 보고한다
 - torchvision, [`vit_b_16` weight 문서](https://docs.pytorch.org/vision/stable/models/generated/torchvision.models.vit_b_16.html) — ViT-B/16 의
   parameter 수 86,567,656 과 ImageNet 정확도
 - Google Research, [vision_transformer](https://github.com/google-research/vision_transformer) — 논문의 공식 구현과 학습된 weight

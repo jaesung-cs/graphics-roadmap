@@ -199,23 +199,21 @@
       answer: 3
       explanation: |
         사진 한 변이 2 배가 되면 한 변의 patch 수가 16 개에서 32 개로 2 배라서 token 은 256 개에서 1,024 개로 2 × 2 = 4 배가 된다.
-        PaliGemma 도 224, 448, 896 사진에서 image token 을 각각 256, 1,024, 4,096 개 쓴다.
+        사진 한 변이 다시 2 배가 되면 token 은 다시 4 배가 된다.
         첫째 보기는 한 방향만 센 답이다. patch 크기가 같아도 사진이 커지면 patch 수가 늘어나므로 둘째 보기는 틀렸다. 16 배라는 셋째 보기는
         token 수가 아니라 attention 점수 표가 늘어나는 배수다.
     - question: |
-        OpenVLA 는 입력 사진을 224×224 와 384×384 로 비교한 뒤 224×224 를 골랐다. 이유로 가장 알맞은 것은?
+        ViT-L/16 과 ViT-L/32 는 층 수와 폭이 같고 patch 크기만 다르다. 224×224 사진에서 두 model 의 차이로 알맞은 것은?
       choices:
-        - '작업 성공률 차이는 없었는데, 큰 사진은 image token 이 늘어 학습 시간이 3 배 걸렸기 때문이다'
-        - '384×384 는 patch 크기 14 로 나누어떨어지지 않아서, 사진을 patch 로 자를 수 없기 때문이다'
-        - '사진이 크면 patch 사이가 멀어져서, attention 이 멀리 떨어진 patch 를 보지 못하기 때문이다'
-        - '사진이 크면 position embedding 표가 상대적으로 작아져서 자리 정보가 흐려지고 정확도가 떨어지기 때문이다'
+        - 'parameter 는 거의 같지만 L/16 의 token 이 4 배라서, attention 계산이 훨씬 많다'
+        - 'patch 가 작은 L/16 은 parameter 가 4 배라서, 같은 데이터로 학습하기가 훨씬 어렵다'
+        - 'patch 가 큰 L/32 는 사진 일부를 버리고 가운데 patch 만 보아서, 계산이 적다'
+        - 'patch 크기가 달라도 token 수는 같고, patch 하나에 담기는 숫자만 다르다'
       answer: 0
       explanation: |
-        OpenVLA 저자들은 두 크기에서 로봇 작업 성능 차이를 찾지 못했다. 384×384 로는 image token 이 늘어 학습에 3 배의 시간이 걸려서
-        저자들은 224×224 를 골랐다. token 수가 늘면 attention 계산이 제곱으로 늘어난다.
-        384 는 14 로 나누어떨어지지 않지만 사진을 맞춰 줄이거나 384 에 맞춘 encoder 를 쓰면 되므로 둘째 보기는 이유가 아니다. attention 은
-        사진 크기와 관계없이 모든 patch 를 보므로 셋째 보기는 틀렸다. 사진이 크면 position embedding 표는 오히려 커져야 하므로 넷째 보기도
-        틀렸다.
+        한 변의 patch 수가 $224 \div 16 = 14$ 와 $224 \div 32 = 7$ 이라 token 은 196 개와 49 개로 4 배 차이 나고, attention 점수 표는 16 배
+        차이 난다. 층 수와 폭이 같아 parameter 는 patch embedding 의 행렬 크기 차이 정도만 다르다. L/32 도 사진 전체를 patch 로 덮으므로 사진을
+        버리지 않는다. patch 크기가 바뀌면 token 수가 바뀐다.
 
 - topic: inductive-bias
   title: inductive bias 와 데이터 양
@@ -248,99 +246,96 @@
         1.38%p 뒤처지던 ViT-L/16 이 2.97%p 앞서게 되므로 차이가 그대로라는 둘째 보기는 틀렸다. ViT-B/16 도 77.91% 에서 84.15% 로
         오르므로 두 모델 모두 떨어진다는 셋째 보기도 틀렸다. ViT-L/16 은 76.53% 에서 87.12% 로 더 크게 오르므로 넷째 보기도 틀렸다.
     - question: |
-        작업 하나에 시연 50 개 정도로 학습하는 ACT 는 image encoder 로 ResNet-18 을 쓰고, 인터넷 사진·글 수억 쌍으로 미리 학습한 VLA 는 ViT 계열을 쓴다. 이 선택을 가장 잘 설명하는 것은?
+        사진과 설명 글 4 억 쌍으로 학습한 CLIP 에서는 CLIP 의 ViT 가 CLIP 의 ResNet 보다 같은 성능을 내는 데 계산이 약 3 배 덜 들었다. 이 결과를 가장 잘 설명하는 것은?
       choices:
-        - 'ResNet-18 은 사진을 token 으로 바꿀 수 없어서, Transformer 로 된 VLA 에는 넣을 수 없기 때문이다'
-        - 'ViT 는 로봇 시연 데이터로 fine-tuning 할 수 없어서, 시연으로 학습하는 ACT 는 쓰지 못하기 때문이다'
-        - 'CNN 은 inductive bias 가 없어 데이터에 맞춰 자유롭게 배우므로 시연이 적을 때 유리하기 때문이다'
+        - 'ResNet 은 사진을 숫자 vector 로 바꿀 수 없어서, 글과 짝을 맞추는 학습에는 쓸 수 없기 때문이다'
+        - 'ViT 는 parameter 가 ResNet 보다 언제나 적어서, 어떤 데이터에서든 계산이 덜 들기 때문이다'
+        - 'CNN 은 inductive bias 가 없어 데이터에 맞춰 자유롭게 배우므로 데이터가 많을 때 불리하기 때문이다'
         - '데이터가 적으면 가정이 담긴 CNN 이 유리하고, 아주 많으면 가정이 적은 ViT 가 앞서기 때문이다'
       answer: 3
       explanation: |
         ViT 논문은 작은 데이터에서는 convolution 의 inductive bias 가 도움이 되고, 큰 데이터에서는 패턴을 데이터에서 바로 배우는 편이
-        낫다고 정리했다. 이 결과대로 시연이 적은 policy 는 CNN 을 쓰고, 거대한 데이터로 미리 학습한 VLM 위에 만든 VLA 는 ViT 를 쓴다.
-        ACT 는 ResNet-18 의 feature map 칸들을 token 으로 Transformer 에 넣으므로 첫째 보기는 틀렸다. OpenVLA 는 ViT encoder 를 로봇 데이터로
-        fine-tuning 하므로 둘째 보기도 틀렸다. CNN 은 inductive bias 가 많은 쪽이므로 셋째 보기도 틀렸다.
+        낫다고 정리했다. 4 억 쌍은 아주 큰 데이터라 CLIP 에서 ViT 가 앞선 것도 이 결과와 맞는다. CLIP 은 ResNet 으로도 사진을 vector 로
+        바꿔 학습했으므로 첫째 보기는 틀렸다. ViT 가 언제나 parameter 가 적은 것은 아니다. CNN 은 inductive bias 가 많은 쪽이므로 셋째 보기도
+        틀렸다.
 
-- topic: patch-as-token
-  title: VLA 가 patch token 전부를 넘기는 이유
+- topic: dit-patch-output
+  title: DiT 가 patch 출력 전부를 쓰는 이유
   variants:
     - question: |
-        VLA 는 ViT image encoder 의 [CLS] 출력 하나가 아니라 patch 출력 전부를 언어 모델에 넘긴다. 그 이유는 무엇인가?
+        분류용 ViT 는 [CLS] 출력 하나만 head 에 넣지만, 그림을 그리는 DiT 는 patch 출력 전부를 쓴다. 그 이유는 무엇인가?
       choices:
-        - '[CLS] 출력은 숫자 개수가 너무 많아서 언어 모델의 token 길이에 맞출 수 없기 때문이다'
-        - 'patch 출력 전부를 넘기면 [CLS] 를 따로 계산하지 않아도 되어 언어 모델의 계산량이 줄어들기 때문이다'
-        - 'SigLIP 같은 encoder 에는 patch 출력이 없고 [CLS] 만 있기 때문이다'
-        - '[CLS] 하나로는 위치가 흐려지지만, patch token 은 저마다 한 구역에서 나와 위치 정보가 남기 때문이다'
-      answer: 3
-      explanation: |
-        물체를 집으려면 물체가 사진의 어디에 있는지가 중요하다. patch token 은 저마다 사진의 한 구역에서 나왔기 때문에, 언어 모델이 지시문의 단어와
-        그 물체가 있는 구역의 patch token 사이에 attention 점수를 매길 수 있다. OpenVLA 논문은 이 방식을 patch-as-token 이라고 불렀다.
-        [CLS] 출력은 patch token 하나와 길이가 같으므로 첫째 보기는 틀렸다. token 이 많을수록 계산은 늘어나므로 둘째 보기도 틀렸다.
-        ViT 구조의 encoder 는 patch 마다 출력을 내므로 셋째 보기도 틀렸다.
-    - question: |
-        PaliGemma 를 바탕으로 한 VLA 가 224×224 카메라 사진 한 장을 patch 14 의 SigLIP 에 넣으면 언어 모델이 받는 image token 은 몇 개인가? patch 출력은 모두 넘긴다.
-      choices:
-        - '196 개'
-        - '1 개'
-        - '256 개'
-        - '50,176 개'
-      answer: 2
-      explanation: |
-        224 ÷ 14 = 16 이라 patch 가 16 × 16 = 256 개이고, patch 출력을 모두 image token 으로 넘기므로 256 개다.
-        196 개는 patch 16 일 때의 수다. 1 개는 [CLS] 하나만 넘길 때의 수다. 50,176 개는 pixel 하나를 token 으로 쓸 때의 수다.
-    - question: |
-        VLA 안의 언어 모델은 image token 과 text token 을 어떻게 함께 처리하는가?
-      choices:
-        - 'image token 은 언어 모델 밖에서 따로 처리하고, 그 결과만 마지막 층의 출력에 더한다'
-        - 'image token 의 길이를 text token 에 맞춰 한 sequence 에 넣고, 함께 attention 을 계산한다'
-        - 'image token 을 vocabulary 의 가장 가까운 단어 번호로 바꿔 text 처럼 넣는다'
-        - 'text token 을 글자 그림으로 바꿔 사진과 함께 image encoder 에 넣고, 출력을 언어 모델에 넘긴다'
-      answer: 1
-      explanation: |
-        patch-as-token 방식에서는 encoder 의 patch 출력을 행렬이나 작은 MLP 로 언어 모델의 token 길이에 맞춘 뒤 지시문 token 과 같은
-        sequence 에 놓는다. 언어 모델 안에서는 둘 다 같은 길이의 vector 라서 구별 없이 attention 을 계산한다.
-        image token 을 따로 처리한 뒤 마지막에 더하면 지시문 단어와 사진 구역 사이의 attention 을 층마다 계산할 수 없으므로 첫째 보기는
-        틀렸다. patch 출력은 단어 번호로 바꾸지 않고 vector 그대로 넣으므로 셋째 보기도 틀렸다. 넷째 보기는 실제로 쓰는 방식이 아니다.
-
-- topic: robot-encoder
-  title: 로봇 VLA 의 image encoder 선택
-  variants:
-    - question: |
-        OpenVLA 는 SigLIP 과 함께 DINOv2 encoder 를 써서, patch 마다 두 encoder 의 출력을 이어 붙인다. DINOv2 를 더하는 이유로 알맞은 것은?
-      choices:
-        - '사진만으로 학습한 DINOv2 가 위치·모양 같은 공간 정보를 담아 SigLIP 을 보완하기 때문이다'
-        - 'DINOv2 가 지시문을 읽어 text token 을 만들어서, 언어 모델이 지시문을 따로 읽지 않아도 되기 때문이다'
-        - 'DINOv2 를 더하면 image token 수가 절반으로 줄어 계산이 빨라지기 때문이다'
-        - 'SigLIP 은 224×224 사진을 받을 수 없어서 DINOv2 가 사진 크기를 맞추기 때문이다'
+        - 'noise 를 걷어 내려면 latent 의 자리마다 섞인 noise 를 맞혀야 해서, 자리마다 출력이 있어야 하기 때문이다'
+        - 'DiT 에는 [CLS] token 을 붙이는 단계가 없어서, 남은 patch 출력이라도 모두 써야 하기 때문이다'
+        - 'patch 출력을 모두 쓰면 token 수가 줄어 attention 계산이 [CLS] 하나를 쓸 때보다 가벼워지기 때문이다'
+        - '[CLS] 출력은 class 를 맞히는 데만 쓸 수 있어서, 그림을 그리는 model 에서는 계산할 수 없기 때문이다'
       answer: 0
       explanation: |
-        Prismatic 논문의 저자들은 사진과 설명 글의 짝을 맞히며 배운 SigLIP 이 무엇이 있는지를 잘 담고, 사진만으로 배운 DINOv2 가
-        공간 정보를 더 담는다고 해석했다. OpenVLA 실험에서 DINOv2 를 빼자 평균 성공률이 5%p 떨어졌다.
-        DINOv2 는 image encoder 라서 text token 을 만들지 않으므로 둘째 보기는 틀렸다. 두 encoder 의 출력을 patch 마다 이어 붙이므로 token 수는
-        그대로이고 계산은 오히려 늘어서 셋째 보기도 틀렸다. SigLIP 은 224×224 를 그대로 받으므로 넷째 보기도 틀렸다.
+        DiT 의 출력은 입력 latent 와 같은 크기의 noise 다. 마지막 block 뒤에서 token 하나하나를 $p \times p$ noise 조각으로 바꾸고 원래 자리에
+        늘어놓으므로, token 이 저마다 latent 의 한 구역을 맡는다. [CLS] 를 붙이지 않는 것은 결과이지 이유가 아니다. 쓰는 출력이 많다고
+        attention 계산이 줄지 않는다. [CLS] 출력도 계산은 할 수 있지만 자리마다 다른 noise 를 담지 못한다.
     - question: |
-        인터넷 데이터로 미리 학습한 ViT image encoder 를 VLA 학습 중에 고정하는 것과 함께 fine-tuning 하는 것 중 OpenVLA 는 어느 쪽이 나았다고 보고했는가?
+        256×256 사진의 latent 는 32×32×4 다. patch 크기 2 인 DiT-XL/2 에 넣으면 token 은 몇 개인가?
       choices:
-        - '고정하는 쪽이 나았다. 적은 로봇 데이터로 encoder 를 건드리면 미리 학습한 feature 가 망가지기 때문이다'
-        - '함께 fine-tuning 하는 쪽이 크게 나았다. 고정한 encoder 는 세밀한 위치 정보가 부족하다고 추측했다'
-        - '두 방법의 성공률이 같아서, 학습이 빠른 고정 쪽을 고르면 된다고 보고했다'
-        - 'encoder 를 아예 빼고 pixel 을 직접 언어 모델에 넣는 쪽이 나았다'
+        - '16 개. 32 를 2 로 나눈 한 변의 patch 수만 센다'
+        - '256 개. 한 변의 patch 수 16 을 제곱한다'
+        - '1,024 개. latent 의 칸 수 32 × 32 를 그대로 쓴다'
+        - '4,096 개. 칸 수 1,024 에 channel 4 를 곱한다'
       answer: 1
       explanation: |
-        VLM 연구에서는 encoder 를 고정하는 쪽이 대개 좋았지만, OpenVLA 는 로봇 행동을 배울 때 encoder 까지 fine-tuning 해야 성능이
-        났다. 두 방법을 비교한 과제들에서 평균 성공률은 고정했을 때 46.7% 였고 fine-tuning 했을 때 80.0% 였다.
-        첫째 보기는 VLM 에서의 결과를 로봇에 그대로 옮긴 오해다. 두 방법의 차이가 컸으므로 셋째 보기는 틀렸다. encoder 를 빼는 실험은
-        보고되지 않았으므로 넷째 보기도 틀렸다.
+        한 변의 patch 수는 $32 \div 2 = 16$ 이고 token 은 $16 \times 16 = 256$ 개다. patch 하나는 $2 \times 2 \times 4 = 16$ 개 숫자를 담아
+        token 하나가 된다. 16 은 한 방향만 센 값이다. 1,024 는 patch 크기 1 로 칸마다 token 을 만든 경우의 수다. channel 은 token 하나
+        안에 들어가므로 token 수를 늘리지 않는다.
     - question: |
-        GR00T N1 은 224×224 사진 한 장을 image token 64 개로 만들어 언어 모델에 넣는다. patch 출력을 그대로 넘기는 방식과 비교해 무엇이 달라지는가?
+        DiT 는 마지막 Transformer block 뒤에서 token 을 어떻게 다시 noise 로 바꾸는가?
       choices:
-        - 'token 이 줄어드는 만큼 사진의 숫자도 4 분의 1 만 남기고 버려져 정보가 크게 사라진다'
-        - 'token 수는 그대로 두고, token 하나의 길이를 줄여 언어 모델의 계산량을 줄인다'
-        - '이웃한 token 을 이어 붙여 숫자는 버리지 않고 token 수만 줄인다'
-        - '사진을 64 구역으로 더 잘게 나눠 token 수가 늘고, 사진을 더 자세히 본다'
+        - 'token 전부를 평균 내 숫자 하나로 만든 뒤, 그 숫자를 latent 의 모든 칸에 똑같이 채운다'
+        - '[CLS] 출력 하나를 linear 층에 넣어 latent 전체 크기의 noise 를 한꺼번에 만든다'
+        - 'token 하나하나를 linear 층으로 $p \times p$ noise 조각으로 바꾸고, 조각을 원래 자리에 늘어놓는다'
+        - 'token 을 다시 VAE decoder 에 넣어 512×512 그림으로 바꾼 뒤 그 차이를 noise 로 쓴다'
       answer: 2
       explanation: |
-        GR00T N1 은 pixel shuffle 로 이웃한 token 을 이어 붙여 한 token 으로 합친다. 숫자는 그대로 두고 token 하나의 길이를 늘려
-        개수를 줄이므로, token 수의 제곱으로 커지는 attention 계산이 줄어든다.
-        이어 붙이는 계산이라 숫자를 버리지 않으므로 첫째 보기는 틀렸다. 바뀌는 것은 token 수이고 token 하나의 길이는 오히려 길어지므로
-        둘째 보기도 틀렸다. token 이 줄어드는 방식이라 넷째 보기도 틀렸다.
+        DiT 논문은 마지막 LayerNorm 뒤에 linear decoder 를 두어 token 마다 $p \times p$ 조각(과 channel)을 만들고, 조각을 원래 자리로 다시
+        늘어놓아 입력과 같은 크기의 출력을 만든다. 평균을 내면 자리마다 다른 noise 를 낼 수 없다. DiT 는 [CLS] 를 쓰지 않는다. VAE decoder 는
+        noise 를 다 걷어 낸 뒤 마지막에 한 번만 쓰고, DiT 의 출력은 latent 크기의 noise 다.
+
+- topic: dit-patch-size
+  title: DiT 의 patch 크기와 계산량
+  variants:
+    - question: |
+        DiT-XL 을 patch 크기 8, 4, 2 로 학습했더니 parameter 는 약 6.75 억 개로 거의 같았는데 FID 는 106.41, 43.01, 19.47 로 좋아졌다. 무엇이 달라졌기 때문인가?
+      choices:
+        - 'patch 가 작을수록 parameter 가 크게 늘어서, 더 많은 숫자로 그림을 배웠기 때문이다'
+        - 'patch 가 작을수록 token 이 늘어 계산량이 7.39 에서 118.64 Gflops 로 커졌기 때문이다'
+        - 'patch 가 작을수록 학습 step 을 더 많이 해서, 학습이 더 오래 이어졌기 때문이다'
+        - 'patch 가 작을수록 VAE 가 latent 를 더 크게 만들어, 그림의 정보가 늘었기 때문이다'
+      answer: 1
+      explanation: |
+        patch 한 변을 절반으로 줄이면 token 이 4 배(16 → 64 → 256)가 되고 계산량도 약 4 배씩 는다. 논문은 parameter 가 거의 같아도 계산량이
+        늘면 FID 가 좋아진다는 점에서 계산량이 품질을 정한다고 정리했다. parameter 는 세 model 이 거의 같으므로 크게 늘지 않았다.
+        세 model 은 모두 400K step 을 학습했다. latent 는 patch 크기와 상관없이 VAE 가 정한 32×32×4 그대로다.
+    - question: |
+        patch 크기를 그대로 두고 사진을 256×256 에서 512×512 로 키우면 DiT 의 token 수와 attention 점수 표는 각각 몇 배가 되는가?
+      choices:
+        - 'token 2 배, 점수 표 4 배. 사진 한 변이 2 배라서다'
+        - 'token 4 배, 점수 표 4 배. 점수 표는 token 수에 비례한다'
+        - 'token 4 배, 점수 표 16 배. 점수 표는 token 수의 제곱이다'
+        - 'token 1 배, 점수 표 1 배. patch 크기가 같으면 token 도 같다'
+      answer: 2
+      explanation: |
+        latent 가 $32 \times 32$ 에서 $64 \times 64$ 로 한 변이 2 배라서 patch 2 일 때 token 은 256 개에서 1,024 개로 4 배가 된다. 점수 표는
+        token 끼리 모두 짝지어 $256^2$ 에서 $1{,}024^2$ 으로 16 배다. token 2 배는 한 방향만 센 값이다. 점수 표는 token 수에
+        비례하지 않고 token 수의 제곱에 비례한다. patch 크기가 같아도 latent 가 커지면 patch 수가 늘어난다.
+    - question: |
+        DiT 논문은 계산량이 작은 model 이 그림을 뽑을 때 step 수를 늘려도 큰 model 을 따라잡지 못한다고 보고했다. 이 결과가 말하는 것은?
+      choices:
+        - '그림을 뽑는 step 수를 늘리면 언제나 model 을 키운 것과 같은 효과가 난다'
+        - 'step 수는 그림 품질과 관계가 없어서, 몇 step 으로 뽑든 FID 가 같다'
+        - 'step 하나를 계산하는 model 의 크기가 모자라면, step 을 많이 밟아도 그 차이를 메우지 못한다'
+        - '작은 model 은 step 을 늘릴수록 오히려 FID 가 나빠져서, step 을 줄여야 한다'
+      answer: 2
+      explanation: |
+        논문에서 DiT-L/2 가 1000 step 으로 그림 한 장에 80.7 Tflops 를 써도, 128 step 으로 15.2 Tflops 를 쓴 DiT-XL/2 보다 FID 가 나빴다(25.9
+        대 23.7). step 을 늘리면 작은 model 도 좋아지지만 큰 model 과의 차이를 메우지는 못했으므로, step 을 늘리는 것이 model 을
+        키우는 것과 같지 않다. step 수를 바꾸면 FID 도 바뀌므로 step 수는 품질과 관계가 있다. 작은 model 도 step 을 늘리면 FID 가
+        좋아졌으므로 나빠진다는 보기도 틀렸다.

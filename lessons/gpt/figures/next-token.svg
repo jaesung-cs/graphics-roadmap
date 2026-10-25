@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 270" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
-  <title>입력 bos 빨간 컵 집어 를 한 칸 밀면 정답 빨간 컵 집어 eos 가 된다</title>
+  <title>입력 bos 빨간 모자 쓴 를 한 칸 밀면 정답 빨간 모자 쓴 eos 가 된다</title>
   <defs>
 <marker id="a38bdf8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker>
 <marker id="af59e0b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker>
@@ -19,21 +19,21 @@
   <text x="130.0" y="250.0" fill="#94a3b8" font-size="12" text-anchor="middle">위치 1</text>
   <line x1="130.0" y1="150.0" x2="130.0" y2="82.0" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#a94a3b8)"/>
   <rect x="208.0" y="40.0" width="84.0" height="38.0" rx="6" fill="#111a2e" fill-opacity="1" stroke="#334155" stroke-width="1.5"/>
-  <text x="250.0" y="63.7" fill="#e2e8f0" font-size="13" text-anchor="middle">컵</text>
+  <text x="250.0" y="63.7" fill="#e2e8f0" font-size="13" text-anchor="middle">모자</text>
   <rect x="208.0" y="190.0" width="84.0" height="38.0" rx="6" fill="#111a2e" fill-opacity="1" stroke="#334155" stroke-width="1.5"/>
   <text x="250.0" y="213.7" fill="#e2e8f0" font-size="13" text-anchor="middle">빨간</text>
   <text x="250.0" y="250.0" fill="#94a3b8" font-size="12" text-anchor="middle">위치 2</text>
   <line x1="250.0" y1="150.0" x2="250.0" y2="82.0" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#a94a3b8)"/>
   <rect x="328.0" y="40.0" width="84.0" height="38.0" rx="6" fill="#111a2e" fill-opacity="1" stroke="#f59e0b" stroke-width="1.5"/>
-  <text x="370.0" y="63.7" fill="#e2e8f0" font-size="13" text-anchor="middle">집어</text>
+  <text x="370.0" y="63.7" fill="#e2e8f0" font-size="13" text-anchor="middle">쓴</text>
   <rect x="328.0" y="190.0" width="84.0" height="38.0" rx="6" fill="#111a2e" fill-opacity="1" stroke="#f59e0b" stroke-width="1.5"/>
-  <text x="370.0" y="213.7" fill="#e2e8f0" font-size="13" text-anchor="middle">컵</text>
+  <text x="370.0" y="213.7" fill="#e2e8f0" font-size="13" text-anchor="middle">모자</text>
   <text x="370.0" y="250.0" fill="#94a3b8" font-size="12" text-anchor="middle">위치 3</text>
   <line x1="370.0" y1="150.0" x2="370.0" y2="82.0" stroke="#f59e0b" stroke-width="1.8" marker-end="url(#af59e0b)"/>
   <rect x="448.0" y="40.0" width="84.0" height="38.0" rx="6" fill="#111a2e" fill-opacity="1" stroke="#334155" stroke-width="1.5"/>
   <text x="490.0" y="63.7" fill="#e2e8f0" font-size="13" text-anchor="middle">&lt;eos&gt;</text>
   <rect x="448.0" y="190.0" width="84.0" height="38.0" rx="6" fill="#111a2e" fill-opacity="1" stroke="#334155" stroke-width="1.5"/>
-  <text x="490.0" y="213.7" fill="#e2e8f0" font-size="13" text-anchor="middle">집어</text>
+  <text x="490.0" y="213.7" fill="#e2e8f0" font-size="13" text-anchor="middle">쓴</text>
   <text x="490.0" y="250.0" fill="#94a3b8" font-size="12" text-anchor="middle">위치 4</text>
   <line x1="490.0" y1="150.0" x2="490.0" y2="82.0" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#a94a3b8)"/>
   <rect x="88.0" y="112.0" width="444.0" height="38.0" rx="8" fill="#111a2e" fill-opacity="1" stroke="#e2e8f0" stroke-width="1.5"/>
@@ -44,5 +44,5 @@
   <line x1="490.0" y1="188.0" x2="490.0" y2="152.0" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#a94a3b8)"/>
   <text x="560.0" y="136.0" fill="#f59e0b" font-size="12" text-anchor="start">위치 3:</text>
   <text x="560.0" y="152.0" fill="#f59e0b" font-size="12" text-anchor="start">앞 세 칸만</text>
-  <text x="560.0" y="168.0" fill="#f59e0b" font-size="12" text-anchor="start">보고 집어</text>
+  <text x="560.0" y="168.0" fill="#f59e0b" font-size="12" text-anchor="start">보고 쓴</text>
 </svg>

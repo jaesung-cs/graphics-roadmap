@@ -4,7 +4,7 @@ title: ResNet
 branch: vision
 requires: [cnn]
 hours: 2
-summary: 층을 깊게 쌓은 CNN 이 학습 사진조차 덜 맞히는 degradation 을 입력을 출력에 더하는 residual connection 으로 푼 ResNet. batch normalization, BasicBlock 과 bottleneck block, ResNet-18·50 의 구조, pretrained backbone 과 fine-tuning, ACT·Diffusion Policy 의 ResNet-18 encoder
+summary: 층을 깊게 쌓은 CNN 이 학습 사진조차 덜 맞히는 degradation 을 입력을 출력에 더하는 residual connection 으로 푼 ResNet. batch normalization, BasicBlock 과 bottleneck block, ResNet-18·50 의 구조, pretrained backbone 과 fine-tuning, GroupNorm 을 쓰는 Stable Diffusion U-Net 의 residual block
 papers:
   - title: "Deep Residual Learning for Image Recognition"
     authors: Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun
@@ -22,22 +22,22 @@ papers:
 
 # ResNet
 
-로봇 카메라 사진에서 컵과 손잡이와 사람 손을 가려내려면 CNN 을 수십 층으로 깊게 쌓아야 한다. 그런데 2015년 Microsoft Research 의
+사진에서 고양이의 귀와 수염과 털 무늬를 가려내려면 CNN 을 수십 층으로 깊게 쌓아야 한다. 그런데 2015년 Microsoft Research 의
 실험에서 34 층 CNN 은 18 층 CNN 보다 처음 보는 사진은 물론 학습에 쓴 사진에서도 더 많이 틀렸다. 층을 늘렸는데 왜 학습 사진조차
 덜 맞히게 될까?
 
 이 실험을 한 Kaiming He 등은 층 두세 개마다 입력을 출력에 그대로 더하는 연결을 넣어 이 문제를 풀었고, 이렇게 만든 network 가
-ResNet 이다. LeRobot 의 ACT 와 Diffusion Policy 도 기본 설정에서 ResNet-18 로 카메라 사진을 읽는다.
+ResNet 이다. Stable Diffusion 의 U-Net 도 이 연결을 넣은 residual block 을 쌓아 만든다.
 
 ## 학습 목표
 
 - 깊은 plain network 의 degradation 이 overfitting 과 다른 이유와, residual connection 이 identity 와 gradient 의 길을 만드는 방식을
   설명할 수 있다
-- batch normalization 이 학습 때와 평가 때 다른 통계를 쓰는 이유와, 작은 batch 로 학습하는 로봇 policy 가 FrozenBatchNorm 이나
-  GroupNorm 을 쓰는 이유를 설명할 수 있다
+- batch normalization 이 학습 때와 평가 때 다른 통계를 쓰는 이유와, 작은 batch 로 학습하는 Stable Diffusion 의 U-Net 이 GroupNorm 을 쓰는
+  이유를 설명할 수 있다
 - ResNet-18 과 ResNet-50 을 block 과 stage 로 따라가며 층마다 출력 모양과 parameter 수를 셀 수 있다
-- pretrained backbone 에 새 head 를 붙여 freeze 하거나 fine-tuning 하는 방법과, ACT·Diffusion Policy 가 ResNet-18 을 image encoder 로
-  쓰는 방식을 설명할 수 있다
+- pretrained backbone 에 새 head 를 붙여 freeze 하거나 fine-tuning 하는 방법과, Stable Diffusion 의 `ResnetBlock2D` 가 BasicBlock 과 다른 점을
+  설명할 수 있다
 
 ## degradation
 
@@ -215,8 +215,8 @@ He 등이 plain 망과 층 수·parameter 수가 같은 ResNet 을 만들어 비
 
 CIFAR-10 에서는 1202 층 ResNet 도 training error 가 0.1% 아래로 내려갔다. ResNet 여러 개를 합친 모델은 2015년 ImageNet 대회(ILSVRC) 분류 부문에서 1 위를 했다.
 
-로봇 policy 에도 residual connection 이 들어 있다. LeRobot 의 ACT 구현은 Transformer 층마다 층의 출력에 입력을 더하고, Diffusion
-Policy 의 noise 예측 network 는 `DiffusionConditionalResidualBlock1d` 라는 residual block 을 쌓아 만든다.
+그림 생성 모델에도 residual connection 이 들어 있다. Stable Diffusion 의 U-Net 은 residual block 을 쌓아 만들고, 그 사이의 Transformer 층도
+층마다 출력에 입력을 더한다.
 
 <details><summary><b>심화: 두 block 의 길 네 개와 block 안 weight 의 gradient</b></summary>
 
@@ -364,8 +364,8 @@ channel 마다 하나씩 $C$ 개다. batch 32, channel 64, 56×56 feature map �
 
 ### 학습 때와 평가 때의 통계
 
-학습 때는 batch 마다 그 batch 의 평균과 분산으로 정규화하지만, 로봇에서 policy 를 실행할 때는 카메라 사진이 한 장씩 들어오고 같은
-사진의 결과가 함께 들어온 사진에 따라 바뀌어서도 안 된다. 그래서 학습하는 동안 batch 의 평균과 분산을 moving average(지난 평균과
+학습 때는 batch 마다 그 batch 의 평균과 분산으로 정규화하지만, 학습을 마친 모델로 사진을 분류할 때는 사진이 한 장씩 들어오기도 하고
+같은 사진의 결과가 함께 들어온 사진에 따라 바뀌어서도 안 된다. 그래서 학습하는 동안 batch 의 평균과 분산을 moving average(지난 평균과
 새 값을 일정 비율로 섞는 평균)로 따로 쌓아 두었다가, 평가 때는 그 값을 고정해 쓴다.
 
 $$
@@ -376,8 +376,8 @@ $\mu_{\text{run}}$ 은 쌓아 둔 평균(running mean)이고 $\mu_{\mathcal B}$ 
 mean 이 데이터 전체의 평균에 가까워진다. PyTorch 는 섞는 비율 0.1 을 BatchNorm 의 `momentum` 이라고 부르는데, optimizer 의 momentum 과는 이름만 같은 다른
 숫자다.
 
-PyTorch 는 `model.eval()` 로 평가 모드로 바꿔야 쌓아 둔 통계를 쓰기 때문에, 이를 빠뜨리고 로봇에서 실행하면 같은 장면에서도 함께
-계산한 사진에 따라 다른 action 이 나온다.
+PyTorch 는 `model.eval()` 로 평가 모드로 바꿔야 쌓아 둔 통계를 쓰기 때문에, 이를 빠뜨리고 실행하면 같은 사진에서도 함께 계산한 사진에
+따라 다른 답이 나온다.
 
 **확인 문제.** running mean 이 2 이고 이번 batch 평균이 12 면 새 running mean 은?
 
@@ -406,9 +406,8 @@ batch 가 작으면 평균과 분산이 batch 마다 크게 흔들린다. 사진
 | BatchNorm | 23.6% | 23.7% | 24.8% | 27.3% | 34.7% |
 | GroupNorm | 24.1% | 24.2% | 24.0% | 24.2% | 24.1% |
 
-로봇 policy 는 사진이 크고 카메라가 여러 대라 batch 를 작게 잡는 경우가 많은데, ACT 논문의 batch 는 8 이고 LeRobot 학습 설정의 기본
-batch 도 8 이다. 그래서 로봇 policy 는 BatchNorm 대신 [로봇 policy 의 ResNet-18 encoder](#로봇-policy-의-resnet-18-encoder) 절에서 볼
-FrozenBatchNorm 이나 GroupNorm 을 쓰기도 한다.
+그림 생성 모델은 그림이 크고 parameter 가 많아 GPU 하나에 올리는 batch 를 작게 잡는 경우가 많다. 그래서 Stable Diffusion 의 U-Net 은
+BatchNorm 대신 [Stable Diffusion U-Net 의 residual block](#stable-diffusion-u-net-의-residual-block) 절에서 볼 GroupNorm 을 쓴다.
 
 ## BasicBlock 과 bottleneck block
 
@@ -562,9 +561,9 @@ ResNet-18 layer1 의 block 하나는 $2 \times (64 \times 64 \times 9) + 2 \time
 network 는 입력을 feature 로 바꾸는 앞부분 **backbone** 과, feature 를 원하는 출력으로 바꾸는 뒷부분 **head** 로 나눠 볼 수 있다.
 ResNet-18 에서는 global average pooling 이 512 개를 내는 곳까지가 backbone 이고 fc 가 head 다. ImageNet 으로 학습해 둔 parameter 값을
 **pretrained weight** 라고 하는데, 그 앞쪽 stage 의 filter 는 선과 색의 경계에 반응하고 뒤쪽 stage 의 filter 는 바퀴나 손잡이 같은
-물체의 부분에 반응한다. 로봇 카메라 사진도 같은 세상을 찍은 것이라 이 filter 를 가져다 쓸 수 있다.
+물체의 부분에 반응한다. 다른 일에 쓸 사진도 같은 세상을 찍은 것이라 이 filter 를 가져다 쓸 수 있다.
 
-로봇이 물체 10 종류를 가려내야 한다면 ImageNet 용 fc(512 → 1000)를 떼고 512 → 10 짜리 새 head 를 붙인다. 이렇게 다른 데이터로 학습한
+꽃 사진을 10 종류로 가려내야 한다면 ImageNet 용 fc(512 → 1000)를 떼고 512 → 10 짜리 새 head 를 붙인다. 이렇게 다른 데이터로 학습한
 weight 를 가져다 새 일에 쓰는 것을 **transfer learning** 이라고 한다.
 
 ![사진을 숫자 512 개로 바꾸는 backbone(11,176,512 개) 뒤에서 ImageNet head 512 → 1000 을 떼고 새 head 512 → 10(5,130 개)을 붙인다](figures/backbone-head.svg)
@@ -578,26 +577,16 @@ weight 를 가져다 새 일에 쓰는 것을 **transfer learning** 이라고 �
 | 처음부터 학습 | 무작위 값에서 출발 | 새로 학습 | 11,181,642 |
 
 11,181,642 는 backbone 11,176,512 개와 head $512 \times 10 + 10 = 5{,}130$ 개를 더한 값이다. freeze 는 학습이 빠르지만, ImageNet 의
-feature 가 그 일에 맞지 않으면 head 만 학습해서는 그 차이를 바로잡을 수 없다. Diffusion Policy 논문의 저자들은 시뮬레이션 과제 robomimic
-Square(사각 고리를 막대에 끼우는 과제)에서 ImageNet-21k 로 pretraining 한 ResNet-18 encoder 를 세 방식으로 비교했다.
-
-| encoder 학습 방식 | 성공률 |
-| --- | --- |
-| 처음부터 학습 | 0.94 |
-| pretrained, freeze | 0.58 |
-| pretrained, fine-tuning (policy 보다 10 배 작은 learning rate) | 0.92 |
-
-freeze 한 encoder 만 성공률이 크게 떨어졌는데, 저자들은 이 policy 에 필요한 사진 요약이 흔한 pretraining 으로 얻는 요약과 다르기
-때문이라고 해석했다. ACT 는 pretrained ResNet-18 을 fine-tuning 하는데, 원 구현과 LeRobot 모두 backbone 의 learning rate 를 policy 의
-나머지 부분과 같은 1e-5 로 둔다.
+feature 가 그 일에 맞지 않으면 head 만 학습해서는 그 차이를 바로잡을 수 없다. fine-tuning 은 backbone 까지 고쳐서 이 차이를 줄이지만,
+pretrained weight 가 이미 쓸 만한 값이라 크게 흔들지 않도록 learning rate 를 작게 잡는다.
 
 ### pretrained weight 의 입력 전처리
 
 torchvision 의 ResNet-18 weight 는 사진을 256 으로 줄여 가운데 224×224 를 자르고, 0 ~ 1 로 바꾼 뒤 channel 마다 평균 (0.485, 0.456, 0.406) 을 빼고 표준편차 (0.229, 0.224, 0.225) 로 나눈 입력으로 학습했다.
-0 ~ 255 그대로의 사진을 넣으면 첫 층이 받는 값의 크기가 학습 때와 달라져 pretrained filter 가 제대로 반응하지 않는다. LeRobot 은
-`use_imagenet_stats` 가 기본으로 켜져 있어 카메라 사진을 이 ImageNet 평균과 표준편차로 정규화한다.
+0 ~ 255 그대로의 사진을 넣으면 첫 층이 받는 값의 크기가 학습 때와 달라져 pretrained filter 가 제대로 반응하지 않는다. 그래서
+pretrained weight 를 쓸 때는 새 사진도 같은 평균과 표준편차로 정규화한다.
 
-**확인 문제.** ResNet-18 backbone 위에 관절 각도 7 개를 내는 head(Linear 512 → 7)를 붙이면 head 의 parameter 는 몇 개이고, freeze
+**확인 문제.** ResNet-18 backbone 위에 꽃 7 종류의 점수를 내는 head(Linear 512 → 7)를 붙이면 head 의 parameter 는 몇 개이고, freeze
 방식으로 학습하면 학습하는 parameter 는 모두 몇 개일까?
 
 <details><summary>답 보기</summary>
@@ -610,55 +599,38 @@ freeze 는 backbone 을 고정하므로 학습하는 parameter 도 3,591 개다.
 
 </details>
 
-## 로봇 policy 의 ResNet-18 encoder
+## Stable Diffusion U-Net 의 residual block
 
-policy 는 지금 보이는 것(observation)을 받아 다음 행동(action)을 내는 모델이고, 사진을 policy 가 쓸 숫자로 바꾸는 부분을 image encoder
-라고 한다. ACT 와 Diffusion Policy 는 둘 다 ResNet-18 을 image encoder 로 쓰지만
-feature 를 꺼내는 방식과 normalization 이 다르다.
+Stable Diffusion 의 [U-Net](../unet/README.md) 도 residual block 을 쌓아 만든다. diffusers 의 `ResnetBlock2D` 는 이 강의의 BasicBlock 과 모양이
+같지만 두 가지가 다르다. BatchNorm 대신 channel 을 32 묶음으로 나누는 GroupNorm 을 쓰고, 두 conv 사이에서 지금이 noise 를 걷어 내는 몇 번째
+단계인지를 나타내는 숫자(time embedding)를 더한다.
 
-![ACT 는 480×640 사진을 512×15×20 feature map 으로 줄여 token 300 개로 쓰고, Diffusion Policy 는 96×96 사진을 512×3×3 으로 줄여 spatial softmax 로 keypoint 32 개를 뽑는다](figures/robot-encoder.svg)
+| 순서 | ResNet-18 의 BasicBlock | Stable Diffusion 의 `ResnetBlock2D` |
+| --- | --- | --- |
+| 1 | 3×3 conv | GroupNorm(32 묶음) → SiLU |
+| 2 | BatchNorm → ReLU | 3×3 conv |
+| 3 | 3×3 conv | time embedding 을 channel 마다 더함 |
+| 4 | BatchNorm | GroupNorm(32 묶음) → SiLU → 3×3 conv |
+| 5 | 입력을 더한 뒤 ReLU | 입력을 더함. channel 수가 다르면 입력을 1×1 conv 로 맞춘 뒤 더한다 |
 
-### ACT
+SiLU 는 ReLU 처럼 양수 쪽은 거의 그대로 내보내고 음수 쪽은 0 근처로 줄이는 매끄러운 activation function 이다. 정규화를 conv 앞에 두는 순서는
+He 등의 2016 년 후속 논문(Identity Mappings in Deep Residual Networks)이 제안한 pre-activation 순서와 같다. 맨 끝의 덧셈이 그대로 남아서, U-Net
+에서도 block 의 출력이 입력을 그대로 담고 gradient 가 weight 를 거치지 않고 앞 층으로 전해진다.
 
-ACT 는 카메라 4 대가 찍은 480×640 사진을 ResNet-18 에 넣는다. 가로세로가 32 분의 1 이 되므로 layer4 의 출력은 세로
-$480 \div 32 = 15$, 가로 $640 \div 32 = 20$ 인 $512 \times 15 \times 20$ 이고, ACT 는 global average pooling 을 하지 않고 이 feature map 의 300 칸을 Transformer
-에 넣을 token 300 개로 쓴다. 칸마다 token 을 두면 컵이 사진의 어느 구역에 있는지가 남지만, 평균을 내 512 개로 줄이면 그 위치가
-사라진다. LeRobot 구현은 layer4 의 512 channel 을 1×1 conv 로 Transformer 의 폭 `dim_model` = 512 에 맞추므로, `vision_backbone` 을
-ResNet-50 으로 바꾸면 같은 1×1 conv 가 2048 channel 을 512 로 줄인다.
+GroupNorm 은 사진 한 장 안에서 평균과 분산을 구하므로 batch 크기의 영향을 받지 않는다. 512×512 그림을 64×64 latent 로 줄여 다루는 U-Net 도 parameter 와
+activation 이 커서 GPU 하나에 올리는 batch 가 작은데, 이때 이 성질이 쓸모 있다. diffusers 의 학습 예제 README 에 실린 명령도 batch 크기를
+1 로 둔다.
 
-ACT 의 ResNet-18 은 torchvision 의 ImageNet weight(`ResNet18_Weights.IMAGENET1K_V1`)에서 출발하고, BatchNorm 자리에 FrozenBatchNorm 을
-쓴다. FrozenBatchNorm 은 ImageNet 학습 때 쌓아 둔 running mean·running variance 와 $\gamma$·$\beta$ 를 모두 고정한 BatchNorm 이다. 예를
-들어 쌓아 둔 평균이 2, 분산이 4, $\gamma = 3$, $\beta = 1$ 이면 입력 6 은 batch 에 무엇이 함께 있든 언제나 $3 \times (6 - 2) \div 2 + 1 = 7$ 이 된다. conv 의 weight 는 fine-tuning 으로 고치되 정규화 숫자는 고정하므로, batch 8 로
-학습해도 통계가 흔들리지 않는다.
-
-### Diffusion Policy
-
-Diffusion Policy 논문의 저자들은 ResNet-18 을 pretrained weight 없이 처음부터 학습하면서 두 곳을 바꿨다. global average pooling 자리에는
-channel 마다 값이 큰 칸의 위치 $(x, y)$ 를 뽑는 spatial softmax 를 두었고, BatchNorm 은 GroupNorm 으로 바꿨다. GroupNorm 은 사진 한
-장 안에서 channel 을 몇 개씩 묶어 그 묶음의 값으로 평균과 분산을 구하므로, batch 에 다른 사진이 몇 장 있든 결과가 같다. 저자들은
-weight 의 moving average 를 따로 두는 EMA 와 함께 쓸 때 이 변경이 중요하다고 적었다. LeRobot 구현은 channel 16 개를 한 묶음으로 두어서,
-64 channel 층은 묶음이 4 개이고 512 channel 층은 32 개다.
-
-![BatchNorm 은 channel 하나를 batch 의 모든 사진에서 모으고, GroupNorm 은 사진 한 장 안의 channel 묶음 하나를 모은다. FrozenBatchNorm 은 저장해 둔 숫자로 입력 6 을 언제나 7 로 바꾼다](figures/norm-compare.svg)
-
-LeRobot 의 PushT 데이터는 사진이 96×96 이라 layer4 출력이 $512 \times 3 \times 3$ 이다. LeRobot 구현은 1×1 conv 로 512 channel 을 32
-channel 로 줄인 뒤 channel 마다 위치 $(x, y)$ 하나를 뽑는데, 이 위치를 keypoint 라고 한다. keypoint 가 32 개라 사진 한 장은 숫자
-$32 \times 2 = 64$ 개가 된다. spatial softmax 의 계산은 Diffusion Policy 강의에서 다룬다.
-
-LeRobot 의 Diffusion Policy 기본 설정은 논문과 달리 ImageNet weight 에서 출발하고 BatchNorm 을 그대로 둔다. `use_group_norm` 을 켠 채
-pretrained weight 를 지정하면 오류를 낸다. pretrained weight 의 conv weight 와 $\gamma$·$\beta$ 는 BatchNorm 통계로 정규화한 값에 맞춰
-학습됐는데, GroupNorm 은 다른 값들로 평균과 분산을 구해서 다음 층이 받는 값이 달라지기 때문이다.
-
-**확인 문제.** FrozenBatchNorm 의 쌓아 둔 평균이 1, 분산이 9, $\gamma = 2$, $\beta = 0$ 이면 입력 7 의 출력은? batch 에 다른 사진이 함께
-들어오면 달라질까?
+**확인 문제.** channel 이 320 개인 feature map 에 32 묶음 GroupNorm 을 쓰면 묶음 하나에 channel 이 몇 개 들어가고, 64×64 크기의 사진 한 장에서
+묶음 하나의 평균은 숫자 몇 개로 구하는가?
 
 <details><summary>답 보기</summary>
 
-1. 표준편차: $\sqrt 9 = 3$
-2. 정규화: $(7 - 1) \div 3 = 2$
-3. $\gamma$·$\beta$: $2 \times 2 + 0 = 4$
+① 묶음 하나의 channel: $320 \div 32 = 10$ 개
 
-답: 4 다. 고정된 숫자만 쓰므로 batch 에 무엇이 함께 들어와도 같다.
+② 평균에 쓰는 숫자: $10 \times 64 \times 64 = 40{,}960$ 개
+
+batch 에 사진이 몇 장 있든 이 숫자는 같다.
 
 </details>
 
@@ -667,14 +639,15 @@ pretrained weight 를 지정하면 오류를 낸다. pretrained weight 의 conv 
 - 깊은 plain network 는 학습 사진에서조차 더 많이 틀리는 degradation 을 보인다. residual block $y = \mathcal F(x) + x$ 는 weight 를 0
   으로 보내면 identity 가 되고, gradient 비율이 $1 + \frac{\partial \mathcal F}{\partial x}$ 라서 weight 를 거치지 않는 길이 언제나 남는다
 - BatchNorm 은 channel 마다 batch 의 값으로 평균 0, 분산 1 을 맞춘 뒤 $\gamma$·$\beta$ 로 퍼진 정도와 위치를 다시 정하고, 평가 때는
-  학습 중 쌓아 둔 통계를 쓴다. batch 가 작으면 통계가 흔들려서 ACT 는 FrozenBatchNorm 을 쓰고 Diffusion Policy 논문은 GroupNorm 을 쓴다
+  학습 중 쌓아 둔 통계를 쓴다. batch 가 작으면 통계가 흔들려서, batch 가 작은 Stable Diffusion 의 U-Net 은 사진 한 장 안에서 통계를 구하는
+  GroupNorm 을 쓴다
 - ResNet-18 은 BasicBlock 8 개로 사진을 숫자 512 개로 줄이고, ResNet-50 은 bottleneck block 16 개로 2048 개로 줄인다. pretrained
-  backbone 은 fc 를 떼고 새 head 를 붙여 freeze 하거나 fine-tuning 해서 쓰는데, ACT 는 fine-tuning 한 ResNet-18 의
-  $512 \times 15 \times 20$ feature map 을 token 300 개로 쓴다
+  backbone 은 fc 를 떼고 새 head 를 붙여 freeze 하거나 fine-tuning 해서 쓴다. Stable Diffusion 의 `ResnetBlock2D` 는 GroupNorm 과 time
+  embedding 을 넣은 residual block 이다
 
 ResNet 은 convolution 으로 가까운 칸끼리만 계산하므로, 사진에서 멀리 떨어진 두 구역의 관계는 층을 많이 쌓아야 반영된다. 사진을 patch
-로 잘라 patch 끼리 서로 참고하게 하는 모델은 [ViT](../vit/README.md) 에서 다룬다. ResNet 의 feature map 을 token 으로 쓰는 policy 는
-ACT 에서 다루고, CNN 의 image token 에 지시 문장을 섞는 policy 는 RT-1 에서 다룬다.
+로 잘라 patch 끼리 서로 참고하게 하는 모델은 [ViT](../vit/README.md) 에서 다룬다. residual block 을 쌓아 noise 를 맞히는 network 는
+[U-Net](../unet/README.md) 에서 다룬다.
 
 ## 참고 자료
 
@@ -687,10 +660,8 @@ ACT 에서 다루고, CNN 의 image token 에 지시 문장을 섞는 policy 는
 - Shibani Santurkar et al., [How Does Batch Normalization Help Optimization?](https://arxiv.org/abs/1805.11604) (2018) — BatchNorm 의 효과와
   internal covariate shift 의 관계를 따진 실험
 - Yuxin Wu, Kaiming He, [Group Normalization](https://arxiv.org/abs/1803.08494) (2018) — GroupNorm 의 정의와 batch 크기별 error(Table 2)
-- Cheng Chi et al., [Diffusion Policy](https://arxiv.org/abs/2303.04137) (2023) — 3.2절이 ResNet-18 encoder 의 변경, Table 5 가 encoder
-  학습 방식 비교다
 - torchvision, [`resnet18`](https://docs.pytorch.org/vision/stable/models/generated/torchvision.models.resnet18.html)·[`resnet50`](https://docs.pytorch.org/vision/stable/models/generated/torchvision.models.resnet50.html)
   문서 — pretrained weight 의 정확도, parameter 수, 입력 전처리
 - PyTorch, [nn.BatchNorm2d](https://docs.pytorch.org/docs/stable/generated/torch.nn.BatchNorm2d.html) — `momentum`·`eps` 와 running 통계의 갱신 식
-- LeRobot, [`modeling_act.py`](https://github.com/huggingface/lerobot/blob/main/src/lerobot/policies/act/modeling_act.py)·[`modeling_diffusion.py`](https://github.com/huggingface/lerobot/blob/main/src/lerobot/policies/diffusion/modeling_diffusion.py)
-  — ACT 의 FrozenBatchNorm·1×1 conv token 과 Diffusion Policy 의 `DiffusionRgbEncoder` 구현
+- diffusers, [`models/resnet.py`](https://github.com/huggingface/diffusers/blob/main/src/diffusers/models/resnet.py) — `ResnetBlock2D` 의
+  GroupNorm(기본 32 묶음)·time embedding·shortcut 구현

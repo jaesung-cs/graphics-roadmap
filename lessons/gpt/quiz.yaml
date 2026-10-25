@@ -278,56 +278,54 @@
         배가 된다. 그래서 가로축을 log 눈금으로 그리면 곧은 선에 가깝다. loss 가 절반이 된다면 0.95 배보다 훨씬 빠르게 줄어야 한다. 보고된
         범위에서는 loss 가 어느 크기에서 멈추지 않고 계속 줄었다. 모델이 커질수록 loss 가 커진다는 것은 관찰과 반대다.
     - question: |
-        parameter 가 약 70 억 개인 모델을 숫자 하나에 2 byte 인 bfloat16 으로 GPU 에 올리면 weight 만으로 메모리가 대략 얼마나 필요한가?
+        parameter 가 120 억 개인 DALL·E 의 Transformer 를 숫자 하나에 2 byte 인 16-bit 로 저장하면 weight 만으로 메모리가 대략 얼마나 필요한가?
       choices:
-        - '약 14 GB 다. parameter 수에 숫자 하나의 byte 수를 곱한다'
-        - '약 7 GB 다. bfloat16 도 parameter 하나를 1 byte 에 담기 때문이다'
-        - '약 28 GB 다. bfloat16 도 숫자 하나에 4 byte 를 쓰기 때문이다'
-        - '약 700 MB 다. 계산에 쓰이는 parameter 만 메모리에 올리기 때문이다'
+        - '약 24 GB 다. parameter 수에 숫자 하나의 byte 수를 곱한다'
+        - '약 12 GB 다. 16-bit 도 parameter 하나를 1 byte 에 담기 때문이다'
+        - '약 48 GB 다. 16-bit 도 숫자 하나에 4 byte 를 쓰기 때문이다'
+        - '약 1.2 GB 다. 계산에 쓰이는 parameter 만 메모리에 올리기 때문이다'
       answer: 0
       explanation: |
-        weight 의 메모리는 parameter 수 × 숫자 하나의 byte 수라서 70 억 × 2 byte = 140 억 byte, 약 14 GB 다. OpenVLA 논문에 따르면 bfloat16
-        으로 올릴 때 GPU 메모리가 15 GB 필요하다. parameter 하나가 1 byte 인 것은 8-bit 로 줄였을 때다. 숫자 하나에 4 byte 를 쓰는 것은 float32
-        이고 bfloat16 은 2 byte 다. token 하나를 만들 때마다 parameter 가 거의 모두 쓰이므로 일부만 올릴 수 없다.
+        weight 의 메모리는 parameter 수 × 숫자 하나의 byte 수라서 120 억 × 2 byte = 240 억 byte, 약 24 GB 다. DALL·E 논문에도 16-bit 로
+        저장하면 약 24 GB 라서 16 GB 인 V100 한 장에 올라가지 않았다고 적혀 있다. parameter 하나가 1 byte 인 것은 8-bit 로 줄였을 때다. 숫자 하나에 4 byte 를 쓰는 것은 float32
+        이고 16-bit 는 2 byte 다. token 하나를 만들 때마다 parameter 가 거의 모두 쓰이므로 일부만 올릴 수 없다.
 
-- topic: vla-action-tokens
-  title: language model 위에서 생성하는 action token
+- topic: image-tokens
+  title: language model 위에서 생성하는 그림 token
   variants:
     - question: |
-        RT-2 나 OpenVLA 는 language model 의 vocabulary 로 로봇 행동을 낸다. 연속된 행동 값은 어떻게 token 으로 바꾸는가?
+        DALL·E 는 language model 처럼 vocabulary 의 token 만 고를 수 있는 Transformer 로 그림을 그린다. 256×256 그림은 어떻게 token 으로 바꾸는가?
       choices:
-        - '행동 값의 실수를 "0.123" 같은 문자열로 적어, 글자처럼 BPE tokenizer 로 잘라 낸다'
-        - '행동 값을 logit 자리에 그대로 넣어, softmax 를 거친 값을 행동으로 내보낸다'
-        - 'vocabulary 에 행동 값마다 새 token 을 추가해, 나올 수 있는 값을 모두 token 으로 만든다'
-        - '차원마다 범위를 256 개 bin 으로 나누고, bin 하나를 token 하나에 짝짓는다'
-      answer: 3
-      explanation: |
-        language model 은 vocabulary 의 token 하나를 고를 수만 있어서, 연속된 값을 바로 낼 수 없다. 그래서 차원마다 범위를 256 개 bin 으로
-        나누고 bin 을 token 에 짝짓는다. RT-2 의 PaLI-X 는 숫자 token 을 썼고, PaLM-E 와 OpenVLA 는 가장 덜 쓰이는 token 256 개를 덮어썼다.
-        실수를 문자열로 적어 자르면 값 하나가 token 여러 개로 갈려 행동 하나의 길이가 들쭉날쭉해진다. logit 은 token 마다 매기는 점수라서 행동
-        값을 넣을 곳이 아니다. 연속된 값은 끝없이 많아서 값마다 token 을 만들 수 없다.
-    - question: |
-        OpenVLA 는 행동 하나를 action token 7 개로 낸다. 행동 하나를 내는 데 forward 를 몇 번 하고, 그것이 로봇에 어떤 영향을 주는가?
-      choices:
-        - 'forward 를 한 번만 한다. 7 개 token 을 한꺼번에 내므로 속도 걱정이 없다'
-        - 'forward 를 7 번 한다. 앞 token 을 붙여야 다음을 고를 수 있어, 1초에 내는 행동 수가 제한된다'
-        - 'forward 를 7 번 하지만 각 forward 가 서로 독립이라 병렬로 돌려 한 번의 시간이면 된다'
-        - 'forward 를 256 번 한다. bin 마다 확률을 따로 계산하므로 7 개 token 보다 훨씬 오래 걸린다'
+        - 'pixel 마다 빨강·초록·파랑 값을 숫자 글자로 적고, 그 글자열을 BPE tokenizer 로 자른다'
+        - '따로 학습한 dVAE 로 그림을 32×32 격자로 줄이고, 칸마다 8,192 가지 가운데 하나의 번호를 token 으로 쓴다'
+        - 'CLIP 의 image encoder 로 그림을 vector 하나로 줄이고, 그 vector 를 token 하나로 쓴다'
+        - '그림을 16×16 pixel 조각으로 잘라, 조각의 pixel 숫자 묶음을 그대로 token 으로 쓴다'
       answer: 1
       explanation: |
-        action token 도 autoregressive 하게 생성하므로, 앞에서 고른 token 을 입력 끝에 붙여야 다음 token 을 고를 수 있다. 그래서 token 7 개에
-        forward 7 번이 차례로 필요하고, OpenVLA 는 RTX 4090 에서 1초에 약 6 번 행동을 낸다. forward 한 번에 7 개를 한꺼번에 내는 방식이 아니다.
-        뒤 token 이 앞 token 에 의존하므로 7 번의 forward 를 서로 독립인 병렬 계산으로 돌릴 수도 없다. bin 256 개의 확률은 forward 한 번의
-        확률표에 함께 들어 있어서 256 번 계산할 필요가 없다.
+        DALL·E 는 1 단계에서 dVAE 를 학습해 256×256 그림을 32×32 칸으로 줄이고, 칸마다 8,192 개 번호 가운데 하나를 고르게 한다. 이 번호가 그대로
+        vocabulary 의 token 이 되어 그림 한 장이 token 1,024 개가 된다. pixel 숫자를 글자로 적으면 token 이 너무 많아진다. vector 하나로 줄이면
+        그림을 되살릴 수 없다. 숫자 묶음 그대로 넣는 patch token 은 번호가 없어서 vocabulary 에서 고를 수 없다.
     - question: |
-        OpenVLA 를 학습시킬 때 loss 는 어떻게 계산하는가?
+        DALL·E 는 그림 한 장을 그림 token 1,024 개로 낸다. 그림 한 장을 그리는 데 forward 를 몇 번 하고, 그 까닭은 무엇인가?
       choices:
-        - '로봇 행동 값과 예측 값의 차이를 제곱해 평균하는 MSE 를 쓴다. 행동이 연속 값이기 때문이다'
-        - '이미지 token 과 지시문 token 까지 포함한 모든 위치의 다음 token 을 맞히는 loss 를 똑같이 더한다'
-        - '시연의 action token 을 정답으로 붙이고, action token 위치에서만 cross-entropy 를 계산한다'
-        - '정답 없이 로봇이 과제에 성공했는지만 보고, 그 보상으로 parameter 를 고친다'
+        - '1 번. causal mask 덕분에 학습 때처럼 forward 한 번에 1,024 개 위치를 모두 채우기 때문이다'
+        - '32 번. 격자의 한 줄 32 개를 forward 한 번에 함께 고르고 줄 수만큼 되풀이하기 때문이다'
+        - '1,024 번. 앞에서 고른 token 을 입력 끝에 붙여야 다음 token 을 고를 수 있기 때문이다'
+        - '8,192 번. vocabulary 의 token 마다 forward 를 한 번씩 해서 점수를 매기기 때문이다'
       answer: 2
       explanation: |
-        OpenVLA 는 language model 학습과 같은 다음 token 맞히기 목표를 쓰고, 논문에 따르면 cross-entropy 를 action token 위치에서만 계산한다.
-        행동을 bin 의 token 으로 바꿨으므로 연속 값의 MSE 가 아니라 token 분류의 cross-entropy 다. 이미지와 지시문은 입력으로 주어질 뿐 맞힐
-        대상이 아니라서 그 위치의 loss 는 더하지 않는다. 사람의 시연이 정답으로 쓰이므로 보상만으로 배우는 학습도 아니다.
+        그림 token 도 autoregressive 하게 생성하므로 앞의 token 이 정해져야 다음 token 의 확률표를 계산할 수 있다. 그래서 token 1,024 개에 forward
+        1,024 번이 차례로 필요하다. causal mask 로 한 번에 계산하는 것은 정답 token 이 모두 주어진 학습 때의 일이다. 격자의 한 줄도 한꺼번에
+        고르지 않는다. vocabulary 전체의 점수는 forward 한 번에 확률표로 한꺼번에 나온다.
+    - question: |
+        DALL·E 를 학습시킬 때 loss 는 어떻게 계산하는가?
+      choices:
+        - '그린 그림과 정답 그림의 pixel 차이를 제곱해 평균하는 MSE 를 쓴다. 그림이 pixel 숫자이기 때문이다'
+        - '글과 그림 token 을 이은 줄의 다음 token cross-entropy 에 글 쪽 1/8, 그림 쪽 7/8 을 곱한다'
+        - '글 token 위치에서만 cross-entropy 를 계산하고, 그림 token 은 dVAE 가 맡으므로 loss 에 넣지 않는다'
+        - '정답 없이 CLIP 이 매긴 점수만 보고, 그 점수가 커지는 쪽으로 parameter 를 고친다'
+      answer: 1
+      explanation: |
+        DALL·E 는 language model 과 같은 다음 token 맞히기 목표를 쓴다. 논문에 따르면 저자들은 그림 쪽에 관심이 있어서 글 token 의 cross-entropy 에 1/8,
+        그림 token 의 cross-entropy 에 7/8 을 곱해 더했다. 그림을 token 으로 바꿨으므로 pixel 의 MSE 가 아니라 token 분류의 cross-entropy 다.
+        그림 token 의 loss 에도 7/8 을 곱해 더하므로 그림 token 을 loss 에서 빼지 않는다. CLIP 은 학습이 끝난 뒤 뽑은 그림 512 장 가운데 하나를 고르는 데 썼다.

@@ -4,7 +4,7 @@ title: GPT-2
 branch: language
 requires: [transformer]
 hours: 2
-summary: 다음 token 을 맞히도록 학습하는 decoder-only Transformer. 정답이 들어 있는 text, cross-entropy, sampling, 크기와 scaling, 같은 생성 방식으로 행동 token 을 내는 VLA
+summary: 다음 token 을 맞히도록 학습하는 decoder-only Transformer. 정답이 들어 있는 text, cross-entropy, sampling, 크기와 scaling, 같은 생성 방식으로 그림 token 을 내는 DALL·E
 papers:
   - title: "Improving Language Understanding by Generative Pre-Training"
     authors: Alec Radford, Karthik Narasimhan, Tim Salimans, Ilya Sutskever
@@ -22,16 +22,19 @@ papers:
     authors: Jared Kaplan, Sam McCandlish, Tom Henighan, Tom B. Brown, Benjamin Chess, Rewon Child, Scott Gray, Alec Radford, Jeffrey Wu, Dario Amodei
     year: 2020
     url: https://arxiv.org/abs/2001.08361
+  - title: "Zero-Shot Text-to-Image Generation"
+    authors: Aditya Ramesh et al.
+    year: 2021
+    url: https://arxiv.org/abs/2102.12092
 ---
 
 # GPT-2
 
-OpenVLA 는 카메라 영상과 지시문을 받아 로봇 팔의 움직임을 내는 모델인데, 논문의 구조 그림을 보면 한가운데에 Llama 2 7B 라는 language
-model 이 있다. 이 language model 은 인터넷의 글을 읽으며 바로 다음에 올 조각 하나를 맞히는 연습만 했다. 다음 조각 하나를 맞힐 줄 아는
-모델이 어떻게 긴 글을 쓰고 로봇의 움직임까지 내게 될까?
+글을 받아 그림을 그리는 DALL·E 에서 그림을 그리는 부분은 language model 과 같은 Transformer 다. language model 은 글을 읽으며 바로
+다음에 올 조각 하나를 맞히는 연습만 한다. 다음 조각 하나를 맞힐 줄 아는 모델이 어떻게 긴 글을 쓰고 그림까지 그리게 될까?
 
 2019 년 OpenAI 가 발표한 GPT-2 는 Transformer 의 decoder 만 쌓은 모델로, 웹 문서 약 800 만 개(40 GB)에서 다음 token 맞히기만 배웠다.
-글을 쓸 때는 맞힌 token 을 입력 끝에 붙여 다시 맞히기를 되풀이하는데, OpenVLA 도 같은 방식으로 로봇 행동 하나를 token 7 개로 하나씩
+글을 쓸 때는 맞힌 token 을 입력 끝에 붙여 다시 맞히기를 되풀이하는데, DALL·E 도 같은 방식으로 그림 한 장을 그림 token 1,024 개로 하나씩
 생성한다.
 
 ## 학습 목표
@@ -39,24 +42,24 @@ model 이 있다. 이 language model 은 인터넷의 글을 읽으며 바로 �
 - 다음 token 맞히기를 사람이 정답을 달지 않은 text 로 학습할 수 있는 이유와, 위치마다 cross-entropy loss 를 구하는 방법을 설명할 수 있다
 - decoder-only 구조를 설명하고, causal mask 를 쓰면 forward 한 번에 위치 수만큼의 문제를 풀 수 있는 이유를 설명할 수 있다
 - greedy decoding·temperature·top-k 가 같은 확률표에서 token 을 고르는 방식을 숫자로 비교할 수 있다
-- GPT-2 의 크기와 scaling 경향, RT-2·OpenVLA 가 language model 위에서 행동 token 을 생성하는 방식을 설명할 수 있다
+- GPT-2 의 크기와 scaling 경향, DALL·E 가 같은 다음 token 생성으로 그림 token 을 내는 방식을 설명할 수 있다
 
 ## 다음 token 의 확률표
 
 [BPE Tokenizer](../tokenizer/README.md) 에서 본 tokenizer 는 text 를 token 이라는 조각으로 자르고, token 마다 vocabulary(쓸 수 있는 token 을
 모두 모아 번호를 붙인 목록) 안의 번호를 붙인다. 이 강의에서는 계산을 쉽게 하려고 단어 하나를 token 하나로 자른다.
 
-로봇에게 내린 지시문 10 개가 모두 "빨간 컵" 으로 시작하고, 그 뒤에 온 token 을 세어 보니 아래와 같았다고 하자.
+그림 설명 글(caption) 10 개가 모두 "빨간 모자" 로 시작하고, 그 뒤에 온 token 을 세어 보니 아래와 같았다고 하자.
 
-| "빨간 컵" 다음 token | 나온 횟수 | 비율 |
+| "빨간 모자" 다음 token | 나온 횟수 | 비율 |
 | --- | --- | --- |
-| 집어 | 6 | $6 \div 10 = 0.6$ |
-| 놓아 | 2 | $2 \div 10 = 0.2$ |
-| 밀어 | 1 | $1 \div 10 = 0.1$ |
-| 던져 | 1 | $1 \div 10 = 0.1$ |
+| 쓴 | 6 | $6 \div 10 = 0.6$ |
+| 벗은 | 2 | $2 \div 10 = 0.2$ |
+| 든 | 1 | $1 \div 10 = 0.1$ |
+| 던진 | 1 | $1 \div 10 = 0.1$ |
 
-비율이 모두 0 과 1 사이이고 더하면 1 이라서 확률로 쓸 수 있다. "집어" 의 비율은 $p(\text{집어} \mid \text{빨간 컵}) = 0.6$ 으로 적고 "앞에
-'빨간 컵' 이 주어졌을 때 다음 token 이 '집어' 일 확률은 0.6" 이라고 읽는데, 세로 막대 $\mid$ 가 " ~ 가 주어졌을 때" 를 뜻한다. 앞에 나온
+비율이 모두 0 과 1 사이이고 더하면 1 이라서 확률로 쓸 수 있다. "쓴" 의 비율은 $p(\text{쓴} \mid \text{빨간 모자}) = 0.6$ 으로 적고 "앞에
+'빨간 모자' 가 주어졌을 때 다음 token 이 '쓴' 일 확률은 0.6" 이라고 읽는데, 세로 막대 $\mid$ 가 " ~ 가 주어졌을 때" 를 뜻한다. 앞에 나온
 token 들을 받아 vocabulary 의 token 마다 다음에 올 확률을 매기는 모델을 **language model** 이라고 하는데, GPT-2 나 LLM(large language model,
 아주 많은 text 로 학습한 큰 language model)이 내는 것도 이런 확률표 한 장이다.
 
@@ -69,52 +72,52 @@ $50{,}257 \times 50{,}257 \approx 25$ 억 가지이고, 실제 글의 앞부분�
 
 | 후보 token | logit $z$ | $e^{z}$ | $e^{z} \div 12.124$ |
 | --- | --- | --- | --- |
-| 집어 | 2.0 | 7.389 | 0.609 |
-| 놓아 | 1.0 | 2.718 | 0.224 |
-| 밀어 | 0.5 | 1.649 | 0.136 |
-| 던져 | $-1.0$ | 0.368 | 0.030 |
+| 쓴 | 2.0 | 7.389 | 0.609 |
+| 벗은 | 1.0 | 2.718 | 0.224 |
+| 든 | 0.5 | 1.649 | 0.136 |
+| 던진 | $-1.0$ | 0.368 | 0.030 |
 | 합 | | 12.124 | 1 (반올림 때문에 0.999) |
 
-![빨간 컵 다음에 올 token 의 확률표 예. 예로 든 지시문 10 개에서 센 집어 0.6, 놓아 0.2, 밀어 0.1, 던져 0.1 을 막대로 그렸고, 옆에 설명을 위해 정한 logit 으로 계산한 확률 0.609, 0.224, 0.136, 0.030 을 나란히 놓았다](figures/next-token-probs.svg)
+![빨간 모자 다음에 올 token 의 확률표 예. 예로 든 설명 글 10 개에서 센 쓴 0.6, 벗은 0.2, 든 0.1, 던진 0.1 을 막대로 그렸고, 옆에 설명을 위해 정한 logit 으로 계산한 확률 0.609, 0.224, 0.136, 0.030 을 나란히 놓았다](figures/next-token-probs.svg)
 
-세어 둔 표와 달리 network 는 처음 보는 앞부분에도 확률표를 내는데, "빨간 머그컵" 처럼 비슷한 앞부분은 network 안에서 비슷한 숫자 묶음으로
+세어 둔 표와 달리 network 는 처음 보는 앞부분에도 확률표를 내는데, "빨간 털모자" 처럼 비슷한 앞부분은 network 안에서 비슷한 숫자 묶음으로
 바뀌어 비슷한 확률표가 나온다.
 
-**확인 문제.** 지시문 20 개가 모두 "파란 공" 으로 시작하고 그 뒤에 "굴려" 가 12 번, "집어" 가 8 번 왔다. $p(\text{굴려} \mid \text{파란 공})$ 은?
+**확인 문제.** 설명 글 20 개가 모두 "파란 공" 으로 시작하고 그 뒤에 "위의" 가 12 번, "옆의" 가 8 번 왔다. $p(\text{위의} \mid \text{파란 공})$ 은?
 
 <details><summary>답 보기</summary>
 
-$12 \div 20 = 0.6$ 이다. "집어" 는 $8 \div 20 = 0.4$ 이고 둘을 더하면 1 이다.
+$12 \div 20 = 0.6$ 이다. "옆의" 는 $8 \div 20 = 0.4$ 이고 둘을 더하면 1 이다.
 
 </details>
 
 ## 정답이 들어 있는 text
 
 분류 모델을 학습시키려면 사진마다 사람이 "이것은 7" 같은 정답(label)을 달아야 하지만, 다음 token 맞히기는 정답이 text 안에 이미 들어 있다.
-지시문 "빨간 컵 집어" 의 앞에는 글의 시작 표시 `<bos>` 를 붙이고 뒤에는 끝 표시 `<eos>` 를 붙인다. 그런 다음 입력 줄을 왼쪽으로 한 칸 밀면
+설명 글 "빨간 모자 쓴" 의 앞에는 글의 시작 표시 `<bos>` 를 붙이고 뒤에는 끝 표시 `<eos>` 를 붙인다. 그런 다음 입력 줄을 왼쪽으로 한 칸 밀면
 정답 줄이 된다. GPT-2 는 두 자리 모두에 special token `<|endoftext|>` 하나를 쓰지만, 이 강의에서는 구분하기 쉽게 둘을 따로 적는다.
 
 | 위치 | 1 | 2 | 3 | 4 |
 | --- | --- | --- | --- | --- |
-| 입력 $x$ | `<bos>` | 빨간 | 컵 | 집어 |
-| 정답 $y$ | 빨간 | 컵 | 집어 | `<eos>` |
+| 입력 $x$ | `<bos>` | 빨간 | 모자 | 쓴 |
+| 정답 $y$ | 빨간 | 모자 | 쓴 | `<eos>` |
 
-위치 3 은 입력의 처음부터 자기 자리까지인 "`<bos>` 빨간 컵" 을 보고 "집어" 를 맞혀야 하고, 위치 1 은 `<bos>` 만 보고 "빨간" 을 맞혀야 한다.
+위치 3 은 입력의 처음부터 자기 자리까지인 "`<bos>` 빨간 모자" 를 보고 "쓴" 을 맞혀야 하고, 위치 1 은 `<bos>` 만 보고 "빨간" 을 맞혀야 한다.
 text 에서 길이가 $T + 1$ 인 조각을 잘라 내면 입력과 정답이 $T$ 개씩 생겨 문제도 $T$ 개 나온다.
 
-![빨간 컵 집어 에서 만든 학습 문제. 입력 bos 빨간 컵 집어 를 왼쪽으로 한 칸 밀면 정답 빨간 컵 집어 eos 가 되고, 위치 3 은 bos 빨간 컵 만 보고 집어 를 맞힌다](figures/next-token.svg)
+![빨간 모자 쓴 에서 만든 학습 문제. 입력 bos 빨간 모자 쓴 을 왼쪽으로 한 칸 밀면 정답 빨간 모자 쓴 eos 가 되고, 위치 3 은 bos 빨간 모자 만 보고 쓴 을 맞힌다](figures/next-token.svg)
 
 사람이 정답을 달지 않고 데이터 안에서 정답을 만들어 학습하는 방식을 **self-supervised learning** 이라고 하는데, 이 방식이면 인터넷의 어떤
 글이든 학습 데이터로 쓸 수 있다. 2018 년의 GPT(GPT-1)는 출판되지 않은 책 7,000 권 남짓을 모은 BooksCorpus 로 학습했고, GPT-2 는 Reddit
 에서 사람들이 추천한 링크를 따라가 모은 웹 문서 800 만 개 남짓, 40 GB 의 text(WebText)로 학습했다.
 
-**확인 문제.** "`<bos>` 공 을 집어 `<eos>`" 는 token 5 개다. 문제는 몇 개 나오고, 마지막 문제의 입력과 정답은?
+**확인 문제.** "`<bos>` 공 을 든 `<eos>`" 는 token 5 개다. 문제는 몇 개 나오고, 마지막 문제의 입력과 정답은?
 
 <details><summary>답 보기</summary>
 
 1. 길이 5 인 조각이라 $T + 1 = 5$, $T = 4$ 이고 문제는 4 개다
-2. 입력 줄은 "`<bos>` 공 을 집어" 이고, 정답 줄은 한 칸 민 "공 을 집어 `<eos>`" 다
-3. 마지막 문제는 "`<bos>` 공 을 집어" 를 보고 `<eos>` 를 맞히는 것이다
+2. 입력 줄은 "`<bos>` 공 을 든" 이고, 정답 줄은 한 칸 민 "공 을 든 `<eos>`" 다
+3. 마지막 문제는 "`<bos>` 공 을 든" 을 보고 `<eos>` 를 맞히는 것이다
 
 </details>
 
@@ -192,15 +195,15 @@ ReLU 는 $x = 0$ 에서 갑자기 꺾이지만 GELU 는 매끄럽게 이어지�
 
 마지막 LayerNorm 을 지난 vector 를 $\mathbf{h}$ 라고 하자. GPT-2 는 $\mathbf{h}$ 에서 logit 을 구할 때 행렬을 따로 두지 않고, token 마다 자기
 token embedding 과 $\mathbf{h}$ 의 dot product 를 그 token 의 logit 으로 쓴다. dot product 는 두 vector 의 첫째 숫자끼리, 둘째 숫자끼리 곱해
-모두 더한 값이다. "빨간 컵" 의 마지막 위치에서 $\mathbf{h} = [2, 1]$ 이 나왔고 네 token 의 embedding 이 아래와 같다고 하자(2차원으로 줄여
+모두 더한 값이다. "빨간 모자" 의 마지막 위치에서 $\mathbf{h} = [2, 1]$ 이 나왔고 네 token 의 embedding 이 아래와 같다고 하자(2차원으로 줄여
 설명을 위해 정한 값이다).
 
 | token | token embedding | dot product 계산 | logit |
 | --- | --- | --- | --- |
-| 집어 | $[1, 0]$ | $2 \times 1 + 1 \times 0$ | 2.0 |
-| 놓아 | $[0, 1]$ | $2 \times 0 + 1 \times 1$ | 1.0 |
-| 밀어 | $[0.5, -0.5]$ | $2 \times 0.5 + 1 \times (-0.5)$ | 0.5 |
-| 던져 | $[-0.5, 0]$ | $2 \times (-0.5) + 1 \times 0$ | $-1.0$ |
+| 쓴 | $[1, 0]$ | $2 \times 1 + 1 \times 0$ | 2.0 |
+| 벗은 | $[0, 1]$ | $2 \times 0 + 1 \times 1$ | 1.0 |
+| 든 | $[0.5, -0.5]$ | $2 \times 0.5 + 1 \times (-0.5)$ | 0.5 |
+| 던진 | $[-0.5, 0]$ | $2 \times (-0.5) + 1 \times 0$ | $-1.0$ |
 
 이 logit 이 앞에서 softmax 한 $[2.0, 1.0, 0.5, -1.0]$ 이다. 입력의 embedding 표와 출력의 행렬을 같은 숫자로 묶어 쓰는 이 방법을 weight tying
 이라고 하고, 2016 년 Press 와 Wolf 가 제안했다.
@@ -214,7 +217,7 @@ dot product 는 두 vector 의 같은 번째 숫자가 함께 클수록 커져�
 
 </details>
 
-**확인 문제.** "컵" 의 token embedding 이 $[0, 1]$ 이고 위치 2 의 position embedding 이 $[0.2, -0.1]$ 이다. "컵" 이 위치 2 에 오면 첫 block 에
+**확인 문제.** "모자" 의 token embedding 이 $[0, 1]$ 이고 위치 2 의 position embedding 이 $[0.2, -0.1]$ 이다. "모자" 가 위치 2 에 오면 첫 block 에
 들어가는 vector 는? position embedding 표가 4 행이면 context length 는?
 
 <details><summary>답 보기</summary>
@@ -226,7 +229,7 @@ dot product 는 두 vector 의 같은 번째 숫자가 함께 클수록 커져�
 
 ## causal mask 와 teacher forcing
 
-"`<bos>` 빨간 컵 집어" 를 넣으면 모델은 위치 4 개에서 동시에 확률표를 내는데, 위치 3 이 맞혀야 할 "집어" 는 위치 4 의 입력으로 이미 들어와
+"`<bos>` 빨간 모자 쓴" 을 넣으면 모델은 위치 4 개에서 동시에 확률표를 내는데, 위치 3 이 맞혀야 할 "쓴" 은 위치 4 의 입력으로 이미 들어와
 있다. self-attention 이 모든 위치를 보게 두면 위치 3 은 정답을 그대로 베낄 수 있으므로, GPT 는 모든 block 의 self-attention 에
 [Transformer](../transformer/README.md) 에서 본 causal mask 를 쓴다. causal mask 는 softmax 전에 자기보다 뒤쪽 위치의 점수를 $-\infty$ 로 바꾼다.
 
@@ -235,11 +238,11 @@ dot product 는 두 vector 의 같은 번째 숫자가 함께 클수록 커져�
 제대로 맞히지 못한다. 위치 4 의 점수를 $-\infty$ 로 바꾸면 $e^{-\infty} = 0$ 이라 그 weight 는 0 이 된다. 남은 세 위치의 weight 는 $e^{z}$ 를
 합 $e^{0} + e^{1} + e^{2} = 11.107$ 로 나눈 0.090, 0.245, 0.665 다.
 
-![bos 빨간 컵 집어 의 4 × 4 causal mask. 행은 query 위치, 열은 key 위치이고 대각선과 그 왼쪽만 열려 있다. 오른쪽은 예로 든 점수 0, 1, 2, 3 에서 위치 3 의 weight 를 mask 없을 때 0.032, 0.087, 0.237, 0.644 와 mask 후 0.090, 0.245, 0.665, 0 으로 비교한 막대](figures/causal-mask.svg)
+![bos 빨간 모자 쓴 의 4 × 4 causal mask. 행은 query 위치, 열은 key 위치이고 대각선과 그 왼쪽만 열려 있다. 오른쪽은 예로 든 점수 0, 1, 2, 3 에서 위치 3 의 weight 를 mask 없을 때 0.032, 0.087, 0.237, 0.644 와 mask 후 0.090, 0.245, 0.665, 0 으로 비교한 막대](figures/causal-mask.svg)
 
 causal mask 를 쓰면 위치 $t$ 의 출력은 위치 1 부터 $t$ 까지의 입력만으로 정해진다. 첫 block 에서 위치 3 의 vector 는 위치 1, 2, 3 만 보고
 고쳐진다. 둘째 block 에서 위치 3 이 참고하는 vector 도 모두 위치 3 까지의 입력으로 만든 것이라, block 을 몇 번 쌓아도 이 성질은 그대로다.
-그래서 "`<bos>` 빨간 컵 집어" 를 한 번 넣어 계산한 결과는 "`<bos>`", "`<bos>` 빨간", "`<bos>` 빨간 컵", "`<bos>` 빨간 컵 집어" 를 따로 넣어
+그래서 "`<bos>` 빨간 모자 쓴" 을 한 번 넣어 계산한 결과는 "`<bos>`", "`<bos>` 빨간", "`<bos>` 빨간 모자", "`<bos>` 빨간 모자 쓴" 을 따로 넣어
 마지막 위치의 확률표를 얻은 결과와 같다. 정답 줄을 입력으로 한꺼번에 넣어 위치마다 다음 token 을 맞히게 하는 이 방식을 **teacher forcing**
 이라고 한다. 입력을 받아 출력까지 한 번 계산하는 것을 forward 라고 하는데, GPT-2 는 길이 1,024 인 조각 512 개를 한 묶음(batch)으로
 학습했으므로 forward 한 번에 다음 token 맞히기 문제를 $1{,}024 \times 512 = 524{,}288$ 개 푼다.
@@ -260,15 +263,15 @@ token 을 바꾸면 달라지는가?
 $\log 0.5 = -0.693$ 이다. $p$ 가 1 이하라 $\log p$ 는 0 이하이므로 마이너스를 붙인 loss 는 0 이상이고, 정답 확률이 1 에 가까울수록 0 에
 가깝다.
 
-"`<bos>` 빨간 컵 집어" 에서 모델이 위치마다 정답에 준 확률이 아래와 같다고 하자. 위치 3 의 0.609 는 앞에서 계산한 확률표의 "집어" 이고,
+"`<bos>` 빨간 모자 쓴" 에서 모델이 위치마다 정답에 준 확률이 아래와 같다고 하자. 위치 3 의 0.609 는 앞에서 계산한 확률표의 "쓴" 이고,
 나머지는 설명을 위해 정한 값이다.
 
 | 위치 | 보는 입력 | 정답 | 정답의 확률 $p$ | loss $-\log p$ |
 | --- | --- | --- | --- | --- |
 | 1 | `<bos>` | 빨간 | 0.5 | 0.693 |
-| 2 | `<bos>` 빨간 | 컵 | 0.8 | 0.223 |
-| 3 | `<bos>` 빨간 컵 | 집어 | 0.609 | 0.496 |
-| 4 | `<bos>` 빨간 컵 집어 | `<eos>` | 0.9 | 0.105 |
+| 2 | `<bos>` 빨간 | 모자 | 0.8 | 0.223 |
+| 3 | `<bos>` 빨간 모자 | 쓴 | 0.609 | 0.496 |
+| 4 | `<bos>` 빨간 모자 쓴 | `<eos>` | 0.9 | 0.105 |
 
 네 loss 의 합은 $0.693 + 0.223 + 0.496 + 0.105 = 1.517$ 이고, 위치 수 4 로 나눈 평균 $1.517 \div 4 \approx 0.379$ 가 이 조각의 loss 다. 식으로는
 아래와 같다.
@@ -287,7 +290,7 @@ $V$ 개 token 에 거의 같은 확률 $1/V$ 를 주므로 첫 loss 는 $-\log(1
 
 | vocabulary | $V$ | 정답 확률 $1/V$ | 처음 loss $\log V$ |
 | --- | --- | --- | --- |
-| 이 강의의 예 (`<bos>`, `<eos>`, 빨간, 컵, 집어, 놓아, 밀어, 던져) | 8 | 0.125 | 2.079 |
+| 이 강의의 예 (`<bos>`, `<eos>`, 빨간, 모자, 쓴, 벗은, 든, 던진) | 8 | 0.125 | 2.079 |
 | Tiny Shakespeare 의 글자 | 65 | 0.0154 | 4.174 |
 | GPT-2 의 BPE token | 50,257 | 0.0000199 | 10.825 |
 
@@ -298,8 +301,8 @@ Shakespeare 희곡 약 111 만 글자를 모은 Tiny Shakespeare 에는 서로 �
 <details><summary><b>심화: logit 의 gradient, train loss 와 validation loss, tokenizer 가 다른 모델의 비교</b></summary>
 
 logit 을 어느 쪽으로 고칠지는 gradient 로 정한다. softmax 뒤에 cross-entropy 를 쓰면 logit 의 gradient 는 그 token 의 확률에서 정답 token 이면
-1 을 빼고 아니면 0 을 뺀 값이다. 그래서 위치 3 에서 집어·놓아·밀어·던져 의 gradient 는 $0.609 - 1 = -0.391$, $0.224$, $0.136$, $0.030$ 이다.
-gradient 의 반대 방향으로 고치므로 정답 "집어" 의 logit 은 올라가고 나머지는 내려간다.
+1 을 빼고 아니면 0 을 뺀 값이다. 그래서 위치 3 에서 쓴·벗은·든·던진 의 gradient 는 $0.609 - 1 = -0.391$, $0.224$, $0.136$, $0.030$ 이다.
+gradient 의 반대 방향으로 고치므로 정답 "쓴" 의 logit 은 올라가고 나머지는 내려간다.
 
 공개 구현 nanoGPT 는 Tiny Shakespeare 의 앞 90% 를 학습에 쓰고(train set), 뒤 10% 는 학습에 쓰지 않고 loss 를 재는 데만 쓴다(validation set).
 약 111 만 글자는 block 6 개짜리 모델에게도 작은 데이터라서, 오래 학습시키면 train loss 는 계속 내려가는데 validation loss 는 어느 순간부터
@@ -370,8 +373,6 @@ $\eta = 0.3$ 으로 바로 시작하면 $w$ 가 $1 \to -2 \to 4 \to -8$ 로 커�
 **흔한 오해.** warmup 을 처음에 learning rate 가 작아 덜 배우는 구간으로만 보기 쉽다. warmup 이 막는 것은 loss 가 가파른 초반에 큰 learning
 rate 가 일으키는 발산이고, 그 덕분에 나중에 큰 learning rate 를 쓸 수 있다.
 
-이미 학습된 모델을 이어서 학습할 때는 warmup 이 꼭 필요하지 않을 수 있다. OpenVLA 의 저자들은 Llama 2 기반의 미리 학습된 모델을 이어서 학습하며
-learning rate 를 0.00002 로 고정했고, warmup 을 넣어도 이득이 없었다고 보고했다.
 
 <details><summary><b>심화: warmup·cosine decay 의 식과 AdamW</b></summary>
 
@@ -430,15 +431,15 @@ Adam 의 update 와 따로 계산하는 AdamW 를 제안했다.
 
 | 단계 | 넣는 입력 | 마지막 위치에서 확률이 가장 큰 token | 고른 token |
 | --- | --- | --- | --- |
-| 1 | `<bos>` 빨간 | 컵 (0.8) | 컵 |
-| 2 | `<bos>` 빨간 컵 | 집어 (0.609) | 집어 |
-| 3 | `<bos>` 빨간 컵 집어 | `<eos>` (0.9) | `<eos>` → 멈춤 |
+| 1 | `<bos>` 빨간 | 모자 (0.8) | 모자 |
+| 2 | `<bos>` 빨간 모자 | 쓴 (0.609) | 쓴 |
+| 3 | `<bos>` 빨간 모자 쓴 | `<eos>` (0.9) | `<eos>` → 멈춤 |
 
-![autoregressive 생성. bos 빨간 을 넣어 컵 을 고르고, bos 빨간 컵 을 넣어 집어 를 고르고, bos 빨간 컵 집어 를 넣어 eos 를 고른 뒤 멈춘다. 고른 token 이 다음 단계 입력의 끝에 붙는다](figures/generate-loop.svg)
+![autoregressive 생성. bos 빨간 을 넣어 모자 를 고르고, bos 빨간 모자 를 넣어 쓴 을 고르고, bos 빨간 모자 쓴 을 넣어 eos 를 고른 뒤 멈춘다. 고른 token 이 다음 단계 입력의 끝에 붙는다](figures/generate-loop.svg)
 
 모델은 위치마다 확률표를 내지만 생성에는 마지막 위치의 표만 쓰고, `<eos>` 가 나오거나 정해 둔 길이에 닿으면 생성을 멈춘다. 학습 때는
 forward 한 번에 위치 수만큼의 문제를 풀었지만, 생성은 앞에서 고른 token 이 있어야 다음 token 을 고를 수 있어서 token 하나마다 forward 를 한
-번씩 차례로 해야 한다. 100 token 을 쓰려면 forward 를 100 번 하고, 행동 하나가 token 7 개인 OpenVLA 는 행동 하나마다 forward 를 7 번 한다.
+번씩 차례로 해야 한다. 100 token 을 쓰려면 forward 를 100 번 하고, 그림 한 장이 token 1,024 개인 DALL·E 는 그림 한 장마다 forward 를 1,024 번 한다.
 입력이 context length 보다 길어지면 position embedding 표의 행이 모자라서, 가장 최근 token 을 context length 만큼만 남겨 넣는다(GPT-2 는
 1,024 개).
 
@@ -454,11 +455,11 @@ forward 한 번에 위치 수만큼의 문제를 풀었지만, 생성은 앞에�
 ## greedy decoding 과 sampling
 
 매번 확률이 가장 큰 token 을 고르는 방식을 **greedy decoding** 이라고 한다. greedy decoding 은 같은 prompt 에서 언제나 같은 결과를 내지만,
-긴 글에서 같은 앞부분이 다시 나오면 같은 token 을 골라 "공 집어 공 집어 …" 처럼 같은 구절을 끝없이 반복하기 쉽다.
+긴 글에서 같은 앞부분이 다시 나오면 같은 token 을 골라 "공 든 공 든 …" 처럼 같은 구절을 끝없이 반복하기 쉽다.
 
 확률표의 확률대로 token 을 뽑는 방법을 **sampling** 이라고 한다. 확률을 차례로 더한 누적 확률로 0 ~ 1 을 구간으로 나눠 두고, 0 이상 1 미만의
-random number 하나를 뽑아 그 수가 떨어진 구간의 token 을 고른다. "빨간 컵" 의 확률표로 나눈 구간은 집어 0 ~ 0.609, 놓아 0.609 ~ 0.834, 밀어
-0.834 ~ 0.970, 던져 0.970 ~ 1 이라서, random number 가 0.75 면 놓아 를 고른다. sampling 은 같은 prompt 에서도 매번 다른 글을 쓰지만 확률이 낮은
+random number 하나를 뽑아 그 수가 떨어진 구간의 token 을 고른다. "빨간 모자" 의 확률표로 나눈 구간은 쓴 0 ~ 0.609, 벗은 0.609 ~ 0.834, 든
+0.834 ~ 0.970, 던진 0.970 ~ 1 이라서, random number 가 0.75 면 벗은 을 고른다. sampling 은 같은 prompt 에서도 매번 다른 글을 쓰지만 확률이 낮은
 token 도 가끔 뽑힌다. 확률 3% 짜리 token 이 100 번의 선택 동안 한 번도 뽑히지 않을 확률은 $0.97^{100} \approx 0.048$ 이라서, 긴 글에는 95% 가
 넘는 확률로 이런 token 이 한 번은 끼어든다.
 
@@ -466,26 +467,25 @@ greedy decoding 과 sampling 의 중간을 고르는 방법으로는 temperature
 $\tau$ 로 나누고, **top-k** 를 쓰면 logit 이 큰 $k$ 개만 남기고 나머지 logit 을 $-\infty$ 로 바꾼 뒤 softmax 한다. 같은 logit
 $[2.0, 1.0, 0.5, -1.0]$ 에서 만든 확률표는 아래와 같다.
 
-| 설정 | softmax 에 넣는 logit | 확률 (집어, 놓아, 밀어, 던져) | random number 0.75 일 때 |
+| 설정 | softmax 에 넣는 logit | 확률 (쓴, 벗은, 든, 던진) | random number 0.75 일 때 |
 | --- | --- | --- | --- |
-| $\tau = 1$ | $2.0, 1.0, 0.5, -1.0$ | 0.609, 0.224, 0.136, 0.030 | 놓아 |
-| $\tau = 0.5$ | $4.0, 2.0, 1.0, -2.0$ | 0.842, 0.114, 0.042, 0.002 | 집어 |
-| $\tau = 2$ | $1.0, 0.5, 0.25, -0.5$ | 0.434, 0.263, 0.205, 0.097 | 밀어 |
-| top-k, $k = 2$ | $2.0, 1.0, -\infty, -\infty$ | 0.731, 0.269, 0, 0 | 놓아 |
+| $\tau = 1$ | $2.0, 1.0, 0.5, -1.0$ | 0.609, 0.224, 0.136, 0.030 | 벗은 |
+| $\tau = 0.5$ | $4.0, 2.0, 1.0, -2.0$ | 0.842, 0.114, 0.042, 0.002 | 쓴 |
+| $\tau = 2$ | $1.0, 0.5, 0.25, -0.5$ | 0.434, 0.263, 0.205, 0.097 | 든 |
+| top-k, $k = 2$ | $2.0, 1.0, -\infty, -\infty$ | 0.731, 0.269, 0, 0 | 벗은 |
 
-![예로 든 logits 2.0, 1.0, 0.5, −1.0 에서 만든 네 확률표를 0 에서 1 까지의 막대로 나란히 그린 그림. random number 0.75 의 세로선이 τ = 1 에서는 놓아, τ = 0.5 에서는 집어, τ = 2 에서는 밀어, top-2 에서는 놓아 구간에 떨어진다](figures/sampling-compare.svg)
+![예로 든 logits 2.0, 1.0, 0.5, −1.0 에서 만든 네 확률표를 0 에서 1 까지의 막대로 나란히 그린 그림. random number 0.75 의 세로선이 τ = 1 에서는 벗은, τ = 0.5 에서는 쓴, τ = 2 에서는 든, top-2 에서는 벗은 구간에 떨어진다](figures/sampling-compare.svg)
 
 softmax 의 비율은 logit 의 크기가 아니라 logit 끼리의 차이로 정해져서, $\tau = 0.5$ 로 나눠 차이가 두 배가 되면 가장 큰 token 에 확률이 몰린다.
 $\tau = 2$ 로 나누면 차이가 절반으로 줄어 확률이 고르게 퍼진다. $\tau$ 를 0 에 가깝게 줄이면 가장 큰 token 의 확률이 1 에 다가가 greedy
-decoding 과 같아지는데, $\tau = 0.25$ 에서 이미 집어 가 0.980 이다. top-k 를 쓰면 상위 $k$ 개 밖의 token 은 아예 뽑히지 않아 확률 낮은 token 이
+decoding 과 같아지는데, $\tau = 0.25$ 에서 이미 쓴 이 0.980 이다. top-k 를 쓰면 상위 $k$ 개 밖의 token 은 아예 뽑히지 않아 확률 낮은 token 이
 끼어들 수 없고, $k = 1$ 이면 greedy decoding 과 같다.
 
 GPT-2 논문에 실린 생성 예시는 $k = 40$ 인 top-k sampling 으로 만들었다. 요약 실험에서는 같은 말이 반복되는 것을 줄이려고 greedy decoding 대신
-$k = 2$ 를 썼다. OpenVLA 의 공식 예제에서는 sampling 을 끄는 설정(`do_sample=False`)으로 greedy decoding 을 써서 action token 을 고른다. 이렇게
-하면 같은 장면과 지시문에서 언제나 같은 행동이 나와서 로봇 실험을 똑같이 다시 해 볼 수 있다.
+$k = 2$ 를 썼다. DALL·E 저자들은 그림 token 을 temperature 1 로 sampling 해 같은 설명 글로 여러 장을 뽑고, 그 가운데 글과 가장 잘 맞는 그림을 골랐다.
 
 **흔한 오해.** temperature 를 바꾸면 가장 그럴듯한 token 이 바뀐다고 생각하기 쉽다. 같은 양수로 나누면 logit 의 크기 순서는 그대로라서 위 표의
-세 temperature 모두 집어 > 놓아 > 밀어 > 던져 이고, greedy decoding 의 결과도 같다. temperature 는 순서가 아니라 확률이 몰린 정도만 바꾼다.
+세 temperature 모두 쓴 > 벗은 > 든 > 던진 이고, greedy decoding 의 결과도 같다. temperature 는 순서가 아니라 확률이 몰린 정도만 바꾼다.
 
 **확인 문제.** logit 이 $[1, 0]$ 이고 $\tau = 0.5$ 다. 두 token 의 확률은? ($e^{2} \approx 7.389$)
 
@@ -522,8 +522,8 @@ weight 로 센 숫자를 따라 흔히 GPT-2 124M 이라고 부른다.
 
 parameter 하나를 float32(숫자 하나를 4 byte 에 담는 방식)로 저장하면 가장 작은 모델은 $124{,}439{,}808 \times 4 \approx 5$ 억 byte, 약 500 MB 이고,
 가장 큰 모델은 약 6.2 GB 다. token 하나를 만들 때마다 이 숫자들이 거의 모두 곱셈에 한 번씩 쓰이므로, 모델이 클수록 메모리도 많이 들고 token
-하나를 만드는 시간도 길어진다. parameter 가 약 70 억 개인 OpenVLA 를 숫자 하나에 2 byte 인 bfloat16 으로 올리면 weight 만
-$7 \times 10^9 \times 2 = 14 \times 10^9$ byte 이고, 논문에 따르면 GPU 메모리가 15 GB 필요하다.
+하나를 만드는 시간도 길어진다. 논문에 따르면 parameter 가 120 억 개인 DALL·E 의 Transformer 는 숫자 하나에 2 byte 인
+16-bit 로 저장해도 약 24 GB 라서, 메모리 16 GB 인 V100 GPU 한 장에 올라가지 않는다. 그래서 저자들은 parameter 를 여러 GPU 에 나눠 담았다.
 
 <details><summary><b>심화: GPT-2 124M 의 parameter 세기</b></summary>
 
@@ -581,9 +581,6 @@ Kaplan 등이 쓴 데이터는 OpenWebText 와 달라서, 이 계산에는 loss 
 
 위 그림은 가로축을 log 눈금(같은 간격이 같은 배수)으로 그려서, 거듭제곱 꼴의 관계가 곧은 선에 가깝게 보인다.
 
-로봇에서도 모델의 크기와 미리 학습한 데이터에 따라 성능이 크게 달라진다. RT-2 논문에서 처음 보는 물체·배경·환경으로 잰 평균 성공률은 5B
-구조를 처음부터 로봇 데이터로만 학습하면 9% 였다. 인터넷 데이터로 미리 학습한 5B 모델을 이어서 학습하면 44% 였고, 같은 방법으로 55B 모델을
-학습하면 63% 였다.
 
 <details><summary><b>심화: Kaplan 의 식</b></summary>
 
@@ -608,42 +605,38 @@ $N$ 을 $k$ 배로 키우면 $L$ 은 $k^{-\alpha_N}$ 배가 된다. $k = 2$ 면 
 
 </details>
 
-## language model 위의 VLA
+## 그림 token 을 생성하는 DALL·E
 
-이미지와 지시문을 받아 로봇 행동을 내는 모델을 VLA(Vision-Language-Action model)라고 한다. RT-2(2023)와 OpenVLA(2024)는 GPT-2 와 같은 다음
-token 생성을 그대로 쓴다. language model 은 vocabulary 의 token 을 고를 수만 있고 실수를 직접 내지 못하므로, 연속된 행동 값을 차원마다
-구간(bin) 256 개로 나누고 bin 하나를 language model 의 token 하나에 짝짓는다. 카메라 영상은 image encoder 가 vector 묶음으로 바꿔 지시문
-token 앞에 넣는다.
+OpenAI 가 2021 년에 발표한 DALL·E 는 GPT-2 와 같은 다음 token 생성으로 그림을 그렸다. language model 은 vocabulary 의 token 을 고를 수만 있으므로,
+저자들은 그림을 token 으로 바꾸는 단계를 먼저 따로 학습했다. 논문의 두 단계는 아래와 같다.
 
-| 항목 | RT-2 | OpenVLA |
+| 단계 | 하는 일 | 숫자 |
 | --- | --- | --- |
-| 바탕 모델 | PaLI-X (5B, 55B), PaLM-E (12B) | Llama 2 7B + DINOv2·SigLIP image encoder |
-| 행동 하나의 token 수 | 8 개 (끝내기 1, 손끝 위치·회전 변화 6, 집게 1) | 7 개 (손끝 위치·회전 변화 6, 집게 1) |
-| action token 으로 쓰는 token | PaLI-X 는 bin 번호와 같은 숫자의 token 을 쓰고, PaLM-E 는 가장 덜 쓰이는 token 256 개를 덮어씀 | Llama tokenizer 에서 가장 덜 쓰이는 token 256 개(vocabulary 의 마지막 256 개)를 덮어씀 |
-| 학습 데이터 | 로봇 데이터와 인터넷 데이터를 섞어 이어서 학습 | Open X-Embodiment 의 로봇 시연 97 만 개 |
-| 실행 주기 | 55B 는 cloud TPU 에서 1 ~ 3 Hz 이고, 5B 는 약 5 Hz | RTX 4090 한 장에서 약 6 Hz |
+| 1 단계: dVAE | 256×256 컬러 그림을 가로세로 32 칸의 token 격자로 바꾼다. 칸마다 8,192 가지 가운데 하나를 고른다 | 그림 한 장이 token $32 \times 32 = 1{,}024$ 개 |
+| 2 단계: Transformer | 설명 글의 BPE token 뒤에 그림 token 을 이어 붙인 한 줄로 다음 token 맞히기를 학습한다 | 글 token 최대 256 개(vocabulary 16,384) + 그림 token 1,024 개 |
 
-학습 방법도 language model 과 같아서, 이미지와 지시문 뒤에 사람이 시연한 행동의 action token 을 정답으로 붙이고 cross-entropy 로 맞히게 한다.
-이때 OpenVLA 는 action token 위치에서만 loss 를 계산한다. 보통의 LLM 은 같은 데이터를 한두 번만 보고 학습을 마치지만, OpenVLA 는 학습
-데이터의 action token 정확도가 95% 를 넘을 때까지 실제 로봇 성능이 계속 올라서 데이터를 27 번 되풀이해 학습했다. 학습에는 A100 GPU 64 장으로
-14 일이 걸렸다.
+dVAE(discrete VAE)는 [VAE](../vae/README.md) 처럼 그림을 줄였다가 되살리도록 학습하는데, 줄인 결과가 실수가 아니라 8,192 개 번호 가운데 하나라서
+그대로 vocabulary 의 token 이 된다. 논문에 따르면 이 단계에서 Transformer 가 볼 길이가 192 분의 1 로 준다($256 \times 256 \times 3 = 196{,}608$ 을
+1,024 로 나누면 192 다).
 
-![OpenVLA 의 action token 생성. 카메라 영상은 DINOv2·SigLIP 과 projector 를 거쳐 Llama 2 7B 에 들어가고, 지시문은 token 으로 바뀌어 들어간다. 모델은 위치 변화 3 개, 회전 변화 3 개, 집게 1 개의 action token 7 개를 forward 7 번으로 하나씩 고른다. 각 token 은 256 개 bin 중 하나를 가리키고, 연속된 값으로 되돌려 로봇 팔에 보낸다. RTX 4090 한 장에서 1초에 약 6 번 행동을 낸다](figures/action-tokens.svg)
+학습도 language model 과 같다. 사진–글 쌍 2 억 5 천만 개에서 소문자로 바꾼 설명 글을 BPE token 으로 자르고, 그 뒤에 그림 token 1,024 개를 붙여
+위치마다 cross-entropy 로 다음 token 을 맞히게 한다. 저자들은 그림 쪽에 관심이 있어서 글 token 의 loss 에 1/8, 그림 token 의 loss 에 7/8 을 곱해
+더했다. Transformer 는 parameter 120 억 개짜리다.
 
-action token 도 [autoregressive 생성](#autoregressive-생성) 에서처럼 고른 token 을 다음 forward 의 입력 끝에 붙여 가며 하나씩 생성하는데, 행동
-하나마다 70 억 개 parameter 의 forward 를 7 번 하므로 1초에 6 번 정도밖에 행동을 내지 못한다. 논문에 따르면 A5000 GPU 에서 8-bit 로 줄인
-모델은 1초에 1.2 번만 행동을 내서, 1초에 5 번 명령하며 모은 시연 데이터와 로봇의 움직임이 달라지고 성공률이 크게 떨어졌다. 행동을 bin 으로
-자를 때 잃는 정밀도, 1초에 내는 행동 수의 한계, action token 대신 별도의 출력 층을 붙이는 방식은 RT-2 → OpenVLA
-에서 다룬다.
+![DALL·E 의 그림 생성. 설명 글은 BPE token 최대 256 개로 바뀌어 앞에 놓이고, Transformer 가 그림 token 을 하나씩 1,024 번 골라 32×32 격자를 채운다. 다 채운 격자를 dVAE decoder 가 256×256 그림으로 되살린다](figures/dalle-tokens.svg)
 
-**확인 문제.** 0 ~ 8 cm 의 집게 벌림을 1 cm 씩 bin 8 개(bin 0 ~ bin 7)로 나눈다고 하자. 5.6 cm 는 몇 번 bin 이고, 그 bin 을 가운데 값으로 되돌리면
-몇 cm 가 될까?
+그림을 그릴 때는 [autoregressive 생성](#autoregressive-생성) 에서처럼 고른 token 을 다음 forward 의 입력 끝에 붙여 가며 그림 token 을 하나씩 고른다.
+그림 한 장이 token 1,024 개라서 120 억 개 parameter 의 forward 를 1,024 번 해야 한다. 저자들은 같은 설명 글로 그림을 temperature 1 로 512 장 뽑은
+뒤, [CLIP](../clip/README.md) 으로 설명 글과 가장 잘 맞는 그림을 골랐다. 반면 Stable Diffusion 은 그림의 모든 자리를 step 마다 한꺼번에 고치고,
+수십 step 이면 그림 한 장이 나온다.
+
+**확인 문제.** 설명 글이 BPE token 20 개이고 그림이 DALL·E 의 token 1,024 개다. Transformer 가 다루는 한 줄의 길이는 몇 token 이고, 그림을 다
+그리려면 forward 를 몇 번 해야 하는가?
 
 <details><summary>답 보기</summary>
 
-1. 5.6 은 5 이상 6 미만이라 bin 5 다
-2. bin 5 의 가운데 값은 $(5 + 6) \div 2 = 5.5$ cm 다
-3. 원래 값과 0.1 cm 차이가 나는데, 이 차이가 bin 으로 나눌 때 생기는 오차다
+1. 한 줄의 길이: $20 + 1{,}024 = 1{,}044$ token
+2. 글은 처음에 한꺼번에 넣고, 그림 token 은 하나마다 forward 를 한 번 하므로 forward 는 1,024 번이다
 
 </details>
 
@@ -654,11 +647,11 @@ action token 도 [autoregressive 생성](#autoregressive-생성) 에서처럼 �
 - GPT 는 Transformer 에서 encoder 와 cross-attention 을 뺀 decoder-only 구조이고, causal mask 덕분에 forward 한 번에 위치 수만큼의 문제를 푼다.
   생성은 마지막 위치의 확률표에서 token 하나를 골라 붙이기를 되풀이하며, greedy decoding·temperature·top-k 가 고르는 방식을 정한다
 - GPT-2 는 block 을 12 ~ 48 개 쌓은 parameter 124M ~ 1.5B 의 네 모델이고, scaling law 에 따르면 embedding 표를 뺀 parameter 수가 두 배가 될
-  때마다 loss 가 약 0.95 배가 된다. RT-2 와 OpenVLA 는 이런 language model 위에서 행동을 bin 256 개의 token 으로 바꿔 하나씩 생성한다
+  때마다 loss 가 약 0.95 배가 된다. DALL·E 는 그림을 dVAE 로 token 1,024 개로 바꾼 뒤, 120 억 개 parameter 의 Transformer 로 설명 글 뒤에
+  그림 token 을 하나씩 생성한다
 
-GPT-2 는 text 만 읽는 모델이라 카메라 영상을 보지 못한다. 사진과 설명 글을 같은 숫자 공간에 놓아 서로 맞춰 보는 모델은 [CLIP](../clip/README.md)
-에서 다루고, language model 에 image encoder 와 action token 을 더해 만든 VLA 의 구조와 약점은 RT-2 → OpenVLA 에서
-다룬다.
+GPT-2 는 text 만 읽는 모델이라 사진을 보지 못한다. 사진과 설명 글을 같은 숫자 공간에 놓아 서로 맞춰 보는 모델은 [CLIP](../clip/README.md)
+에서 다룬다. token 을 하나씩 고르지 않고 그림의 모든 자리를 한꺼번에 조금씩 고쳐 가며 그림을 그리는 방법은 [DDPM](../ddpm/README.md) 에서 다룬다.
 
 ## 참고 자료
 
@@ -671,10 +664,9 @@ GPT-2 는 text 만 읽는 모델이라 카메라 영상을 보지 못한다. 사
 - Dan Hendrycks, Kevin Gimpel, [Gaussian Error Linear Units (GELUs)](https://arxiv.org/abs/1606.08415) — GELU 의 정의와 ReLU 와의 비교
 - Jared Kaplan 등, [Scaling Laws for Neural Language Models](https://arxiv.org/abs/2001.08361) — 1.2절에서 parameter 수·데이터 양·계산량에 따른
   loss 의 거듭제곱 식을 정리한다
-- Anthony Brohan 등, [RT-2](https://arxiv.org/abs/2307.15818) — 3.2절(행동을 token 으로 바꾸는 방법), 3.3절(실행 주기), 표 6(모델 크기와 학습
-  방법에 따른 성공률)을 본다
-- Moo Jin Kim 등, [OpenVLA](https://arxiv.org/abs/2406.09246) — 3.2절(Llama tokenizer 의 token 256 개를 덮어쓰는 방법), 3.4 ~ 3.5절(학습
-  epoch·learning rate·실행 주기)을 본다
+- Aditya Ramesh 등, [Zero-Shot Text-to-Image Generation](https://arxiv.org/abs/2102.12092) — DALL·E 논문. 2 절의 두 단계(dVAE 의 32×32 token 과
+  vocabulary 8,192, 글 token 256 개와 vocabulary 16,384, loss 의 1/8·7/8), 2.4 ~ 2.5 절의 16-bit 24 GB 와 parameter 나누기, 2.6 절의 CLIP 으로
+  512 장 가운데 고르기를 본다
 - [karpathy/nanoGPT](https://github.com/karpathy/nanoGPT) — README 의 Tiny Shakespeare 결과(validation loss 1.4697)와 GPT-2 네 모델의 OpenWebText loss 표를
   본다
 - Andrej Karpathy, [Let's build GPT: from scratch, in code, spelled out.](https://www.youtube.com/watch?v=kCc8FmEb1nY) — Tiny Shakespeare 로 글자 단위 GPT 를

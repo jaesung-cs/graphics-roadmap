@@ -4,7 +4,7 @@ title: Transformer
 branch: language
 requires: [pytorch-mlp, tokenizer]
 hours: 3
-summary: token 들이 query·key·value 로 서로를 참고하는 self-attention 과 √d 로 나누는 scaling, multi-head, positional encoding, residual·LayerNorm 으로 쌓는 block, causal mask, ACT 의 Transformer encoder-decoder
+summary: token 들이 query·key·value 로 서로를 참고하는 self-attention 과 √d 로 나누는 scaling, multi-head, positional encoding, residual·LayerNorm 으로 쌓는 block, causal mask, Stable Diffusion 의 text encoder 와 U-Net attention block
 papers:
   - title: "Neural Machine Translation by Jointly Learning to Align and Translate"
     authors: Dzmitry Bahdanau, Kyunghyun Cho, Yoshua Bengio
@@ -22,30 +22,30 @@ papers:
     authors: Ruibin Xiong et al.
     year: 2020
     url: https://arxiv.org/abs/2002.04745
-  - title: "Learning Fine-Grained Bimanual Manipulation with Low-Cost Hardware"
-    authors: Tony Z. Zhao, Vikash Kumar, Sergey Levine, Chelsea Finn
-    year: 2023
-    url: https://arxiv.org/abs/2304.13705
+  - title: "High-Resolution Image Synthesis with Latent Diffusion Models"
+    authors: Robin Rombach, Andreas Blattmann, Dominik Lorenz, Patrick Esser, Björn Ommer
+    year: 2022
+    url: https://arxiv.org/abs/2112.10752
 ---
 
 # Transformer
 
-tokenizer 는 "배를 먹었다" 와 "배를 탔다" 의 "배" 에 같은 token id 를 붙인다. ALOHA 양팔 로봇의 policy 는 카메라 사진 한 장을
-ResNet 으로 $15 \times 20 = 300$ 개 구역으로 나눠 구역마다 숫자 512 개로 요약한다. 어느 쪽이든 조각 하나만 봐서는 뜻이 정해지지 않아서,
-"배" 가 과일인지는 "먹었다" 를 봐야 알고 큐브가 찍힌 구역이 집을 만한 자리인지는 집게가 찍힌 구역을 봐야 안다. 어느 조각이 어느 조각을
-봐야 하는지 사람이 정해 주지 않는데, 모델은 수백 개 조각 가운데 필요한 조각의 정보를 어떻게 골라 모을까?
+tokenizer 는 "배를 먹었다" 와 "배를 탔다" 의 "배" 에 같은 token id 를 붙인다. [ViT](../vit/README.md) 는 사진 한 장을 16×16 pixel 조각
+196 개로 나눠 조각마다 숫자 768 개로 적는다. 어느 쪽이든 조각 하나만 봐서는 뜻이 정해지지 않아서, "배" 가 과일인지는 "먹었다" 를 봐야
+알고 갈색 털이 찍힌 조각이 고양이인지 강아지인지는 귀와 얼굴이 찍힌 조각을 봐야 안다. 어느 조각이 어느 조각을 봐야 하는지 사람이 정해
+주지 않는데, 모델은 수백 개 조각 가운데 필요한 조각의 정보를 어떻게 골라 모을까?
 
 조각마다 다른 모든 조각과 관련도 점수를 매기고, 점수가 큰 조각의 정보를 많이 섞어 자기 vector 를 고치는 계산이 attention 이다.
-attention 을 층으로 쌓은 구조가 2017 년 Vaswani 등이 발표한 Transformer 다. ALOHA 의 ACT policy 도 이 구조로 카메라 4 대의 구역
-1,200 개와 관절 각도를 한꺼번에 읽고, 앞으로 100 step 의 관절 목표값을 한 번에 낸다. 저자들은 parameter 가 약 8,000 만 개인 이 모델을
-RTX 2080 Ti 한 장으로 5 시간쯤 학습했다.
+attention 을 층으로 쌓은 구조가 2017 년 Vaswani 등이 발표한 Transformer 다. Stable Diffusion 도 이 구조를 두 군데에서 쓴다. prompt 를 읽는
+CLIP 의 text encoder 가 Transformer 이고, 그림을 그리는 U-Net 안에도 그림의 위치끼리, 그리고 그림의 위치와 prompt 의 token 사이에서 attention
+을 계산하는 block 이 있다.
 
 ## 학습 목표
 
 - embedding 과 query·key·value 로 attention 의 weight 와 출력을 작은 숫자로 계산하고, 점수를 $\sqrt{d_k}$ 로 나누는 이유를 설명할 수 있다
 - multi-head attention, positional encoding, residual connection, LayerNorm 이 각각 어떤 문제를 막는지 설명할 수 있다
 - encoder 와 decoder 의 차이와, causal mask 가 학습과 생성의 조건을 맞추는 방식을 설명할 수 있다
-- ACT 가 Transformer encoder-decoder 로 카메라·관절 token 을 action chunk 로 바꾸는 구조를 token 수와 층 수로 설명할 수 있다
+- Stable Diffusion 의 text encoder 와 U-Net 의 attention block 이 이 강의의 어느 부분으로 이루어졌는지 token 수와 층 수로 설명할 수 있다
 
 ## 문맥과 attention
 
@@ -53,7 +53,7 @@ Transformer 이전에 문장을 다루던 RNN(recurrent neural network)은 token
 기억으로 삼아 읽을 때마다 고쳐 썼다. 기억의 크기가 문장 길이와 상관없이 정해져 있어서 문장이 길수록 앞쪽 token 의 정보가 뒤에 덮인다.
 또 셋째 token 은 둘째까지 읽은 기억이 있어야 계산할 수 있으므로, token 100 개를 읽으려면 100 번을 차례로 계산해야 한다.
 
-![위는 RNN 이 빨간, 컵, 집어 를 차례로 읽으며 크기가 정해진 기억 하나를 고쳐 쓰는 모습. 아래는 attention 에서 세 token 이 서로를 한 번에 보는 모습](figures/rnn-vs-attention.svg)
+![위는 RNN 이 빨간, 모자, 쓴 을 차례로 읽으며 크기가 정해진 기억 하나를 고쳐 쓰는 모습. 아래는 attention 에서 세 token 이 서로를 한 번에 보는 모습](figures/rnn-vs-attention.svg)
 
 2014 년 Bahdanau, Cho, Bengio 는 번역 모델이 단어를 하나 만들 때마다 입력 문장의 모든 위치를 다시 보고 필요한 위치에 큰 비중을 주어
 정보를 모으게 했는데, 이것이 attention 의 시작이다. Vaswani 등은 차례로 읽는 부분을 아예 빼고 attention 만으로 모델을 만들었다(논문
@@ -85,8 +85,8 @@ token id 로 그 표의 행 하나를 꺼내 쓴다. 이 표를 embedding 표라
 실제 모델의 embedding 표는 무작위 값에서 시작해 loss 가 줄어드는 쪽으로 고쳐 나가는 parameter 다. "사과 를 먹었다" 와 "배 를 먹었다"
 처럼 비슷한 자리에 나오는 token 은 loss 를 줄이는 방향도 비슷해서 행이 비슷하게 고쳐지고, 학습이 끝나면 두 vector 가 가까워진다.
 GPT-2 의 가장 작은 모델은 token 50,257 개를 각각 768 차원 vector 로 나타내서 embedding 표에 숫자가 $50257 \times 768 = 38{,}597{,}376$
-개 들어 있다. 한편 ACT 는 embedding 표 없이, ResNet 이 사진 구역마다 낸 숫자 512 개와 관절 각도 14 개를 linear layer 로 바꾼 숫자 512
-개를 그대로 token 으로 쓴다. attention 계산에는 vector 의 출처가 들어가지 않으므로, 나머지 계산은 text token 이든 사진 token 이든 똑같다.
+개 들어 있다. 한편 ViT 는 embedding 표 없이, 사진 조각의 pixel 숫자를 linear layer 로 바꾼 숫자 768 개를 그대로 token 으로 쓴다. attention
+계산에는 vector 의 출처가 들어가지 않으므로, 나머지 계산은 text token 이든 사진 token 이든 똑같다.
 
 **확인 문제.** 위 표에서 "배 를 탔다" 의 embedding 세 개는? 그리고 vocabulary 가 token 10 개이고 embedding 이 4차원이면 embedding 표에는
 숫자가 몇 개 들어 있을까?
@@ -151,9 +151,9 @@ weight 는 비 $2 : 1$ 인 $[0.667, 0.333]$ 이 아니라 $[0.731, 0.269]$ 다. 
 
 ## query·key·value
 
-embedding 을 그대로 쓰면 token 이 자기 자신을 가장 많이 보기 쉽다. 사람이 정한 2차원 embedding 으로 로봇 지시 "빨간 컵 집어" 를
-빨간 $[1, 0]$, 컵 $[0, 1]$, 집어 $[1, -1]$ 로 두면, "집어" 의 점수는 $[1, -1] \cdot [1, 0] = 1$, $[1, -1] \cdot [0, 1] = -1$,
-$[1, -1] \cdot [1, -1] = 2$ 이고 weight 는 $[0.259, 0.035, 0.705]$ 다. "집어" 는 무엇을 집을지 알려면 "컵" 을 봐야 하는데 "컵" 에는
+embedding 을 그대로 쓰면 token 이 자기 자신을 가장 많이 보기 쉽다. 사람이 정한 2차원 embedding 으로 prompt 조각 "빨간 모자 쓴" 을
+빨간 $[1, 0]$, 모자 $[0, 1]$, 쓴 $[1, -1]$ 로 두면, "쓴" 의 점수는 $[1, -1] \cdot [1, 0] = 1$, $[1, -1] \cdot [0, 1] = -1$,
+$[1, -1] \cdot [1, -1] = 2$ 이고 weight 는 $[0.259, 0.035, 0.705]$ 다. "쓴" 은 무엇을 썼는지 알려면 "모자" 를 봐야 하는데 "모자" 에는
 3.5% 만 주고 자기 자신에게 70.5% 를 준다. 자기 자신과의 dot product 는 칸마다 제곱을 더한 값이라 크게 나오기 쉽다. 게다가 vector
 하나가 남을 찾는 기준, 남에게 보여 주는 표지, 뽑혔을 때 넘겨주는 내용이라는 세 역할을 한꺼번에 맡는다. Transformer 는 세 역할을
 나누려고 token 의 vector $\mathbf{x}$ 에 서로 다른 행렬 세 개를 곱한다.
@@ -178,42 +178,42 @@ $$
 | token | $\mathbf{x}$ | $\mathbf{q} = W_Q\mathbf{x}$ | $\mathbf{k} = W_K\mathbf{x}$ | $\mathbf{v} = W_V\mathbf{x}$ |
 | --- | --- | --- | --- | --- |
 | 빨간 | $[1, 0]$ | $[0, 1]$ | $[1, 0]$ | $[1, 0]$ |
-| 컵 | $[0, 1]$ | $[1, 0]$ | $[0, 1]$ | $[1, 1]$ |
-| 집어 | $[1, -1]$ | $[-1, 1]$ | $[1, -1]$ | $[0, -1]$ |
+| 모자 | $[0, 1]$ | $[1, 0]$ | $[0, 1]$ | $[1, 1]$ |
+| 쓴 | $[1, -1]$ | $[-1, 1]$ | $[1, -1]$ | $[0, -1]$ |
 
-![집어 의 query [−1, 1] 과 세 key 의 점수 −1, 1, −2 → weight 0.114, 0.844, 0.042 → value 의 가중 평균 [0.958, 0.802]](figures/attention.svg)
+![쓴 의 query [−1, 1] 과 세 key 의 점수 −1, 1, −2 → weight 0.114, 0.844, 0.042 → value 의 가중 평균 [0.958, 0.802]](figures/attention.svg)
 
-위 그림은 "집어" 의 query $[-1, 1]$ 로 attention 출력을 계산한 과정이다. embedding 을 그대로 쓸 때 "컵" 에 3.5% 만 주던 "집어" 가 이제
-84.4% 를 "컵" 에서 가져와서, 출력 $[0.958, 0.802]$ 는 대부분 "컵" 의 value $[1, 1]$ 로 채워진다.
+위 그림은 "쓴" 의 query $[-1, 1]$ 로 attention 출력을 계산한 과정이다. embedding 을 그대로 쓸 때 "모자" 에 3.5% 만 주던 "쓴" 이 이제
+84.4% 를 "모자" 에서 가져와서, 출력 $[0.958, 0.802]$ 는 대부분 "모자" 의 value $[1, 1]$ 로 채워진다.
 
 세 token 이 모두 같은 계산을 하면 점수는 query 3 개 × key 3 개의 표가 된다.
 
-![빨간 컵 집어 의 3 × 3 점수 표와 행마다 softmax 한 weight 표. 색이 진할수록 weight 가 크다](figures/attention-matrix.svg)
+![빨간 모자 쓴 의 3 × 3 점수 표와 행마다 softmax 한 weight 표. 색이 진할수록 weight 가 크다](figures/attention-matrix.svg)
 
-위 그림의 행은 query 를 낸 token 이고 열은 key 를 낸 token 이다. "빨간" 은 "컵" 을 꾸미는 말이고 "컵" 은 "집어" 의 대상이라서, "빨간"
-과 "집어" 는 둘 다 "컵" 을 가장 많이 본다. "컵" 은 색을 나타내는 "빨간" 과 동작을 나타내는 "집어" 를 반씩 보므로, 세 token 모두 자기
+위 그림의 행은 query 를 낸 token 이고 열은 key 를 낸 token 이다. "빨간" 은 "모자" 를 꾸미는 말이고 "모자" 는 "쓴" 의 대상이라서, "빨간"
+과 "쓴" 은 둘 다 "모자" 를 가장 많이 본다. "모자" 는 색을 나타내는 "빨간" 과 동작을 나타내는 "쓴" 을 반씩 보므로, 세 token 모두 자기
 자신보다 다른 token 에 더 큰 weight 를 준다. query 를 한 행에 하나씩 쌓은 행렬을 $Q$ 라고 하고 key 와 value 도 같은 방식으로 쌓아
 $K$, $V$ 라고 하면, 점수 표는 $QK^\top$ 이고 계산 전체는 $\mathrm{softmax}(QK^\top)V$ 다. 이처럼 query·key·value 를 모두 같은 token
 묶음에서 만드는 attention 을 **self-attention** 이라고 한다.
 
 <details><summary><b>심화: 세 token 의 점수 표와 행렬 식</b></summary>
 
-"집어" 의 query $[-1, 1]$ 로 한 계산을 칸마다 적으면 아래와 같다.
+"쓴" 의 query $[-1, 1]$ 로 한 계산을 칸마다 적으면 아래와 같다.
 
 | 상대 token | key | 점수 | $e^{\text{점수}}$ | weight | value | weight × value |
 | --- | --- | --- | --- | --- | --- | --- |
 | 빨간 | $[1, 0]$ | $-1 + 0 = -1$ | 0.368 | 0.114 | $[1, 0]$ | $[0.114, 0]$ |
-| 컵 | $[0, 1]$ | $0 + 1 = 1$ | 2.718 | 0.844 | $[1, 1]$ | $[0.844, 0.844]$ |
-| 집어 | $[1, -1]$ | $-1 - 1 = -2$ | 0.135 | 0.042 | $[0, -1]$ | $[0, -0.042]$ |
+| 모자 | $[0, 1]$ | $0 + 1 = 1$ | 2.718 | 0.844 | $[1, 1]$ | $[0.844, 0.844]$ |
+| 쓴 | $[1, -1]$ | $-1 - 1 = -2$ | 0.135 | 0.042 | $[0, -1]$ | $[0, -0.042]$ |
 | 합 | | | 3.221 | 1 | | $[0.958, 0.802]$ |
 
 세 token 이 모두 같은 계산을 한 결과는 아래와 같다.
 
-| query \ key | 빨간 | 컵 | 집어 | weight (행마다 softmax) | 출력 |
+| query \ key | 빨간 | 모자 | 쓴 | weight (행마다 softmax) | 출력 |
 | --- | --- | --- | --- | --- | --- |
 | 빨간 $[0, 1]$ | 0 | 1 | $-1$ | $[0.245, 0.665, 0.090]$ | $[0.910, 0.575]$ |
-| 컵 $[1, 0]$ | 1 | 0 | 1 | $[0.422, 0.155, 0.422]$ | $[0.578, -0.267]$ |
-| 집어 $[-1, 1]$ | $-1$ | 1 | $-2$ | $[0.114, 0.844, 0.042]$ | $[0.958, 0.802]$ |
+| 모자 $[1, 0]$ | 1 | 0 | 1 | $[0.422, 0.155, 0.422]$ | $[0.578, -0.267]$ |
+| 쓴 $[-1, 1]$ | $-1$ | 1 | $-2$ | $[0.114, 0.844, 0.042]$ | $[0.958, 0.802]$ |
 
 - $K^\top$ 은 "K transpose" 라고 읽고, $K$ 의 행과 열을 맞바꾼 행렬이다. key 가 행에서 열로 옮겨 간다
 - $QK^\top$ 의 $i$ 행 $j$ 열은 $Q$ 의 $i$ 번째 행(query)과 $K^\top$ 의 $j$ 번째 열(key)의 dot product 라서, 위 표의 점수 칸과 같다
@@ -260,17 +260,17 @@ $$
 weight 로 value 를 가중 평균한다는 뜻이다.
 
 **흔한 오해.** 점수를 나누면 가장 관련 있는 token 이 덜 중요해진다고 생각하기 쉽지만, 같은 수로 나누므로 점수의 순서는 그대로다.
-"집어" 의 점수 $[-1, 1, -2]$ 를 $\sqrt{2}$ 로 나누면 "컵" 의 weight 는 0.844 에서 0.734 로 조금 낮아질 뿐 여전히 가장 크다.
+"쓴" 의 점수 $[-1, 1, -2]$ 를 $\sqrt{2}$ 로 나누면 "모자" 의 weight 는 0.844 에서 0.734 로 조금 낮아질 뿐 여전히 가장 크다.
 
-<details><summary><b>심화: "집어" 의 scaled 계산과 점수의 제곱의 평균</b></summary>
+<details><summary><b>심화: "쓴" 의 scaled 계산과 점수의 제곱의 평균</b></summary>
 
-"빨간 컵 집어" 는 $d_k = 2$ 라서 "집어" 의 점수 $[-1, 1, -2]$ 를 $\sqrt{2} \approx 1.414$ 로 나눈다.
+"빨간 모자 쓴" 은 $d_k = 2$ 라서 "쓴" 의 점수 $[-1, 1, -2]$ 를 $\sqrt{2} \approx 1.414$ 로 나눈다.
 
 | 상대 token | 점수 | $\div 1.414$ | $e^{\text{나눈 점수}}$ | weight | value |
 | --- | --- | --- | --- | --- | --- |
 | 빨간 | $-1$ | $-0.707$ | 0.493 | 0.178 | $[1, 0]$ |
-| 컵 | 1 | 0.707 | 2.028 | 0.734 | $[1, 1]$ |
-| 집어 | $-2$ | $-1.414$ | 0.243 | 0.088 | $[0, -1]$ |
+| 모자 | 1 | 0.707 | 2.028 | 0.734 | $[1, 1]$ |
+| 쓴 | $-2$ | $-1.414$ | 0.243 | 0.088 | $[0, -1]$ |
 | 합 | | | 2.764 | 1 | |
 
 출력은 $0.178 \times [1, 0] + 0.734 \times [1, 1] + 0.088 \times [0, -1] = [0.912, 0.646]$ 이다.
@@ -306,17 +306,17 @@ $\sqrt{16} = 4$ 로 나누므로 $12 \div 4 = 3$ 이다.
 
 ## multi-head attention
 
-앞의 점수 표에서 "컵" 의 weight 는 $[0.422, 0.155, 0.422]$ 였다. "컵" 은 "빨간" 과 "집어" 를 둘 다 봐야 하는데, attention 한 번은
+앞의 점수 표에서 "모자" 의 weight 는 $[0.422, 0.155, 0.422]$ 였다. "모자" 는 "빨간" 과 "쓴" 을 둘 다 봐야 하는데, attention 한 번은
 token 마다 weight 한 줄만 만들어서 두 token 에 weight 를 반씩 나눠 줄 수밖에 없다. 출력도 두 value 를 섞은 vector 하나라서 어느 부분이
 색에서 왔는지 갈라 볼 수 없다.
 
 **multi-head attention** 은 vector 의 칸을 몇 묶음으로 나누고 묶음마다 따로 attention 을 하는데, 묶음 하나의 계산을 head 라고 한다.
 head 마다 $W_Q$, $W_K$, $W_V$ 가 따로 있으므로 weight 도 다르게 나온다.
 
-![손으로 정한 숫자의 예. 4차원 vector 를 2차원 head 두 개로 나누면 head 1 은 빨간 에 큰 weight 를 주고 head 2 는 집어 에 큰 weight 를 준다. 두 출력을 이어 붙인 뒤 W_O 를 곱한다](figures/multi-head.svg)
+![손으로 정한 숫자의 예. 4차원 vector 를 2차원 head 두 개로 나누면 head 1 은 빨간 에 큰 weight 를 주고 head 2 는 쓴 에 큰 weight 를 준다. 두 출력을 이어 붙인 뒤 W_O 를 곱한다](figures/multi-head.svg)
 
-위 그림은 손으로 정한 숫자로 "컵" 의 4차원 vector 를 2차원 head 두 개로 나눈 예다. head 1 은 "빨간" 에 weight 0.576 을 주고, head 2 는
-"집어" 에 0.576 을 준다. 두 출력을 이어 붙인 $[0.576, 0.212, 0.212, 0.576]$ 은 앞의 두 칸에 색 쪽 정보를 담고 뒤의 두 칸에 동작 쪽
+위 그림은 손으로 정한 숫자로 "모자" 의 4차원 vector 를 2차원 head 두 개로 나눈 예다. head 1 은 "빨간" 에 weight 0.576 을 주고, head 2 는
+"쓴" 에 0.576 을 준다. 두 출력을 이어 붙인 $[0.576, 0.212, 0.212, 0.576]$ 은 앞의 두 칸에 색 쪽 정보를 담고 뒤의 두 칸에 동작 쪽
 정보를 담는다. 마지막에는 행렬 $W_O$ 를 한 번 더 곱해 두 head 의 정보를 섞은 4차원 vector 를 내는데, 아래첨자 O 는 output 의 첫 글자다.
 
 head 하나의 차원은 token vector 의 차원 $d_\text{model}$ 을 head 수 $h$ 로 나눈 $d_\text{model} / h$ 라서, head 를 늘려도 전체 계산량은
@@ -330,14 +330,14 @@ BLEU 를 비교했다. BLEU 는 사람의 번역과 겹치는 정도로, 클수�
 | 32 | 16 | 25.4 |
 
 head 를 하나만 쓰면 8 개일 때보다 0.9 점 낮고, 32 개로 나눠 head 하나가 16 차원까지 작아져도 다시 떨어진다. GPT-2 의 가장 작은
-모델은 768 차원을 head 12 개로 나누고 ACT 는 512 차원을 head 8 개로 나누므로, 두 모델 모두 head 하나가 64 차원이고 점수를
-$\sqrt{64} = 8$ 로 나눈다.
+모델은 768 차원을 head 12 개로 나누고 원래 Transformer 는 512 차원을 head 8 개로 나누므로, 두 모델 모두 head 하나가 64 차원이고
+점수를 $\sqrt{64} = 8$ 로 나눈다.
 
 <details><summary><b>심화: head 두 개의 손계산과 multi-head 식</b></summary>
 
 숫자는 손으로 정한 값이고, 간단히 하려고 $\sqrt{d_k}$ 로 나누는 단계는 뺐다.
 
-| head | "컵" 의 query | key (빨간, 컵, 집어) | 점수 | weight | value (빨간, 컵, 집어) | 출력 |
+| head | "모자" 의 query | key (빨간, 모자, 쓴) | 점수 | weight | value (빨간, 모자, 쓴) | 출력 |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | $[1, 0]$ | $[1, 0]$, $[0, 1]$, $[0, 1]$ | $[1, 0, 0]$ | $[0.576, 0.212, 0.212]$ | $[1, 0]$, $[0, 1]$, $[0, 0]$ | $[0.576, 0.212]$ |
 | 2 | $[0, 1]$ | $[1, 0]$, $[1, 0]$, $[0, 1]$ | $[0, 0, 1]$ | $[0.212, 0.212, 0.576]$ | $[0, 0]$, $[1, 0]$, $[0, 1]$ | $[0.212, 0.576]$ |
@@ -377,7 +377,7 @@ $W_i^Q, W_i^K, W_i^V$ 는 $i$ 번째 head 의 행렬이다. Concat 은 concatena
 | man bites dog | man 1, bites 1, dog 0 | man 0.422, bites 0.422, dog 0.155 | $[0.577, 0.844]$ |
 
 점수는 vector 끼리의 dot product 라서 token 이 몇 번째에 있는지와 상관없고, 가중 평균은 더하는 순서를 바꿔도 같다. 그래서 두 문장의
-bites 는 똑같은 출력을 얻는다. 사진 구역도 마찬가지라서, 위치 정보 없이 구역 300 개를 넣으면 ACT 는 큐브가 사진의 왼쪽에 있는지
+bites 는 똑같은 출력을 얻는다. 사진 조각도 마찬가지라서, 위치 정보 없이 조각 196 개를 넣으면 ViT 는 고양이가 사진의 왼쪽에 있는지
 오른쪽에 있는지 알 수 없다.
 
 ![dog bites man 과 man bites dog 에서 bites 의 attention 출력이 둘 다 [0.577, 0.844] 로 같은 모습. 위치 vector 를 더하면 dog 의 vector 가 위치마다 달라진다](figures/word-order.svg)
@@ -394,8 +394,8 @@ vector $[\sin(pos), \cos(pos)]$ 를 더하면 dog $[1, 0]$ 는 위치 0 에서 $
 출력이 달라진다.
 
 위치마다 한 행씩 두고 그 값을 학습하는 learned position embedding 도 있는데, Transformer 논문에서는 두 방식의 결과가 거의 같았다.
-GPT-2 는 learned position embedding 을 써서 위치 1,024 개의 행만 있으므로, 그보다 긴 입력에는 더할 vector 가 없다. ACT 는 사진 구역의
-줄 번호와 칸 번호로 만든 2D sin·cos 위치 vector 를 더한다.
+GPT-2 는 learned position embedding 을 써서 위치 1,024 개의 행만 있으므로, 그보다 긴 입력에는 더할 vector 가 없다. ViT 도 조각 위치마다
+학습한 position embedding 을 더한다.
 
 <details><summary><b>심화: positional encoding 의 일반 식</b></summary>
 
@@ -472,7 +472,7 @@ $\mathrm{LayerNorm}(\mathbf{x} + \mathrm{Sublayer}(\mathbf{x}))$ 를 Post-LN 이
 $\mathbf{x} + \mathrm{Sublayer}(\mathrm{LayerNorm}(\mathbf{x}))$ 를 Pre-LN 이라고 한다. Post-LN 은 learning rate 를 작게 시작해 점점
 키우는 warm-up 을 해야 안정적으로 학습되는데, 원래 논문도 처음 4,000 step 동안 warm-up 을 했다. 2020 년 Xiong 등은 Post-LN 에서는
 학습 초기에 출력 쪽 층의 gradient 가 커서 warm-up 이 필요하다는 것을 보였고, Pre-LN 은 warm-up 없이도 비슷한 성능에 이른다고 보고했다.
-GPT-2 는 Pre-LN 을 쓰는 반면, LeRobot 의 ACT 는 기본값(`pre_norm: False`)대로면 Post-LN 이다.
+GPT-2 와 Stable Diffusion U-Net 의 attention block 은 Pre-LN 을 쓴다.
 
 </details>
 
@@ -497,8 +497,8 @@ network)을 둔다. FFN 은 token 마다 따로 계산하는데, vector 를 행�
 
 ![FFN 이 x = [1, 2] 를 W_1 로 [1, 2, −1, 1] 로 늘리고, ReLU 로 [1, 2, 0, 1] 로 바꾸고, W_2 로 [1, 3] 으로 되돌리는 흐름](figures/ffn.svg)
 
-위 그림에서 보듯 FFN 계산에는 다른 token 의 vector 가 들어오지 않는다. 늘리는 차원은 원래 논문이 512 의 4 배인 2,048 이고, ACT 는
-3,200 이다.
+위 그림에서 보듯 FFN 계산에는 다른 token 의 vector 가 들어오지 않는다. 원래 논문에서 늘리는 차원은 512 의 4 배인 2,048 이고, Stable Diffusion
+U-Net 의 attention block 도 4 배로 늘린다.
 
 encoder layer 는 Transformer 에서 입력을 읽는 쪽의 층 하나로, 지금까지 본 계산을 아래 순서로 잇는다. 이 묶음을 block 이라고도 한다.
 
@@ -508,7 +508,7 @@ encoder layer 는 Transformer 에서 입력을 읽는 쪽의 층 하나로, 지�
 ![encoder layer 의 구조. self-attention 과 FFN 마다 입력을 옆으로 돌려 더하는 residual connection 과 LayerNorm 이 붙는다](figures/encoder-layer.svg)
 
 위 그림에서 옆으로 돌아가는 화살표가 residual connection 이고, ⊕ 표시가 더하는 자리다. block 의 입력과 출력은 token 수도 같고 vector
-의 차원도 같아서 같은 block 을 여러 번 쌓을 수 있다. 원래 논문은 encoder 와 decoder 에 각각 6 층을 쌓았고, ACT 는 encoder 에 4 층을 쌓는다.
+의 차원도 같아서 같은 block 을 여러 번 쌓을 수 있다. 원래 논문은 encoder 와 decoder 에 각각 6 층을 쌓았고, CLIP ViT-L/14 의 text encoder 는 12 층을 쌓는다.
 
 <details><summary><b>심화: FFN 의 손계산과 block 하나의 parameter 수</b></summary>
 
@@ -528,14 +528,14 @@ $$
 block 하나의 parameter 수는 행렬의 칸 수에 bias 개수를 더해 직접 셀 수 있다. $d_\text{model} = 512$ 일 때 $W_Q, W_K, W_V, W_O$ 는
 각각 숫자가 $512 \times 512$ 개이고 bias 가 512 개다.
 
-| 구성 요소 | 원래 논문 ($d_\text{ff} = 2048$) | ACT ($d_\text{ff} = 3200$) |
+| 구성 요소 | 원래 논문 ($d_\text{ff} = 2048$) | FFN 을 8 배로 늘린 경우 ($d_\text{ff} = 4096$) |
 | --- | --- | --- |
 | attention ($4 \times (512 \times 512 + 512)$) | 1,050,624 | 1,050,624 |
-| FFN ($512 \times d_\text{ff} + d_\text{ff} + d_\text{ff} \times 512 + 512$) | 2,099,712 | 3,280,512 |
+| FFN ($512 \times d_\text{ff} + d_\text{ff} + d_\text{ff} \times 512 + 512$) | 2,099,712 | 4,198,912 |
 | LayerNorm 두 개 ($2 \times 2 \times 512$) | 2,048 | 2,048 |
-| 합 | 3,152,384 | 4,333,184 |
+| 합 | 3,152,384 | 5,251,584 |
 
-block 하나의 parameter 가운데 FFN 이 원래 논문에서는 약 3 분의 2 를 차지하고, ACT 에서는 약 4 분의 3 을 차지한다. head 수는 이 표에
+block 하나의 parameter 가운데 FFN 이 원래 논문에서는 약 3 분의 2 를 차지하고, FFN 을 8 배로 늘리면 약 5 분의 4 를 차지한다. head 수는 이 표에
 들어가지 않는데, head 를 몇 개로 나누든 $W_Q$ 전체의 크기는 $512 \times 512$ 로 같기 때문이다.
 
 </details>
@@ -633,7 +633,7 @@ encoder 와 decoder 를 어떻게 쓰느냐에 따라 세 가지 조합이 있�
 
 | 조합 | 하는 일 | 예 |
 | --- | --- | --- |
-| encoder-decoder | 입력 sequence 를 읽고 출력 sequence 를 쓴다 | 원래 Transformer(번역), ACT |
+| encoder-decoder | 입력 sequence 를 읽고 출력 sequence 를 쓴다 | 원래 Transformer(번역) |
 | decoder 만 | causal mask 를 쓴 self-attention 으로 다음 token 을 이어 쓴다 | [GPT-2](../gpt/README.md) |
 | encoder 만 | 입력 전체를 읽어 token 마다 vector 를 낸다 | [ViT](../vit/README.md) |
 
@@ -642,69 +642,70 @@ text 를 앞에서부터 읽으며 다음 token 을 맞히는 language model 은
 맞히기를 한꺼번에 학습할 수 있다. GPT-2 의 가장 작은 모델은 768 차원 block 12 층을 쌓고 token 을 최대 1,024 개까지 받는다. 더 큰
 language model 도 같은 block 을 더 넓고 깊게 쌓아 만든다.
 
-## ACT 의 Transformer
+## Stable Diffusion 안의 Transformer
 
-ACT 는 원래 Transformer 와 같은 encoder-decoder 조합으로 사진과 관절 각도를 받아, 앞으로 100 step 의 관절 목표값 묶음인 action
-chunk 를 낸다. ACT 논문의 표 III 에 따르면 encoder 는 4 층이고 decoder 는 7 층이다. hidden dimension 512 를 head 8 개로 나누고, FFN
-은 3,200 차원까지 늘린다.
+Stable Diffusion v1 에는 Transformer 가 두 군데 들어 있다. prompt 를 읽는 CLIP 의 text encoder 와, U-Net 안에 끼워 넣은 attention block 이다.
 
-![ACT 의 Transformer. token 1,202 개가 encoder 4 층을 지나고, decoder 는 query 100 개로 encoder 출력을 읽은 뒤 linear layer 로 100 × 14 관절 목표값을 만든다](figures/act-transformer.svg)
+| 자리 | 구조 | 이 강의의 어느 부분인가 |
+| --- | --- | --- |
+| CLIP ViT-L/14 의 text encoder | 768 차원 block 12 층, head 12 개, $d_\text{ff} = 3072$, token 77 개 | causal mask 를 쓴 self-attention 을 쌓은 encoder |
+| U-Net 의 attention block | self-attention → cross-attention → FFN, sub-layer 마다 Pre-LN 과 residual connection | encoder 의 self-attention 과 decoder 의 cross-attention 을 한 block 에 담는다 |
 
-| 부분 | 입력 | 하는 일 | 출력 |
+Hugging Face 에 올라온 CLIP ViT-L/14 설정 파일에 따르면 text encoder 는 768 차원 block 12 층이고, head 12 개가 64 차원씩 나눠 갖는다.
+CLIP 논문에 따르면 이 text encoder 는 causal mask 를 쓴 self-attention(논문의 표현으로 masked self-attention)을 쓴다. 그래서 token 마다 나온 출력은
+그 token 까지의 앞부분만 보고 만든 값이다.
+
+U-Net 의 attention block 은 diffusers 의 `BasicTransformerBlock` 으로, 그림의 latent 위치 하나하나를 token 으로 본다. 먼저 self-attention 으로 그림의
+위치끼리 서로를 보고, 이어서 cross-attention 에서는 query 를 그림의 위치에서 만들고 key·value 를 text encoder 의 token 77 개에서 만들어 prompt 를 읽는다.
+원래 Transformer 의 decoder 가 encoder 출력을 읽던 cross-attention 과 같은 계산이다. 마지막 FFN 은 차원을 4 배로 늘렸다 되돌린다. sub-layer 마다
+LayerNorm 을 먼저 하고 결과를 입력에 더하는 Pre-LN 순서다.
+
+![Stable Diffusion U-Net 의 attention block. 64×64 latent 의 위치 4,096 개가 token 이 되어 self-attention 으로 서로를 보고, cross-attention 으로 prompt 의 token 77 개를 읽은 뒤 FFN 을 지난다. 단계마다 LayerNorm 을 먼저 하고 입력을 더한다](figures/sd-transformer.svg)
+
+token 수를 세면 계산이 어디에 드는지 보인다. 512×512 그림의 latent 는 $64 \times 64$ 라서 가장 큰 단계의 attention block 에는 token 이 4,096 개 있다.
+
+| attention | query 수 | key 수 | 점수 표의 칸 수 |
 | --- | --- | --- | --- |
-| encoder (4 층) | 사진 구역 $4 \times 300 = 1{,}200$ 개 + 관절 1 개 + $z$ 1 개 = token 1,202 개 | self-attention 으로 카메라 시점, 관절 각도, style 변수의 정보를 합친다 | 512 차원 vector 1,202 개 |
-| decoder (7 층) | step 마다 하나인 query vector 100 개 | cross-attention 으로 encoder 출력을 key·value 로 읽는다 | 512 차원 vector 100 개 |
-| linear layer | vector 100 개 | 512 개 숫자를 관절 목표값 14 개로 바꾼다 | $100 \times 14$ action chunk |
+| self-attention (그림 위치끼리) | 4,096 | 4,096 | $4096 \times 4096 = 16{,}777{,}216$ |
+| cross-attention (그림 위치 → prompt) | 4,096 | 77 | $4096 \times 77 = 315{,}392$ |
+| text encoder 의 self-attention | 77 | 77 | $77 \times 77 = 5{,}929$ |
 
-style 변수 $z$ 는 시연마다 다른 움직임 방식을 담는 숫자로, 관절 각도처럼 linear layer 를 거쳐 512 차원 token 하나가 된다. decoder 의 입력 100 개는 입력 사진과 상관없이 언제나
-같은 vector 이고, $i$ 번째 vector 는 $i$ 번째 step 의 action 을 찾는 query 다.
+self-attention 의 점수 표가 cross-attention 의 50 배가 넘는다. 그림이 커질수록 token 수의 제곱으로 늘어나는 self-attention 이 계산의 대부분을
+차지한다. cross-attention 이 그림에 prompt 를 전하는 방법은 [Cross-Attention](../cross-attention/README.md) 에서 다룬다.
 
-ACT 의 decoder 는 번역 decoder 와 달리 query 100 개를 한꺼번에 넣어 100 step 을 동시에 내므로, 앞의 출력을 다시 넣을 필요가 없다.
-그래서 저자가 공개한 코드도 decoder 의 self-attention 에 causal mask 를 쓰지 않는다. 추론 한 번에 encoder 와 decoder 를 한 번씩만
-계산하면 되고, 논문에 따르면 RTX 2080 Ti 한 장에서 추론이 약 0.01 초 걸린다.
-
-논문 표에는 decoder 가 7 층으로 적혀 있지만, 공개 코드에서는 7 층을 모두 계산한 뒤 마지막 층이 아니라 첫째 층의 출력을 action 에
-쓴다. 그래서 2 ~ 7 층의 결과는 action 에 쓰이지 않고, gradient 도 닿지 않아 학습으로 고쳐지지 않는다. LeRobot 은 이 동작에 맞춰
-decoder 층 1 개를 기본값으로 둔다. 원인이 된 코드는 ACT 에서 다룬다.
-
-attention 은 모든 token 쌍의 점수를 매기므로 점수 표의 칸 수가 token 수의 제곱이다. 카메라가 1 대인 시뮬레이션에서는 token 이 302 개라
-점수 표가 $302 \times 302 = 91{,}204$ 칸이고, 카메라가 4 대인 실제 ALOHA 에서는 $1202 \times 1202 = 1{,}444{,}804$ 칸이라 약 16 배다.
-카메라를 늘리거나 해상도를 높이면 token 수가 늘어난 비율의 제곱만큼 attention 계산이 늘어난다.
-
-**확인 문제.** 카메라 2 대에서 480 × 640 사진을 쓰는 ACT 의 encoder token 은 몇 개이고, 점수 표는 몇 칸일까? action chunk 를 50 step 으로
-줄이면 decoder 의 query 는 몇 개가 될까?
+**확인 문제.** 768×768 그림의 latent 는 $96 \times 96$ 이다. 가장 큰 단계의 self-attention 점수 표는 몇 칸이고, 512×512 일 때의 몇 배인가?
 
 <details><summary>답 보기</summary>
 
-1. 카메라마다 구역이 $15 \times 20 = 300$ 개라서 사진 token 은 $2 \times 300 = 600$ 개이고, 관절 token 1 개와 $z$ token 1 개를 더해
-   602 개다
-2. 점수 표는 $602 \times 602 = 362{,}404$ 칸이다
-3. query 는 step 마다 하나라서 50 개다
+1. token 수: $96 \times 96 = 9{,}216$ 개
+2. 점수 표: $9{,}216 \times 9{,}216 = 84{,}934{,}656$ 칸
+3. 512×512 의 16,777,216 칸과 비교하면 $84{,}934{,}656 \div 16{,}777{,}216 \approx 5.06$ 배다. 그림 한 변이 1.5 배면 token 은 2.25 배가 되고, 점수 표는
+   그 제곱인 약 5.06 배가 된다
 
 </details>
 
 ## 정리
 
-- attention 은 query·key 의 dot product 를 $\sqrt{d_k}$ 로 나눈 점수를 softmax 한 weight 로 value 를 가중 평균한다. "집어" 는
-  embedding 을 그대로 쓰면 자기 자신에게 70.5% 를 주지만, query·key·value 를 나누면 "컵" 에서 84.4% 를 가져온다
+- attention 은 query·key 의 dot product 를 $\sqrt{d_k}$ 로 나눈 점수를 softmax 한 weight 로 value 를 가중 평균한다. "쓴" 은
+  embedding 을 그대로 쓰면 자기 자신에게 70.5% 를 주지만, query·key·value 를 나누면 "모자" 에서 84.4% 를 가져온다
 - multi-head 는 head 마다 다른 관계를 보게 하고, positional encoding 은 순서를 모르는 attention 에 위치 정보를 더한다. residual
   connection 과 LayerNorm 은 입출력 모양이 같은 block 을 깊게 쌓아도 학습이 안정되게 한다
-- causal mask 는 softmax 전에 뒤쪽 점수를 $-\infty$ 로 바꿔 모든 위치를 한꺼번에 학습해도 앞의 token 만 보게 한다. ACT 는 token
-  1,202 개를 encoder 4 층에 넣고, decoder 가 query 100 개로 100 step 을 한꺼번에 낸다
+- causal mask 는 softmax 전에 뒤쪽 점수를 $-\infty$ 로 바꿔 모든 위치를 한꺼번에 학습해도 앞의 token 만 보게 한다. Stable Diffusion 의 CLIP
+  text encoder 는 causal mask 를 쓴 768 차원 block 12 층이고, U-Net 의 attention block 에서는 64×64 latent 의 위치 4,096 개가 self-attention 으로
+  서로를 보고 cross-attention 으로 prompt 의 token 77 개를 읽는다
 
 decoder 만 쌓은 Transformer 를 다음 token 맞히기로 학습시키고 글을 생성하는 방법은 [GPT-2](../gpt/README.md) 에서 다루고, 사진을
-patch token 으로 잘라 encoder 에 넣는 방법은 [ViT](../vit/README.md) 에서 다룬다. 로봇 쪽에서는 action 을 256 구간으로 나눠 token 으로
-바꾼 뒤 Transformer 로 고르는 RT-1 과, action chunk 와 CVAE 를 Transformer encoder-decoder 에 결합한
-ACT 가 이 강의의 구조를 그대로 쓴다.
+patch token 으로 잘라 encoder 에 넣는 방법은 [ViT](../vit/README.md) 에서 다룬다. U-Net 의 cross-attention 이 prompt 를 그림에 전하는 방법은
+[Cross-Attention](../cross-attention/README.md) 에서 다룬다.
 
 ## 참고 자료
 
 - Ashish Vaswani 등, [Attention Is All You Need](https://arxiv.org/abs/1706.03762) — Transformer 를 제안한 논문. 그림 1 의 전체 구조와
   3.2 절의 scaled dot-product attention·multi-head(√d_k 의 이유는 각주 4), 3.5 절의 positional encoding, 표 3 의 head 수 비교를 본다
-- Tony Z. Zhao 등, [Learning Fine-Grained Bimanual Manipulation with Low-Cost Hardware](https://arxiv.org/abs/2304.13705) — ACT 논문.
-  4 절의 encoder·decoder 설명과 표 III 의 층 수를 [ACT 의 Transformer](#act-의-transformer) 절과 맞춰 읽는다
-- LeRobot, [ACT 설정 파일](https://github.com/huggingface/lerobot/blob/main/src/lerobot/policies/act/configuration_act.py) — 차원·head·층
-  수·`pre_norm` 의 기본값과 decoder 층 수에 붙은 주석
+- Hugging Face, [openai/clip-vit-large-patch14 의 `config.json`](https://huggingface.co/openai/clip-vit-large-patch14/blob/main/config.json) —
+  Stable Diffusion v1 이 쓰는 text encoder 의 차원 768, 층 12, head 12, $d_\text{ff}$ 3072, 위치 77 개
+- diffusers, [`models/attention.py`](https://github.com/huggingface/diffusers/blob/main/src/diffusers/models/attention.py) —
+  `BasicTransformerBlock` 의 self-attention → cross-attention → FFN 순서와 Pre-LN, `FeedForward` 의 4 배 차원
 - Dzmitry Bahdanau 등, [Neural Machine Translation by Jointly Learning to Align and Translate](https://arxiv.org/abs/1409.0473) — 번역
   모델에 attention 을 처음 넣은 논문. 3 절의 weight 계산과 그림 3 의 단어 대응을 본다
 - Jimmy Lei Ba 등, [Layer Normalization](https://arxiv.org/abs/1607.06450) — LayerNorm 을 제안한 논문. 3 절의 식만 읽어도 된다

@@ -22,14 +22,14 @@
         CLIP 의 학습 데이터 4억 쌍은 어떻게 만들었고, 사람이 label 을 단 dataset 과 무엇이 다른가?
       choices:
         - '사람이 사진마다 1000 가지 class 중 하나를 골라 단 label 이다'
-        - '로봇이 직접 찍은 사진에 작업 성공 여부를 붙인 데이터라 로봇에 바로 맞는다'
+        - '사진 검색 서비스의 사용자가 누른 사진에 검색어를 붙인 데이터라 검색에 바로 맞는다'
         - '사진을 생성 model 로 만들고, 그 생성에 쓴 문장을 짝으로 붙여 사람 손이 들지 않았다'
         - '인터넷에 사진과 함께 올라온 설명 글을 모은 것으로, 사람이 label 로 단 글이 아니다'
       answer: 3
       explanation: |
         CLIP 은 영어 Wikipedia 에 자주 나오는 단어 등으로 검색어 50만 개를 만들고, 글에 그 검색어가 들어간 사진–글 쌍을 검색어 하나당 2만 개까지
         모아 4억 쌍을 만들었다. 설명 글은 누가 label 로 단 것이 아니지만 대개 사진에 무엇이 있는지가 적혀 있고, 사람이 4억 개에 label 을 달
-        필요도 없다. 사람이 1000 가지 class 중 하나를 골라 단 label 은 ImageNet 의 방식이다. 로봇이 찍은 사진에 성공 여부를 붙인 데이터는 CLIP 의
+        필요도 없다. 사람이 1000 가지 class 중 하나를 골라 단 label 은 ImageNet 의 방식이다. 사용자가 누른 사진에 검색어를 붙인 데이터는 CLIP 의
         학습 데이터가 아니다. 생성 model 로 만든 사진도 쓰지 않았다.
     - question: |
         contrastive learning 의 contrastive 는 무엇을 대조한다는 뜻인가?
@@ -84,7 +84,7 @@
       answer: 3
       explanation: |
         행 방향은 사진 하나에 대해 $B$ 개 설명 중 짝을 고르는 문제이고, 열 방향은 설명 하나에 대해 $B$ 개 사진 중 짝을 고르는 문제다. 둘 다 쓰면
-        사진 → 글 검색과 글 → 사진 검색이 모두 학습되며, 글로 물체를 찾는 로봇의 사용법은 열 방향에 해당한다. 한 방향만 써도 대각선은
+        사진 → 글 검색과 글 → 사진 검색이 모두 학습되며, 글로 사진을 찾는 사진 검색은 열 방향에 해당한다. 한 방향만 써도 대각선은
         계산된다. 세로 방향에도 negative 가 $B - 1$ 개씩 있다. cross-entropy 의 평균은 0 ~ 1 로 제한되지 않는다.
 
 - topic: infonce-negatives
@@ -295,45 +295,44 @@
         충분했고, 작은 batch 에서도 softmax 보다 좋았다. sigmoid 와 softmax 는 둘 다 parameter 가 없는 함수다. 모든 GPU 는 같은 model 을 나눠
         학습한다.
 
-- topic: robot-use
-  title: 로봇에서의 CLIP 과 SigLIP
+- topic: generation-use
+  title: 그림 생성에서의 CLIP
   variants:
     - question: |
-        YOLO-World 같은 open-vocabulary detector 로 로봇이 찾을 물체를 "cup" 에서 "screwdriver" 로 바꾸려면 무엇을 해야 하는가?
+        Stable Diffusion v1 은 prompt 를 CLIP ViT-L/14 의 text encoder 로 읽는다. zero-shot 분류와 비교해 text encoder 의 출력을 쓰는 방식은 어떻게 다른가?
       choices:
-        - '"screwdriver" 를 CLIP text encoder 에 넣어 새 embedding 을 만들기만 하면 된다'
-        - '드라이버 사진 수백 장에 bounding box 를 그려 detector 를 처음부터 다시 학습한다'
-        - 'detector 의 마지막 층에 class 칸을 하나 더 붙이고 드라이버 사진으로 fine-tuning 한다'
-        - '카메라를 드라이버가 잘 보이는 전용 카메라로 바꾼다'
-      answer: 0
-      explanation: |
-        open-vocabulary detector 는 물체 이름을 CLIP text encoder 의 embedding 으로 나타내고, 사진의 영역마다 계산한 embedding 과 비교해 box 를
-        고른다. 이름을 바꾸면 embedding 만 새로 계산하면 되고, YOLO-World 는 이 embedding 을 미리 계산해 weight 처럼 넣어 둘 수 있다. 드라이버
-        사진에 box 를 그려 다시 학습하는 것은 이름표가 정해진 detector 의 방식이다. 마지막 층에 class 칸을 더해 fine-tuning 하는 것도 같은 방식이다.
-        카메라는 찾을 물체의 이름과 관계없다.
-    - question: |
-        CLIPort 는 CLIP 과 Transporter network 를 두 갈래로 묶었다. 왜 CLIP 만으로 집을 위치를 정하지 않았는가?
-      choices:
-        - 'CLIP 은 학습 속도가 너무 느려서 로봇 데이터로 다시 학습할 수 없기 때문이다'
-        - 'CLIP 은 "어느 물체인가" 는 잘 알지만 "어디에" 정보를 잘 담지 못하기 때문이다'
-        - 'CLIP 은 영어 지시문을 읽지 못해 지시를 Transporter 가 대신 읽어야 하기 때문이다'
-        - 'CLIP 은 RGB 사진을 받을 수 없어 Transporter 가 사진을 대신 받기 때문이다'
+        - 'zero-shot 분류처럼 문장 전체를 embedding 하나로 줄여서, 그 vector 하나만 U-Net 에 넘긴다'
+        - '하나로 줄이기 전의 출력을 써서, token 77 개 자리마다 숫자 768 개씩을 모두 U-Net 에 넘긴다'
+        - 'text encoder 를 Stable Diffusion 학습 때 처음부터 새로 학습해서, CLIP 의 weight 는 쓰지 않는다'
+        - 'text encoder 대신 image encoder 를 써서, prompt 를 먼저 사진으로 바꾼 뒤 U-Net 에 넘긴다'
       answer: 1
       explanation: |
-        CLIP 은 인터넷 사진–글 쌍으로 물체 이름과 색 같은 뜻을 넓게 배웠지만, 학습 신호가 위치 관계를 요구하지 않아 "어디에" 정보가 약하다.
-        CLIPort 는 CLIP 이 semantic stream 으로 "무엇" 을, Transporter 가 spatial stream 으로 "어디" 를 맡게 해 Franka 팔의 9 가지 실제 작업을
-        image–action 쌍 179 개로 학습했다. 두 갈래로 나눈 이유는 학습 속도가 아니라 위치 정보다. CLIP 은 영어 지시문을 읽는다. RGB 사진도 CLIP
-        의 기본 입력이다.
+        model card 에 따르면 Stable Diffusion 은 고정한 CLIP ViT-L/14 text encoder 의 non-pooled 출력(token 마다 나온 출력)을 모두 쓴다. U-Net 은
+        cross-attention 으로 그림의 자리마다 이 token 출력들을 참고한다. zero-shot 분류는 문장을 vector 하나로 줄여 사진과 비교했다.
+        text encoder 는 학습 중 고정했으므로 새로 학습하지 않았다. prompt 를 사진으로 바꾸는 단계도 없다.
     - question: |
-        π0·OpenVLA 같은 VLA 가 사진 입력으로 SigLIP 의 image encoder 를 쓰는 이유와, VLA 가 SigLIP 의 출력을 넘기는 방식으로 맞는 것은?
+        LAION-5B 는 인터넷에서 모은 사진–글 쌍 가운데 CLIP ViT-B/32 의 cosine similarity 가 영어 0.28 보다 낮은 쌍을 버렸다. 이렇게 거르는 이유는 무엇인가?
       choices:
-        - 'SigLIP 은 로봇 데이터로만 학습해서 action 을 직접 내기 때문이고, [CLS] vector 하나만 넘긴다'
-        - 'SigLIP 은 parameter 가 가장 적은 encoder 이기 때문이고, 사진을 class 이름 하나로 바꿔 넘긴다'
-        - '출력이 말과 같은 공간에 놓여 지시문과 다루기 쉽기 때문이고, patch token 전부를 넘긴다'
-        - 'SigLIP 은 깊이 사진을 받아 거리를 알 수 있기 때문이고, 깊이 값만 언어 model 에 넘긴다'
+        - '사진이 너무 작거나 흐린 쌍을 골라내려고, 사진의 해상도를 cosine similarity 로 재기 때문이다'
+        - '글이 영어가 아닌 쌍을 모두 버리려고, 언어를 cosine similarity 로 판별하기 때문이다'
+        - '사진과 글이 서로 맞지 않는 쌍을 버려, 글이 사진을 설명하는 쌍만 남기려고'
+        - '같은 사진이 여러 번 들어간 쌍을 지우려고, 사진끼리의 cosine similarity 를 재기 때문이다'
       answer: 2
       explanation: |
-        SigLIP 은 인터넷 사진–글 쌍으로 sigmoid loss 를 써서 학습해, 출력이 "빨간 컵" 같은 말과 같은 공간에 놓인다. PaliGemma(π0 의 출발점)는
-        SigLIP So400m 을 쓰고, OpenVLA 는 SigLIP 과 DINOv2 를 함께 쓴다. 둘 다 [CLS] 하나 대신 patch token 전부를 언어 model 에 넘겨 "어디에"
-        정보를 지킨다. SigLIP 은 로봇 데이터로 학습하지 않았고 action 도 내지 않는다. 가장 작은 encoder 라서 고른 것이 아니며, 사진을 class 이름
-        하나로 바꾸면 위치 정보가 사라진다. SigLIP 은 깊이 사진이 아니라 RGB 사진을 받는다.
+        cosine similarity 는 사진의 embedding 과 글의 embedding 이 얼마나 같은 쪽을 향하는지를 재므로, 글이 사진을 얼마나 잘 설명하는지를
+        나타낸다. 인터넷의 대체 글에는 사진과 상관없는 글도 많아서, 점수가 낮은 쌍을 버리면 짝이 맞는 쌍만 남는다. 논문에 따르면 이 단계에서
+        약 90% 가 빠졌다. 사진의 해상도는 이 점수로 재지 않는다. 다른 언어 쌍은 버리지 않고 기준 0.26 을 따로 썼다. 이 점수는 사진과 글
+        사이에서 재므로 사진끼리의 중복을 찾는 계산이 아니다.
+    - question: |
+        "CLIP 을 Stable Diffusion 에 붙였으니 CLIP 이 그림을 그린다" 는 설명은 어디가 틀렸는가?
+      choices:
+        - 'CLIP 은 사진과 문장이 맞는 정도를 재고 문장을 vector 로 바꿀 뿐, 그림을 만드는 것은 noise 를 걷어 내는 U-Net 이다'
+        - 'CLIP 은 Stable Diffusion 에 쓰이지 않고, Stable Diffusion 은 글을 읽지 않고 그림만 그린다'
+        - 'CLIP 은 그림을 그릴 수 있지만 512×512 보다 작은 그림만 그려서, 큰 그림은 U-Net 이 맡는다'
+        - 'CLIP 이 그림을 그리지만 색을 칠하지 못해서, 색은 VAE decoder 가 따로 칠한다'
+      answer: 0
+      explanation: |
+        CLIP 은 contrastive learning 으로 사진과 문장의 점수를 내도록 학습했을 뿐, 사진을 만들어 내는 부분이 없다. Stable Diffusion 에서 CLIP 의
+        text encoder 는 prompt 를 token 출력으로 바꾸고, 그 출력을 참고해 noise 를 걷어 내는 것은 U-Net 이고, latent 를 그림으로 되살리는
+        것은 VAE decoder 다. Stable Diffusion 은 CLIP 의 text encoder 로 prompt 를 읽는다. CLIP 은 그림을 그리지 않으므로 그림의 크기를 나눠
+        맡지 않는다. 색도 CLIP 이 그린 그림에 VAE decoder 가 따로 칠하는 것이 아니다.

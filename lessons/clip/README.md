@@ -4,7 +4,7 @@ title: CLIP
 branch: vision
 requires: [vit, gpt]
 hours: 2
-summary: 사진–글 쌍 4억 개로 사진과 문장을 같은 공간의 vector 로 바꾸는 contrastive learning. 유사도 행렬과 InfoNCE loss, temperature, zero-shot 분류, 한계, SigLIP, open-vocabulary picking 과 VLA 에서의 쓰임
+summary: 사진–글 쌍 4억 개로 사진과 문장을 같은 공간의 vector 로 바꾸는 contrastive learning. 유사도 행렬과 InfoNCE loss, temperature, zero-shot 분류, 한계, SigLIP, Stable Diffusion 의 text encoder 와 LAION 데이터 거르기
 papers:
   - title: "Learning Transferable Visual Models From Natural Language Supervision"
     authors: Alec Radford et al.
@@ -18,28 +18,20 @@ papers:
     authors: Mert Yuksekgonul, Federico Bianchi, Pratyusha Kalluri, Dan Jurafsky, James Zou
     year: 2023
     url: https://arxiv.org/abs/2210.01936
-  - title: "CLIPort: What and Where Pathways for Robotic Manipulation"
-    authors: Mohit Shridhar, Lucas Manuelli, Dieter Fox
-    year: 2021
-    url: https://arxiv.org/abs/2109.12098
-  - title: "YOLO-World: Real-Time Open-Vocabulary Object Detection"
-    authors: Tianheng Cheng et al.
-    year: 2024
-    url: https://arxiv.org/abs/2401.17270
-  - title: "OK-Robot: What Really Matters in Integrating Open-Knowledge Models for Robotics"
-    authors: Peiqi Liu et al.
-    year: 2024
-    url: https://arxiv.org/abs/2401.12202
+  - title: "LAION-5B: An open large-scale dataset for training next generation image-text models"
+    authors: Christoph Schuhmann et al.
+    year: 2022
+    url: https://arxiv.org/abs/2210.08402
 ---
 
 # CLIP
 
-책상 정리 로봇에게 "파란 머그컵을 집어" 라고 했는데, 로봇의 물체 detector 는 COCO dataset 의 80 가지 class 로 학습해서 "cup" 은 알아도
-"파란 머그컵" 이라는 이름을 고를 방법이 없다. 물체 이름이 하나 늘 때마다 사진 수백 장에 이름을 달아 detector 를 다시 학습해야 할까?
+사진 모음에서 "파란 머그컵" 이 찍힌 사진을 찾고 싶은데, 가진 분류기는 ImageNet 의 1000 가지 class 로 학습해서 "coffee mug" 는 알아도
+"파란 머그컵" 이라는 이름을 고를 방법이 없다. 찾을 이름이 하나 늘 때마다 사진 수백 장에 이름을 달아 분류기를 다시 학습해야 할까?
 
 CLIP 은 인터넷에서 모은 사진–글 쌍 4억 개로 사진과 문장을 같은 공간의 vector 로 바꾸도록 학습해서, 학습이 끝나면 아무 문장이나 사진과
-비교해 점수를 낼 수 있다. 이름표 목록이 따로 없어서 찾을 물체가 바뀌면 문장만 바꾸면 된다. 2024년의 OK-Robot 은 CLIP 계열 model 로 물체를
-찾아, 처음 가 본 집 10 곳에서 따로 학습하지 않고 물건을 집어 옮기는 시도의 58.5% 에 성공했다.
+비교해 점수를 낼 수 있다. 이름표 목록이 따로 없어서 찾을 것이 바뀌면 문장만 바꾸면 된다. CLIP 은 그림 생성에도 쓰인다.
+Stable Diffusion v1 은 prompt 를 CLIP 의 text encoder 로 읽고, 학습에 쓴 사진–글 쌍도 CLIP 의 점수로 걸러 낸 LAION-5B 에서 골랐다.
 
 ## 학습 목표
 
@@ -47,7 +39,7 @@ CLIP 은 인터넷에서 모은 사진–글 쌍 4억 개로 사진과 문장을
   숫자로 설명할 수 있다
 - temperature 가 없으면 학습이 막히는 이유와, 학습한 CLIP 의 logit scale 100 이 zero-shot 분류의 확률을 정하는 방식을 설명할 수 있다
 - CLIP 이 개수·위치 관계·세밀한 구분에 약한 이유와, SigLIP 이 loss 를 바꾼 이유를 설명할 수 있다
-- open-vocabulary detection, language-conditioned policy, VLA 의 image encoder 에서 CLIP 식 학습이 어떻게 쓰이는지 설명할 수 있다
+- Stable Diffusion 의 text encoder 와 LAION-5B 의 데이터 거르기에서 CLIP 이 어떻게 쓰이는지 설명할 수 있다
 
 ## 정해진 class 목록의 한계
 
@@ -351,9 +343,8 @@ notebook 이 80 개 template 으로 이 계산을 한다.
 
 </details>
 
-로봇에서도 문구가 결과를 바꾼다. 서론의 OK-Robot 은 사용자의 문장을 CLIP embedding 으로 바꿔 memory 에 저장한 물체 가운데 가장 가까운 것을
-찾는다. 10 개 집에서 171 번 시도한 실험에서 세부 실패 원인 가운데 가장 많은 것은 엉뚱한 물체를 찾은 경우로 전체의 9.3% 였고, 논문에는 뜻이
-거의 같은 두 문장 가운데 하나로는 물체를 찾고 다른 하나로는 못 찾은 예가 실려 있다.
+사진 검색에서도 문구가 결과를 바꾼다. 검색어를 "mug" 로 넣을 때와 "a photo of a mug" 로 넣을 때 사진마다 매긴 점수가 달라지고, 그래서 1 등으로
+뽑히는 사진도 바뀔 수 있다. Stable Diffusion 의 prompt 도 같은 text encoder 를 지나므로, 뜻이 같아 보이는 두 문구로 서로 다른 그림이 나온다.
 
 **흔한 오해.** zero-shot 을 CLIP 이 그런 사진을 한 번도 본 적이 없다는 뜻으로 읽기 쉽다. 0 개인 것은 그 분류 문제의 label 이 달린 학습
 예시일 뿐, CLIP 은 4억 쌍 속에서 고양이 사진을 아주 많이 봤을 것이다. 학습 데이터에 거의 없던 종류에는 약해서, 손글씨 숫자 사진 모음인 MNIST 에서는
@@ -396,9 +387,9 @@ Yuksekgonul 등은 CLIP ViT-B/32 를 COCO 의 사진 설명으로 다시 학습�
 만들었다. 관계 시험에서 원래 CLIP ViT-B/32 는 59% 를 맞혔고, negative 를 넣지 않고 COCO 로 다시 학습만 한 model 은 63% 를 맞혔으며, NegCLIP
 은 81% 를 맞혔다. 헷갈리는 negative 가 있어야 그 차이를 구별하는 gradient 가 생긴다.
 
-로봇에게는 위치 관계에 약한 점이 특히 문제가 된다. "왼쪽 컵을 집어" 에서 중요한 정보는 "왼쪽" 인데, 사진 전체를 [CLS] 자리의 vector 하나로
-요약하면 무엇이 있는지는 남아도 어디에 있는지는 흐려진다. 그래서 로봇 model 은 CLIP 의 embedding 하나에 기대지 않고 위치를 다른 부분에
-맡기거나 patch 마다 나온 출력을 모두 쓰는데, 그 예는 다음 절에서 다룬다.
+사진 검색에서는 위치 관계에 약한 점이 특히 문제가 된다. "컵 왼쪽의 공" 을 찾을 때 중요한 정보는 "왼쪽" 인데, 사진 전체를 [CLS] 자리의 vector
+하나로 요약하면 무엇이 있는지는 남아도 어디에 있는지는 흐려진다. 이 약점은 CLIP 의 text encoder 출력을 받아 그림을 그리는 model 에도
+이어지는데, 그 이야기는 SigLIP 절 뒤의 [그림 생성에서의 쓰임](#그림-생성에서의-쓰임) 절에서 다룬다.
 
 **확인 문제.** 개수 세기, 위치 관계, 세밀한 구분이 약한 데에는 공통된 원인이 있다. 그 원인과, 위치 관계를 보강하려면 batch 에 어떤 negative 를
 넣어야 하는지 답해 보자.
@@ -467,69 +458,47 @@ SigLiT 은 TPUv4 칩 4 개로 이틀 만에 ImageNet zero-shot 정확도 84.5% �
 
 </details>
 
-## 로봇에서의 쓰임
+## 그림 생성에서의 쓰임
 
-CLIP 식으로 학습한 encoder 를 로봇에서 쓰는 방식은 아래 그림처럼 어느 encoder 를 가져다 쓰는지로 나눌 수 있다.
+CLIP 식으로 학습한 encoder 는 Stable Diffusion 을 만드는 여러 단계에 들어 있다. 글을 그림에 전하는 text encoder 로도 쓰이고, 학습에 쓸
+사진–글 쌍을 고르는 거름망으로도 쓰인다.
 
-![사진–글 짝 맞히기로 학습한 encoder 의 세 가지 쓰임. YOLO-World 는 CLIP 의 text encoder 로 물체 이름을 embedding 으로 바꿔 bounding box 를 찾고, CLIPort 는 CLIP 의 두 encoder 로 지시문의 물체를 알아보고 Transporter 로 위치를 정하며, π0·OpenVLA·SmolVLA 는 SigLIP 의 image encoder 를 사진 입력으로 쓴다](figures/applications.svg)
+### Stable Diffusion 의 text encoder
 
-### open-vocabulary detection 과 picking
+Stable Diffusion v1 의 model card 는 이 model 이 학습 중 고정한(frozen) CLIP ViT-L/14 의 text encoder 로 prompt 를 읽는다고 적는다. zero-shot
+분류는 문장 전체를 embedding 하나로 줄여 사진과 비교했지만, Stable Diffusion 은 그렇게 줄이기 전에 token 마다 나온 출력을 모두 쓴다(model
+card 의 표현으로 non-pooled). token 77 개 자리마다 숫자 768 개가 나오고, U-Net 은 [Cross-Attention](../cross-attention/README.md) 으로 그림의
+자리마다 이 token 출력들을 참고한다.
 
-Classical Pick & Place 에서 본 YOLO-World 는 물체 이름을 숫자로 바꾸는 데 CLIP 의 text encoder 를 그대로 쓴다.
-사용자가 "cup" 을 주면 text encoder 가 그 embedding 을 만들고, detector 는 사진에서 물체가 있을 만한 영역마다 계산한 embedding 과 비교해 점수가
-높은 영역에 bounding box 를 그린다. zero-shot 분류가 사진 전체를 문장과 비교했다면, 이 detector 는 같은 비교를 영역 하나하나에 한다. 정해진
-단어 목록에 묶이지 않아서 이런 detector 를 open-vocabulary detector 라고 부른다.
+CLIP 의 text encoder 가 사진과 같은 공간에 놓이도록 학습됐다는 점이 여기서 쓸모 있다. "a photo of a blue mug" 의 embedding 은 파란 머그컵
+사진의 embedding 과 가깝게 배웠으므로, 그 출력에는 사진에서 무엇이 보일지가 담겨 있다. 개수·위치 관계·세밀한 구분에 약한 점도 그대로 따라온다. 개수나 위치 관계를
+CLIP 이 잘 담지 못하면, 그 출력을 받는 그림 생성 model 도 그 정보를 받지 못한다.
 
-YOLO-World 는 학습에 쓰지 않은 LVIS dataset(물체 class 1203 개)에서 V100 GPU 로 1초에 사진 52 장을 처리하며 35.4 AP 를 얻었다. 찾을 이름을
-미리 정해 두면 그 embedding 을 한 번만 계산해 detector 의 weight 처럼 넣어 둘 수 있어서, 실행 중에는 text encoder 를 다시 계산하지 않는다.
-찾을 물체를 "cup" 에서 "screwdriver" 로 바꿀 때도 새 이름의 embedding 을 한 번 계산하면 되고, 드라이버 사진을 모아 다시 학습할 필요는 없다.
+### 학습 데이터를 거르는 CLIP
 
-![이름으로 물체를 찾아 집는 과정. 질의 문장 "blue mug" 를 text encoder 로 embedding 으로 바꾸고, 방을 훑어 만든 물체 memory 의 CLIP embedding 과 cosine similarity 를 비교한다. 예로 든 점수 0.31, 0.26, 0.22, 0.12 가운데 가장 큰 파란 머그컵의 위치로 이동해 집는다](figures/open-vocab-pick.svg)
+Stable Diffusion v1 은 LAION-5B 의 일부로 학습했다. LAION-5B 를 만든 사람들은 인터넷에서 사진과 그 대체 글(alt-text)을 모은 뒤,
+사진과 글이 서로 맞지 않는 쌍을 CLIP 의 점수로 걸러 냈다. CLIP ViT-B/32 로 두 embedding 의 cosine similarity 를 계산해, 영어 쌍은 0.28 보다
+낮은 것을 버리고 다른 언어 쌍은 0.26 보다 낮은 것을 버렸다. 논문에 따르면 이 단계에서 처음 모은 약 500 억 장 가운데 약 90% 가 빠지고 60 억
+쌍 가까이가 남았다.
 
-서론의 OK-Robot 은 이 방식으로 Hello Robot 의 Stretch 를 움직였다. 먼저 집 안을 iPhone 으로 훑으며 찍은 영상의 frame 마다 CLIP 계열
-open-vocabulary detector 인 OWL-ViT 로 물체를 찾고, 물체마다 위치와 CLIP embedding 을 memory 에 저장한다. "blue mug"(파란 머그컵) 같은 문장이
-들어오면 위 그림처럼 문장의 embedding 과 가장 가까운 물체를 골라 그 위치로 가고, 미리 학습한 grasp model(AnyGrasp)이 정한 자세로 집는다.
-그림의 점수는 예로 든 값이고, 실제 성공률은 10 개 집에서 58.5% 였다. 질의 문장을 다듬고 물건 주변을 치운 뒤 너무 크거나 투명하거나 미끄러운
-물체를 뺀 조건에서는 성공률이 82.4% 까지 올랐다.
+Stable Diffusion v1.2 부터는 그 가운데 LAION-Aesthetics 예측기가 "보기 좋은 정도" 를 5 점 넘게 매긴 사진만 골라 더 학습했다. 이 예측기도 CLIP
+embedding 을 입력으로 받는 작은 neural network 다.
 
-### language-conditioned policy
+| 단계 | CLIP 이 하는 일 | 쓰는 CLIP |
+| --- | --- | --- |
+| 데이터 모으기 (LAION-5B) | 사진과 글의 cosine similarity 로 맞지 않는 쌍을 버린다 | ViT-B/32 |
+| 데이터 고르기 (LAION-Aesthetics) | CLIP embedding 으로 보기 좋은 정도를 매긴다 | CLIP embedding 을 받는 예측기 |
+| 그림 그리기 (Stable Diffusion v1) | prompt 를 token 77 개 × 숫자 768 개로 바꾼다 | ViT-L/14 의 text encoder |
 
-지시문을 함께 받아 행동을 내는 policy 를 language-conditioned policy 라고 한다. 2021년의 CLIPort 는 앞 절에서 본 CLIP 의 위치 약점을 피하려고
-위치를 맡는 부분을 따로 두었다. CLIP 의 image encoder(학습 중 고정)와 text encoder 가 어느 물체인지를 맡는 semantic stream 이 되고, 위치를
-정밀하게 맞히는 Transporter network 가 어디를 집고 어디에 놓을지를 맡는 spatial stream 이 된다. 논문 제목의 What and Where 가 이 두 갈래다.
+**흔한 오해.** CLIP 을 붙이면 그림을 그릴 수 있다고 생각하기 쉽다. CLIP 은 사진과 문장이 얼마나 맞는지 점수를 내고 문장을 vector 로 바꿀
+뿐, 그림을 만들지 않는다. 그림을 만드는 것은 그 vector 를 받아 noise 를 걷어 내는 U-Net 이다.
 
-CLIPort 는 Franka Panda 팔로 9 가지 실제 작업을 하는 multi-task model 하나를 image–action 쌍 179 개로 학습했다. 시뮬레이션 실험에서는 학습
-시연에 한 번도 나오지 않은 "pink" 같은 색 이름을 잘 다루지 못했는데, 논문은 CLIP 이 인터넷에서 그 단어를 배웠어도 로봇이 보는 장면에서는 조명에 따라
-색이 달라 보이기 때문이라고 설명했다. 다른 작업에서 분홍 블록을 본 multi-task model 은 평가 작업에서 처음 나온 "pink block" 도 훨씬 잘 다뤘다.
-
-### VLA 의 SigLIP
-
-사진과 지시문을 받아 로봇 action 을 내는 VLA 는 대개 사진과 글을 함께 받아 글을 내는 VLM(Vision-Language Model)을 바탕으로 만들고, 그
-VLM 의 image encoder 로 SigLIP 을 많이 쓴다. SigLIP 은 사진과 설명 글의 짝을 맞히며 학습해서 출력이 "빨간 컵" 같은 말과 같은 공간에 놓이므로,
-언어 model 이 지시문 token 과 사진 token 을 함께 다루기 쉽다.
-
-| model | 사진 입력 |
-| --- | --- |
-| PaliGemma (2024, VLM) | SigLIP So400m image encoder + Gemma-2B 언어 model |
-| π0 (2024) | PaliGemma 의 weight 에서 출발해 로봇 데이터로 더 학습 |
-| OpenVLA (2024) | SigLIP 과 DINOv2 의 출력을 이어 붙여 Llama 2 에 넣는다 |
-| SmolVLA (2025) | SmolVLM-2 의 SigLIP 을 쓰고, 사진 한 장을 visual token 64 개로 줄인다 |
-
-OpenVLA 저자들은 SigLIP 에 DINOv2 를 더하면 공간 추론이 나아진다고 보았고, 이 조합을 쓴 VLM 으로 만든 policy 가 LLaVA 로 만든 policy 보다
-로봇 작업 성공률이 약 10%p 높았다고 보고했다. 또 zero-shot 분류는 사진 하나를 embedding 하나로 줄이지만, VLA 는 [ViT](../vit/README.md) 에서 본 patch token 을 전부 언어 model 에 넘겨 위치 정보를 지킨다.
-
-**흔한 오해.** CLIP 을 붙이면 로봇이 지시문을 이해해 바로 움직인다고 생각하기 쉽다. CLIP 은 사진과 문장이 얼마나 맞는지 점수를 낼 뿐 action
-을 내지 않는다. OK-Robot 에서도 CLIP 은 물체를 고르는 데만 쓰였고 집는 자세는 grasp model 이 정했다. CLIPort 는 위치를 Transporter 에
-맡겼고, VLA 에서도 action 은 언어 model 이나 그 뒤에 따로 붙인 부분이 낸다.
-
-**확인 문제.** OK-Robot 처럼 물체 memory 에 CLIP embedding 을 저장해 둔 로봇이 있다. 찾을 물체를 "blue mug" 에서 "red screwdriver" 로 바꾸면
-무엇을 다시 계산해야 하고, 무엇은 그대로 쓸 수 있을까?
+**확인 문제.** LAION-5B 를 만들 때 어떤 영어 사진–글 쌍의 CLIP cosine similarity 가 0.25 였다. 이 쌍은 남았을까? 다른 언어의 쌍이 0.27 이면 어떨까?
 
 <details><summary>답 보기</summary>
 
-1. 새 문장 "red screwdriver" 를 text encoder 에 넣어 질의 embedding 하나를 새로 계산한다
-2. memory 에 저장한 물체별 위치와 CLIP embedding 은 그대로 쓰고, 새 질의 embedding 과의 cosine similarity 만 다시 계산해 가장 큰 물체를 고른다
-3. 드라이버 사진을 모으거나 model 을 다시 학습할 필요는 없다
+1. 영어 쌍의 기준은 0.28 이라 0.25 인 쌍은 버린다
+2. 다른 언어 쌍의 기준은 0.26 이라 0.27 인 쌍은 남는다
 
 </details>
 
@@ -542,12 +511,11 @@ OpenVLA 저자들은 SigLIP 에 DINOv2 를 더하면 공간 추론이 나아진�
   자른다. zero-shot 분류는 class 이름을 넣은 prompt 와 사진의 점수를 비교해 고르고, 문구와 template ensemble 이 정확도를 바꾼다
 - CLIP 은 설명 글에 드물게 적히는 개수·위치 관계·세밀한 구분에 약하다(관계 시험에서 CLIP ViT-B/32 의 정확도는 59% 로, 무작위로 고를 때의 50% 와 큰 차이가 없다). SigLIP 은
   softmax 대신 칸마다 sigmoid 를 써서 큰 batch 를 여러 GPU 에 나누기 쉽게 했다
-- 로봇에서는 YOLO-World·OK-Robot 의 open-vocabulary picking, CLIPort 의 language-conditioned policy, π0·OpenVLA·SmolVLA 의 SigLIP image
-  encoder 로 쓰인다
+- Stable Diffusion v1 은 고정한 CLIP ViT-L/14 의 text encoder 로 prompt 를 token 77 개 × 숫자 768 개로 바꿔 쓴다. 학습 데이터 LAION-5B 는
+  CLIP ViT-B/32 의 cosine similarity 가 영어 0.28, 다른 언어 0.26 보다 낮은 쌍을 버려 만들었다
 
-CLIP 은 점수를 낼 뿐 문장이나 로봇 action 을 만들어 내지는 못한다. 사진 encoder 의 patch token 을 언어 model 에 넘기고 action 까지 token 으로
-생성하게 만든 VLA 는 RT-2 → OpenVLA 에서 다룬다. SigLIP 을 쓰는 PaliGemma 에 action 을 내는 부분을 따로 붙인
-VLA 는 π0 에서 다룬다.
+CLIP 은 점수를 낼 뿐 그림을 만들어 내지는 못한다. CLIP 의 text encoder 가 낸 token 출력을 U-Net 의 그림 자리마다 참고하게 하는 방법은
+[Cross-Attention](../cross-attention/README.md) 에서 다룬다.
 
 ## 참고 자료
 
@@ -558,12 +526,12 @@ VLA 는 π0 에서 다룬다.
   식과 bias 초기값(3.2절), pseudocode(Algorithm 1), batch 크기의 영향(4절)을 본다
 - Mert Yuksekgonul et al., [When and why vision-language models behave like bags-of-words, and what to do about it?](https://arxiv.org/abs/2210.01936)
   (2023) — 단어 순서와 관계를 묻는 ARO 시험과 NegCLIP. 그림 1 과 부록 Table 2 의 관계별 정확도를 본다
-- Mohit Shridhar et al., [CLIPort: What and Where Pathways for Robotic Manipulation](https://arxiv.org/abs/2109.12098) (2021) — CLIP 과
-  Transporter 를 두 갈래로 묶은 language-conditioned policy. 그림 2 가 구조다
-- T. Cheng et al., [YOLO-World: Real-Time Open-Vocabulary Object Detection](https://arxiv.org/abs/2401.17270) (2024) — CLIP text encoder 로
-  이름을 embedding 으로 바꾸는 open-vocabulary detector. 3.2절의 Text Encoder 문단과 prompt-then-detect 설명을 본다
-- Peiqi Liu et al., [OK-Robot: What Really Matters in Integrating Open-Knowledge Models for Robotics](https://arxiv.org/abs/2401.12202)
-  (2024) — CLIP·OWL-ViT·AnyGrasp 로 처음 가 본 집에서 물건을 집어 옮기는 system. 구조(II 절)와 실험·실패 원인 분석(III 절)을 본다
+- Christoph Schuhmann et al., [LAION-5B](https://arxiv.org/abs/2210.08402) (2022) — CLIP ViT-B/32 의 cosine similarity 로 영어 0.28, 다른 언어
+  0.26 보다 낮은 쌍을 버려 약 500 억 장에서 60 억 쌍 가까이를 남긴 과정
+- CompVis, [Stable Diffusion v1 README·model card](https://github.com/CompVis/stable-diffusion) — 고정한 CLIP ViT-L/14 text encoder 의
+  non-pooled 출력을 쓴다는 설명과, checkpoint 마다 학습에 쓴 LAION 부분 집합(laion-aesthetics v2 5+ 등)
+- LAION, [improved-aesthetic-predictor](https://github.com/christophschuhmann/improved-aesthetic-predictor) — CLIP embedding 을 입력으로 받아
+  사진의 보기 좋은 정도를 매기는 예측기
 - OpenAI, [CLIP](https://github.com/openai/CLIP) — 공개 weight 와 tokenizer. dataset 별 class 이름과 template 은
   [`data/prompts.md`](https://github.com/openai/CLIP/blob/main/data/prompts.md), 80 개 template ensemble 은
   [Prompt Engineering for ImageNet notebook](https://github.com/openai/CLIP/blob/main/notebooks/Prompt_Engineering_for_ImageNet.ipynb) 에 있다

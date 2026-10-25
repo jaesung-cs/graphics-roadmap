@@ -4,7 +4,7 @@ title: BPE Tokenizer
 branch: language
 requires: [linear-regression]
 hours: 2
-summary: text 를 token id 열로 바꾸는 BPE 의 학습·encode·decode, vocabulary 크기와 한국어의 token 수, 로봇 행동을 token 으로 바꾸는 256 bin 방식과 FAST
+summary: text 를 token id 열로 바꾸는 BPE 의 학습·encode·decode, vocabulary 크기와 한국어의 token 수, Stable Diffusion 이 prompt 를 자르는 CLIP tokenizer 와 77 token 한도
 papers:
   - title: "A New Algorithm for Data Compression"
     authors: Philip Gage
@@ -18,37 +18,33 @@ papers:
     authors: Alec Radford, Jeffrey Wu, Rewon Child, David Luan, Dario Amodei, Ilya Sutskever
     year: 2019
     url: https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf
-  - title: "OpenVLA: An Open-Source Vision-Language-Action Model"
-    authors: Moo Jin Kim et al.
-    year: 2024
-    url: https://arxiv.org/abs/2406.09246
-  - title: "FAST: Efficient Action Tokenization for Vision-Language-Action Models"
-    authors: Karl Pertsch et al.
-    year: 2025
-    url: https://arxiv.org/abs/2501.09747
+  - title: "Learning Transferable Visual Models From Natural Language Supervision"
+    authors: Alec Radford et al.
+    year: 2021
+    url: https://arxiv.org/abs/2103.00020
 ---
 
 # BPE Tokenizer
 
-로봇에게 "빨간 컵을 집어." 라고 지시하면, 지시를 읽는 language model(글을 읽고 쓰는 모델)은 이 문장을 먼저 숫자 몇 개로 바꿔 받는다. GPT-2 의 규칙으로
-바꾸면 영어 "Pick up the red cup." 은 숫자 6 개인데 같은 뜻의 한국어 문장은 18 개가 된다. 같은 지시인데 한국어에는 왜 숫자가 세 배나
-필요할까?
+그림 생성 모델에 "고양이가 모자를 썼다." 라는 prompt 를 넣으면, 모델은 이 문장을 먼저 숫자 몇 개로 바꿔 받는다. 글을
+읽고 쓰는 language model 인 GPT-2 의 규칙으로 바꾸면 영어 "The cat wore a hat." 은 숫자 6 개인데 같은 뜻의 한국어 문장은 26 개가 된다. 같은
+뜻인데 한국어에는 왜 숫자가 네 배 넘게 필요할까?
 
 문장을 숫자로 바꾸는 규칙은 학습 text 에서 자주 붙어 나오는 조각 쌍을 하나씩 합쳐 가며 만드는데, 이 방법이 BPE(byte pair encoding)다.
-GPT-2 가 쓰는 조각 50,257 개 가운데 50,000 개가 이렇게 만들어졌고, 학습 text 가 대부분 영어였던 만큼 영어 조각이 많이 생겼다. 같은 방법을
-로봇 행동에도 써서, FAST 논문의 FAST tokenizer 는 두 팔 로봇이 1 초 동안 내는 행동 숫자 700 개를 평균 53 개로 줄였다.
+GPT-2 가 쓰는 조각 50,257 개 가운데 50,000 개가 이렇게 만들어졌고, 학습 text 가 대부분 영어였던 만큼 영어 조각이 많이 생겼다. Stable
+Diffusion 이 prompt 를 읽을 때 쓰는 CLIP 의 tokenizer 도 같은 BPE 로 만들었고, 이 tokenizer 는 prompt 를 token 77 자리에 맞춰 넣는다.
 
 ## 학습 목표
 
 - language model 이 text 를 token id 열로 바꿔 받는 이유와, 자르는 단위가 클수록 vocabulary 는 커지고 sequence 는 짧아지는 이유를 설명할 수 있다
 - 짧은 corpus 에서 쌍의 빈도를 세어 merge 하는 BPE 학습과, 배운 merge 로 하는 encode·decode 를 손으로 계산할 수 있다
 - vocabulary 크기를 정할 때 맞바꾸는 것과, 한국어 text 가 영어보다 token 을 많이 쓰는 이유를 숫자로 설명할 수 있다
-- RT-1·RT-2·OpenVLA 의 256 bin action token 과 FAST tokenizer 가 로봇 행동을 token 으로 바꾸는 방식을 비교할 수 있다
+- Stable Diffusion 이 쓰는 CLIP tokenizer 가 GPT-2 와 다른 점과, 77 token 한도가 prompt 의 길이를 제한하는 방식을 설명할 수 있다
 
 ## 숫자 열로 바꾼 text
 
-모델이 하는 일은 입력에 숫자를 곱하고 더하는 계산이다. 직선 모델 $\hat y = wx + b$ 는 입력 $x$ 가 2 V 같은 숫자여야 계산할 수 있다.
-문장을 받아 로봇이 할 일을 정하는 큰 모델도 안에서는 곱하기와 더하기만 하므로, "빨간 컵" 이라는 글자를 그대로 넣을 수는 없다. 그래서 글자를 다루는
+모델이 하는 일은 입력에 숫자를 곱하고 더하는 계산이다. 직선 모델 $\hat y = wx + b$ 는 입력 $x$ 가 2 ms 같은 숫자여야 계산할 수 있다.
+prompt 를 받아 그림을 그리는 큰 모델도 안에서는 곱하기와 더하기만 하므로, "빨간 모자" 라는 글자를 그대로 넣을 수는 없다. 그래서 글자를 다루는
 모델은 모두 첫 단계에서 문장을 숫자 열로 바꾸고, 계산이 끝나면 나온 숫자 열을 다시 글자로 되돌린다. 사람이 읽는 글자로 된 데이터를
 text 라고 하고, 다음에 올 글자를 예측하는 식으로 text 를 다루는 모델을 language model 이라고 한다.
 
@@ -162,8 +158,8 @@ able 은 GPT-2 의 tokenizer 가 실제로 자른 결과이고, 오타 unbelieva
 
 GPT-2 는 subword 를 찾는 출발점으로 byte 256 개를 vocabulary 에 먼저 넣었다. GPT-2 논문에 따르면 Unicode 글자를 출발점으로 삼으면
 기본 vocabulary 만 13만 개가 넘지만, byte 에서 시작하면 256 개로 충분하다. 어떤 text 든 byte 열이 되므로 처음 보는 단어나
-한글·emoji 가 나와도 최악의 경우 byte 하나하나가 token 이 될 뿐 `<unk>` 는 생기지 않는다. OpenVLA 가 지시문을 읽는 데 쓰는 Llama 2 의
-tokenizer 도 BPE 로 만든 vocabulary 32,000 개를 쓰고, 숫자는 한 자리씩 나누며, vocabulary 에 없는 글자는 UTF-8 byte 로 쪼갠다.
+한글·emoji 가 나와도 최악의 경우 byte 하나하나가 token 이 될 뿐 `<unk>` 는 생기지 않는다. Stable Diffusion 이 prompt 를 읽는 CLIP 의
+tokenizer 도 byte 에서 출발한 BPE 라서, 한글처럼 merge 가 적은 글자도 byte 조각으로 나뉠 뿐 `<unk>` 가 되지 않는다.
 
 **흔한 오해.** token 을 "단어" 와 같은 말로 여기기 쉽지만, token 은 tokenizer 가 정한 조각일 뿐이다. unbelievable 은 단어 하나지만
 GPT-2 에서는 token 4 개이고, 앞에 공백이 붙은 "␣unbelievable" 은 GPT-2 에서 token 1 개다.
@@ -443,21 +439,19 @@ vocabulary 를 키우면 sequence 는 짧아지지만 모델이 학습할 숫자
 
 | 문장 | UTF-8 byte | GPT-2 | GPT-4 | GPT-4o |
 | --- | --- | --- | --- | --- |
-| Pick up the red cup. | 20 | 6 | 6 | 6 |
-| 빨간 컵을 집어. | 21 | 18 | 11 | 9 |
 | The cat wore a hat. | 19 | 6 | 6 | 6 |
 | 고양이가 모자를 썼다. | 30 | 26 | 13 | 9 |
 
 ![같은 뜻의 영어·한국어 문장이 tokenizer 마다 쓰는 token 수](figures/korean-tokens.svg)
 
-"빨간 컵을 집어." 는 글자 수가 영어 문장의 절반도 안 되지만 한글 한 글자가 3 byte 라서 byte 수는 21 대 20 으로 비슷한데, GPT-2 에서는
-token 이 18 대 6 이다. GPT-2 의 학습 text 는 대부분 영어라서 merge 50,000 개 가운데 한국어 byte 쌍을 합친 merge 가 적고, 그래서 한국어
+"고양이가 모자를 썼다." 는 글자 수가 영어 문장보다 적지만 한글 한 글자가 3 byte 라서 byte 수는 30 대 19 이고, GPT-2 에서는 token 이
+26 대 6 이다. GPT-2 의 학습 text 는 대부분 영어라서 merge 50,000 개 가운데 한국어 byte 쌍을 합친 merge 가 적고, 그래서 한국어
 byte 는 대부분 합쳐지지 못한 채 byte 하나가 token 하나로 남는다. vocabulary 가 크고 한국어를 더 많이 넣어 학습한 tokenizer 는 한국어
 쌍을 merge 로 더 많이 배우므로, "고양이가 모자를 썼다." 의 token 이 26 → 13 → 9 로 준다. 영어 문장은 세 tokenizer 모두 6 개인데, 이미
 단어와 마침표가 하나씩 token 이 되어 있기 때문이다.
 
-token 이 많으면 같은 지시를 처리하는 데 계산이 더 들고, context 길이 안에 담을 수 있는 지시와 대화도 줄어든다. 그래서 한국어 지시를 받는
-로봇에 language model 을 붙일 때는 그 tokenizer 가 한국어 문장을 token 몇 개로 자르는지 먼저 세어 보면 좋다.
+token 이 많으면 같은 문장을 처리하는 데 계산이 더 들고, 정해진 길이 안에 담을 수 있는 내용도 줄어든다. 그래서 한국어 문장을 받는 모델을
+쓸 때는 그 tokenizer 가 한국어 문장을 token 몇 개로 자르는지 먼저 세어 보면 좋다.
 
 **확인 문제.** "안녕" 은 6 byte 이고 GPT-2 에서 token 6 개, "hello" 는 5 byte 이고 token 1 개다. 각각 bytes per token 은?
 
@@ -474,139 +468,50 @@ token 이 많으면 같은 지시를 처리하는 데 계산이 더 들고, cont
 
 ## 문맥에 따른 token 의 뜻
 
-뒤의 강의들에서 token 이라는 말은 세 가지 대상을 가리킨다. 셋 모두 모델이 한 번에 하나씩 받거나 내는 단위이지만, 무엇에서 왔는지와
+뒤의 강의들에서 token 이라는 말은 두 가지 대상을 가리킨다. 둘 다 모델이 한 번에 하나씩 받거나 내는 단위이지만, 무엇에서 왔는지와
 번호가 있는지가 다르다.
 
-![token 의 세 가지 쓰임. text token 은 vocabulary 번호이고, image patch token 은 이미지 조각의 숫자 묶음이며, action token 은 로봇 움직임 값을 칸 번호로 바꾼 것이다](figures/token-meanings.svg)
+![token 의 두 가지 쓰임. text token 은 vocabulary 번호이고, image patch token 은 이미지 조각의 숫자 묶음이다](figures/token-meanings.svg)
 
 - text token 은 이 강의에서 다룬 token 으로, text 를 자른 조각이고 vocabulary 안의 정수 번호 하나로 나타낸다. GPT-2 에서 "␣cat" 은 3797 번이다
 - image patch token 은 사진을 자른 조각이다. 이미지를 읽는 모델 [ViT](../vit/README.md) 는 가로세로 224 pixel 인 사진을 16×16 pixel
   조각(patch)으로 잘라 $14 \times 14 = 196$ 개의 token 을 만든다. text 는 글자라서 번호를 붙여야 숫자가 되지만, 사진은 처음부터 pixel 마다
   빨강·초록·파랑의 밝기가 숫자로 적혀 있어서 번호로 바꿀 필요가 없다. 그래서 조각 안 pixel 의 숫자 $16 \times 16 \times 3 = 768$ 개를 한 줄로
-  묶은 vector 가 곧바로 모델에 들어간다
-- action token 은 로봇 움직임 값의 칸 번호를 vocabulary 의 token 에 짝지은 것이다. 다음 절에서 다룬다
+  묶은 vector 가 곧바로 모델에 들어간다. 그림을 그리는 DiT 도 VAE 가 줄인 latent 를 같은 방식으로 잘라 patch token 으로 쓴다
 
-## action token
+## Stable Diffusion 의 CLIP tokenizer
 
-사진과 지시문을 받아 로봇 행동을 내는 모델을 VLA(Vision-Language-Action model)라고 한다. RT-2·OpenVLA 같은 VLA 는 language model 을
-고쳐 만들어서, 답을 낼 때 vocabulary 의 token 가운데 하나를 고를 수만 있고 "집게를 3.4 cm 벌린다" 의 3.4 같은 실수를 직접 적어 내지
-못한다. 그래서 움직임 값의 범위를 칸(**bin**)으로 나누고, bin 번호마다 vocabulary 의 token 하나를 짝지어 둔다. 예를 들어 0 ~ 8 cm 를
-1 cm 씩 8 개 bin(bin 0 ~ bin 7)으로 나누면 3.4 cm 는 3 이상 4 미만이라 bin 3 이다. 모델이 bin 3 에 짝지은 token 을 내면 그 bin 의 가운데
-값인 3.5 cm 로 되돌려 로봇에 보낸다. 아래 표의 모델들은 값 하나의 범위를 256 개 bin 으로 나눈다.
+Stable Diffusion v1 은 prompt 를 [CLIP](../clip/README.md) 의 text encoder 로 읽으므로, prompt 를 token 으로 자르는 일도 CLIP 의 tokenizer 가
+맡는다. CLIP 논문에 따르면 이 tokenizer 는 GPT-2 처럼 BPE 로 만들었고, 글을 모두 소문자로 바꾼 뒤 자른다. 공개된 tokenizer 코드를 보면 단어 끝을
+나타내는 표시 `</w>` 를 token 에 붙이는 점도 GPT-2 와 다르다. OpenAI 가 공개한 tokenizer 파일로 세어 보면 vocabulary 는 49,408 개다(논문은 49,152 로 적는다).
 
-| 모델 | 행동 숫자 | bin | bin 번호를 나타내는 token |
-| --- | --- | --- | --- |
-| RT-1 (2022) | 11 개 (팔 7, 이동 base 3, 모드 1) | 256 | language model 을 쓰지 않고, RT-1 이 차원마다 256 개 bin 가운데 하나를 고른다 |
-| RT-2 (2023) | 8 개 (손끝 위치·회전 변화 6, 집게 1, 종료 1) | 256 | PaLI-X 판은 1000 까지의 정수 token 을 그대로 쓰고, PaLM-E 판은 가장 드물게 쓰이는 token 256 개를 덮어쓴다 |
-| OpenVLA (2024) | 7 개 (손끝 위치·회전 변화 6, 집게 1) | 256 | Llama tokenizer 에서 가장 드물게 쓰이는 256 개(vocabulary 끝의 256 개)를 덮어쓴다 |
+| 문장 | UTF-8 byte | CLIP 의 token |
+| --- | --- | --- |
+| The cat wore a hat. | 19 | 6 |
+| 고양이가 모자를 썼다. | 30 | 20 |
+| a photo of a cat wearing a red hat | 34 | 9 |
+| 빨간 모자를 쓴 고양이 사진 | 37 | 22 |
 
-OpenVLA 논문에 따르면 Llama 의 tokenizer 는 새로 더할 token 자리를 100 개만 마련해 두어 256 개에 모자랐다. 그래서 OpenVLA 는 이미 있는
-token 가운데 가장 드물게 쓰이는 256 개(vocabulary 끝의 256 개)를 action token 으로 덮어썼다. 드물게 쓰이는 token 은 지시문에 거의 나오지
-않으므로, action 용으로 바꿔도 지시문을 읽는 데 쓰는 token 은 그대로 남는다. OpenVLA 는 bin 을 나눌 범위도 학습 데이터 action 의 최솟값 ~
-최댓값이 아니라 하위 1% 지점부터 상위 1% 지점까지(1st ~ 99th quantile)로 잡아서, 드물게 튄 값 때문에 bin 이 넓어지지 않게 했다. bin 이 vocabulary 의 어느 token 에 대응하는지와 action token 을 하나씩 생성하는 과정은
-RT-2 → OpenVLA 에서 다룬다.
+표의 token 수는 OpenAI 의 CLIP 저장소에 있는 tokenizer 로 직접 센 값이다. "The cat wore a hat." 은 the, cat, wore, a, hat, 마침표가 하나씩
+token 이 되어 6 개이고, 영어 prompt "a photo of a cat wearing a red hat" 도 단어마다 token 하나라 9 개다. 같은 뜻의 한국어 prompt 는 22 개다.
+이 tokenizer 의 vocabulary 에도 한국어 byte 쌍을 합친 merge 가 적어서, 한글 한 글자가 byte 두세 조각으로 나뉜 채 남는다. "고양이가 모자를
+썼다." 는 20 개라서, 앞 절의 GPT-2 로 센 26 개보다는 적다.
 
-이 방식은 행동 숫자 하나가 token 하나라서, 한 번에 여러 step 의 행동(action chunk)을 내면 token 수가 차원 수 × step 수가 된다.
+token 수는 prompt 의 길이 한도와 이어진다. [Cross-Attention](../cross-attention/README.md) 에서 다루듯 Stable Diffusion 은 token 열의 길이를 77 로
+맞추고, 시작과 끝을 표시하는 token 이 한 자리씩 차지한다. 그래서 prompt 에 쓸 수 있는 자리는 75 개이고, 넘친 token 은 잘려서 그림에 반영되지
+않는다. 한국어처럼 token 을 많이 쓰는 언어로 길게 쓰면 이 한도에 더 빨리 닿는다.
 
-**확인 문제.** 0 ~ 8 cm 를 1 cm 씩 8 개 bin 으로 나눌 때 6.7 cm 는 몇 번 bin 이고, 그 bin 을 되돌리면 몇 cm 가 될까?
-
-<details><summary>답 보기</summary>
-
-1. 6.7 은 6 이상 7 미만이라 bin 6 이다
-2. bin 6 의 가운데 값은 $(6 + 7) \div 2 = 6.5$ cm 다
-3. 0.2 cm 의 차이는 bin 으로 나눌 때 생기는 오차다
-
-</details>
-
-## FAST tokenizer
-
-### 높은 주기에서 늘어나는 token
-
-로봇이 1 초에 명령을 보내는 횟수를 주기라고 하고 Hz 로 적는데, 주기가 높을수록 값마다 bin 하나를 쓰는 방식에서는 token 이 늘어난다. FAST
-논문에서는 1 초 분량 action chunk 의 평균 token 수를 dataset 마다 비교했다.
-
-| dataset | 행동 차원 | 주기 | 값마다 bin 하나 | FAST | 압축 비율 |
-| --- | --- | --- | --- | --- | --- |
-| BridgeV2 | 7 | 5 Hz | 35 | 20 | 1.75 |
-| DROID | 7 | 15 Hz | 105 | 29 | 3.6 |
-| Bussing | 7 | 20 Hz | 140 | 28 | 5.0 |
-| Shirt Fold | 14 | 50 Hz | 700 | 53 | 13.2 |
-
-![1 초 분량 action chunk 의 평균 token 수. 값마다 bin 하나를 쓰는 방식은 차원 수 × 주기로 늘고, FAST 는 20 ~ 53 개다](figures/action-token-count.svg)
-
-주기가 높으면 token 이 많아질 뿐 아니라 이웃한 step 의 값이 거의 같아져서, 다음 token 이 바로 앞 token 과 같은 bin 일 때가 많다. FAST
-저자들이 곡선을 예측하는 간단한 문제로 실험한 결과, 값마다 bin 하나를 쓴 모델은 주기를 높일수록 예측 오차가 가파르게 커졌고 주기가 아주
-높아지자 첫 action 을 그대로 되풀이해 냈다. 저자들은 이웃한 token 이 강하게 닮아서 token 하나가 더해 주는 정보가 적기 때문이라고 설명한다.
-
-### DCT
-
-FAST(Frequency-space Action Sequence Tokenization)는 action chunk 를 먼저 DCT(discrete cosine transform)로 바꾼다. DCT 는 값 $N$ 개를
-천천히 출렁이는 cosine 파형부터 빠르게 출렁이는 파형까지 $N$ 개의 합으로 나타내고, 파형마다 얼마나 섞였는지를 계수 $N$ 개로 적는다. 첫
-계수는 평균 높이를 나타내고, 둘째 계수는 처음과 끝이 얼마나 다른지를 나타낸다. 그 뒤의 계수일수록 짧은 간격으로 오르내리는 성분을
-나타내는데, 로봇 팔의 움직임은 부드러워서 앞의 몇 계수만 크고 나머지는 0 에 가깝다.
-
-예를 들어 관절 하나가 8 step 동안 0.10 에서 0.48 로 부드럽게 오른다고 하자. 관절 값은 설명을 위해 정한 것이고, 아래 표의 DCT 계수와
-반올림 결과는 이 값으로 계산했다.
-
-| 단계 | 값 8 개 |
-| --- | --- |
-| 관절 값 | 0.10, 0.12, 0.16, 0.22, 0.30, 0.38, 0.44, 0.48 |
-| DCT 계수 | 0.778, −0.388, 0.032, 0.003, 0.000, −0.003, 0.002, 0.000 |
-| × 10 후 반올림 | 8, −4, 0, 0, 0, 0, 0, 0 |
-
-![관절 하나의 8 step 예로 계산한 FAST 의 세 단계. DCT 계수는 앞의 두 값만 크고, 10 을 곱해 반올림하면 8, −4 와 0 여섯 개가 된다. BPE 는 이어진 0 같은 자주 나오는 묶음을 token 하나로 합친다](figures/fast-pipeline.svg)
-
-계수에 10 을 곱해 반올림하면 정수 8 개 가운데 6 개가 0 이다. FAST 논문은 dataset 마다 따로 만든 tokenizer 에서 이 곱하는 수(scale)를 모두
-10 으로 두었다. scale 이 클수록 원래 값을 더 정확히 되살리지만 0 이 아닌 계수도 늘어난다. 거꾸로 8, −4, 0, … 을 10 으로 나눠 DCT 를
-되돌리면 0.087, 0.117, 0.172, 0.244, 0.322, 0.394, 0.449, 0.479 가 나오는데, 원래 값과 가장 많이 다른 곳도 차이가 약 0.024 다.
-
-<details><summary><b>심화: DCT 계수의 계산</b></summary>
-
-FAST 의 공개 코드가 쓰는 DCT(scipy 의 `norm="ortho"`)는 값 $x_0, \dots, x_{N-1}$ 에서 계수 $c_k$ 를 아래처럼 구한다.
-
-$$
-c_k = s_k \sum_{n=0}^{N-1} x_n \cos\!\left(\frac{\pi (2n + 1) k}{2N}\right), \qquad s_0 = \sqrt{1/N}, \quad s_k = \sqrt{2/N} \ (k \ge 1)
-$$
-
-$\sum$ 은 $n = 0$ 부터 $N - 1$ 까지 더한다는 뜻이고, $\cos$ 안의 값은 $k$ 가 클수록 $n$ 에 따라 빨리 바뀌어 짧게 출렁이는 파형이 된다.
-$N = 8$ 인 위의 예에서 $k = 0$ 은 cos 값이 모두 1 이라 $c_0 = \sqrt{1/8} \times (0.10 + 0.12 + \dots + 0.48) = 0.3536 \times 2.2 \approx 0.778$
-이다. 평균 0.275 에 $\sqrt 8$ 을 곱한 값과 같다.
-
-$k = 1$ 의 cos 값은 0.981, 0.831, 0.556, 0.195, −0.195, −0.556, −0.831, −0.981 로, 처음은 + 이고 끝은 − 인 반 파형이다.
-
-| $n$ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| $x_n \times \cos$ | 0.098 | 0.100 | 0.089 | 0.043 | −0.059 | −0.211 | −0.366 | −0.471 |
-
-합은 $-0.777$ 이고 $s_1 = \sqrt{2/8} = 0.5$ 를 곱하면 $c_1 \approx -0.388$ 이다. 값이 끝으로 갈수록 커지므로, 처음이 + 이고 끝이 − 인 파형과
-곱한 합은 음수가 된다. $k = 2$ 이상의 파형은 + 와 − 가 고르게 섞여 있어서, 부드러운 곡선과 곱한 값이 서로 지워져 합이 0 에 가깝다.
-
-</details>
-
-### BPE 로 하는 압축
-
-DCT 와 반올림을 거친 정수는 0 이 많지만 개수는 원래와 같다. FAST 는 차원마다 구한 계수를 한 줄로 늘어놓는데, 모든 차원의 낮은 주파수
-계수가 먼저 오도록 차원을 번갈아 놓는다. 그다음 정수 하나하나를 기호로 보고 BPE 를 학습한다. text 의 BPE 는 byte 256 개에서 시작하지만,
-여기서는 나올 수 있는 정수 값들이 처음 vocabulary 가 된다. BPE 는 길게 이어진 0 과 자주 함께 나오는 계수 조합을 token 하나로 합친다.
-FAST 논문은 dataset 마다 따로 만든 tokenizer 에서 BPE vocabulary 크기를 1024 로 두었다. 반올림을 빼면 모든 단계를 되돌릴 수 있으므로,
-모델이 낸 token 에서 행동을 빠르게 다시 계산할 수 있다.
-
-앞의 표에서 보듯 FAST 는 주기와 관계없이 1 초 분량 chunk 마다 팔 하나에 30 개 안팎의 token 을 냈다. FAST 를
-PaliGemma 기반의 로봇 policy π0 에 붙인 π0-FAST 는 이 token 을 VLM(사진과 글을 함께 읽는 language model)의 vocabulary 에서 가장 드물게
-쓰이는 token 자리에 덮어쓰고, 다음 token 을 맞히는 방식으로 학습했다. FAST 논문에 따르면 π0-FAST 는 잡음에서 시작해 조금씩 고쳐 가며
-행동을 만드는 원래 π0 와 비슷한 성능을 내면서, 학습에 든 GPU 시간은 π0 의 5 분의 1 이었다. 다만 실행할 때는 token 30 ~ 60 개를 하나씩
-내야 해서 느리다. 논문이 NVIDIA RTX 4090 에서 잰 시간은 1 초 분량 chunk 하나에 π0 가 100 ms 안쪽이고 π0-FAST 가 약 750 ms 다. π0 가 행동을 만드는 방식은 π0 에서 다룬다.
-
-BPE 를 dataset 마다 다시 학습하는 수고를 덜려고, FAST 저자들은 팔 하나·두 팔·이동 로봇의 1 초 분량 action chunk 약 100만 개로 학습한
-범용 tokenizer FAST+ 도 공개했다. Hugging Face 에 공개된 FAST+ 설정 파일에서는 scale 이 10 이고 vocabulary 크기가 2048 이다.
-
-**확인 문제.** 두 팔 로봇(14 차원)이 1 초에 50 번 행동을 낸다. 1 초 분량 chunk 를 값마다 bin 하나로 바꾸면 token 이 몇 개이고, FAST 가
-팔 하나에 30 개 안팎을 쓴다면 대략 몇 개일까?
+**확인 문제.** 영어 prompt 가 token 9 개, 같은 뜻의 한국어 prompt 가 token 22 개다. 시작과 끝 token 을 넣으면 각각 77 자리 가운데 몇 자리를
+쓰고, 몇 자리가 남는가?
 
 <details><summary>답 보기</summary>
 
-1. 값마다 bin 하나면 $14 \times 50 = 700$ 개다
-2. FAST 는 팔 둘이라 $30 \times 2 = 60$ 개 안팎이다. FAST 논문 Table I 의 Shirt Fold 평균은 53 개다
+| prompt | 쓰는 자리 | 남는 자리 |
+| --- | --- | --- |
+| 영어 | $9 + 2 = 11$ | $77 - 11 = 66$ |
+| 한국어 | $22 + 2 = 24$ | $77 - 24 = 53$ |
+
+남는 자리는 끝 token 으로 채운다.
 
 </details>
 
@@ -616,9 +521,9 @@ BPE 를 dataset 마다 다시 학습하는 수고를 덜려고, FAST 저자들�
   커진다. byte 256 개에서 시작하는 subword 방식은 `<unk>` 없이 어떤 text 든 encode 한다
 - BPE 는 가장 자주 나오는 쌍을 새 token 으로 merge 하기를 되풀이해 vocabulary 를 만들고(cat hat cat that 은 16 → 12 → 9 → 7), encode 는
   merge 를 배운 순서대로 적용한다. vocabulary 를 키우면 bytes per token 은 커지지만 embedding 표도 커진다. 한국어를 적게 배운 GPT-2 의
-  tokenizer 에서는 같은 지시에 영어보다 token 이 세 배 든다
-- RT-2·OpenVLA 는 행동 값을 256 개 bin 으로 나눠 bin 마다 vocabulary 의 token 하나를 짝지어 낸다. FAST 는 action chunk 를 DCT 로 바꿔
-  반올림한 뒤 BPE 로 압축하는데, FAST 논문에서 50 Hz 두 팔 행동 700 개를 평균 53 개의 token 으로 줄였다
+  tokenizer 에서는 같은 뜻에 영어보다 token 이 네 배 넘게 든다("The cat wore a hat." 6 개, "고양이가 모자를 썼다." 26 개)
+- Stable Diffusion 은 prompt 를 CLIP 의 lower-cased BPE tokenizer 로 자르고, 시작·끝 token 을 넣어 77 자리에 맞춘다. prompt 에 쓸 자리는
+  75 개이고, 같은 뜻의 prompt 도 영어는 token 9 개, 한국어는 22 개를 쓴다
 
 tokenizer 는 text 를 id 열로 바꾸고 되돌릴 뿐이라서 id 번호 자체에는 뜻이 없다. 모델 안에서 id 하나하나를 숫자 묶음(embedding)으로 바꾸고, 문장 속
 다른 token 을 함께 보며 뜻을 정하는 계산은 [Transformer](../transformer/README.md) 에서 다룬다.
@@ -637,7 +542,6 @@ tokenizer 는 text 를 id 열로 바꾸고 되돌릴 뿐이라서 id 번호 자�
   로 쌍을 세고 합치는 과정을 따라가는 예제
 - [tiktokenizer](https://tiktokenizer.vercel.app/) — text 를 넣으면 GPT 계열 tokenizer 가 자른 token 경계와 id 를 보여 주는 웹 도구.
   한국어와 영어 지시문을 넣어 token 수를 비교해 볼 수 있다
-- Moo Jin Kim 외, [OpenVLA](https://arxiv.org/abs/2406.09246) (2024) — 3.2절에서 action 을 256 개 bin 으로 나누고 Llama tokenizer 의
-  드문 token 을 덮어쓰는 이유를 설명한다
-- Karl Pertsch 외, [FAST: Efficient Action Tokenization for Vision-Language-Action Models](https://arxiv.org/abs/2501.09747) (2025) —
-  Table I 의 token 수 비교와 5장의 DCT + BPE 절차. [공개 tokenizer](https://huggingface.co/physical-intelligence/fast) 로 직접 encode 해 볼 수 있다
+- Alec Radford 외, [Learning Transferable Visual Models From Natural Language Supervision](https://arxiv.org/abs/2103.00020) (2021) — CLIP
+  논문. 2.4 절에 text encoder 의 lower-cased BPE 와 vocabulary 49,152, 길이 한도가 있다. 직접 세어 볼 수 있는 tokenizer 는
+  [openai/CLIP 의 `simple_tokenizer.py`](https://github.com/openai/CLIP/blob/main/clip/simple_tokenizer.py) 에 있다

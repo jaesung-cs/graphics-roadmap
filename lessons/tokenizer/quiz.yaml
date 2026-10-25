@@ -252,87 +252,82 @@
         이므로 그런 text 에서 재야 실제 성능에 가깝다. 압축률 1 은 merge 를 하나도 쓰지 못할 때의 값이라서, merge 가 잘 적용되는
         학습 text 에서는 1 이 나오지 않는다. 학습에 쓴 text 도 encode 할 수 있다. 어느 text 가 더 긴지는 이 선택과 관계없다.
 
-- topic: action-token
-  title: action token 과 256 bin
+- topic: clip-tokenizer
+  title: Stable Diffusion 의 CLIP tokenizer
   variants:
     - question: |
-        RT-2·OpenVLA 같은 VLA 가 로봇 행동 값을 실수로 바로 내지 않고 bin 번호에 짝지은 token 으로 내는 이유는 무엇인가?
+        Stable Diffusion v1 은 prompt 의 token 열을 길이 77 로 맞추고, 시작과 끝을 표시하는 token 이 한 자리씩 차지한다. prompt 가 token 90 개라면 어떻게 되는가?
       choices:
-        - '로봇 motor 가 정수 명령만 받을 수 있어서, 실수인 행동 값을 bin 번호인 정수로 바꿔서 보내야 하기 때문이다'
-        - 'VLA 는 vocabulary 의 token 을 고르는 식으로만 답하므로, 행동 값을 bin 으로 나눠 token 에 짝지어야 하기 때문이다'
-        - 'bin 으로 나누면 행동 값이 정해진 칸의 가운데 값에 딱 맞춰져서, 실수로 직접 낼 때보다 정밀도가 높아지기 때문이다'
-        - '실수를 바로 내는 방식은 gradient 를 계산할 수 없어서, 그런 모델은 학습이 불가능하다고 증명되어 있기 때문이다'
+        - '77 자리에 맞추려고 token 90 개를 고르게 줄여, 모든 단어를 조금씩 반영한다'
+        - '시작·끝 token 을 뺀 앞의 75 개만 남고, 뒤의 15 개는 잘려서 그림에 반영되지 않는다'
+        - '77 자리를 넘으면 오류가 나서, prompt 를 줄이기 전에는 그림을 그릴 수 없다'
+        - '넘친 token 은 다음 그림을 그릴 때 이어서 쓰이므로, 두 번째 그림에 반영된다'
       answer: 1
       explanation: |
-        language model 은 매 자리에서 vocabulary 의 token 하나를 고른다. 그래서 0 ~ 8 cm 를 bin 으로 나눠 3.4 cm 를 bin 3 으로 바꾸고,
-        bin 3 에 token 하나를 짝지어 두면 모델이 다음 token 을 고르는 방식 그대로 행동을 낸다. 고른 bin 은 가운데 값으로 되돌려
-        motor 에 보내므로 motor 는 실수 명령을 받는다. bin 으로 자르면 정밀도는 오히려 bin 폭만큼 떨어진다. 실수를 바로 내는 방식도
-        ACT 처럼 action 출력을 따로 붙인 모델에서 쓰므로 학습이 불가능하지 않다.
+        시작과 끝 token 이 두 자리를 쓰므로 prompt 에 쓸 수 있는 자리는 $77 - 2 = 75$ 개다. 그 뒤의 $90 - 75 = 15$ 개는 잘려 나가 text encoder 에
+        들어가지 않는다. token 을 고르게 줄이는 단계는 없다. 기본 동작은 오류를 내지 않고 잘라 낸다. 잘린 token 이 다음 그림으로 넘어가지도 않는다.
     - question: |
-        OpenVLA 는 action bin 256 개에 해당하는 token 을 vocabulary 에 새로 더하지 않고 어떻게 마련했는가?
+        CLIP 의 tokenizer 에 "A Photo of a CAT" 와 "a photo of a cat" 을 넣으면 token 은 어떻게 되는가?
       choices:
-        - '"the" 처럼 가장 자주 쓰이는 token 256 개를 골라, 학습할 때 action token 으로 덮어썼다'
-        - '0 부터 255 까지의 숫자를 글자로 적어서, 이미 있는 숫자 token 으로 action 을 냈다'
-        - 'vocabulary 를 늘려서, 새 token 256 개를 action token 으로 끝에 더했다'
-        - '가장 드물게 쓰이는 vocabulary 끝의 token 256 개를 action token 으로 덮어썼다'
+        - '대문자가 섞인 쪽은 대문자 byte 가 merge 되지 않아 token 이 훨씬 많아진다'
+        - '대문자로 쓴 단어는 이름으로 보아 special token 하나로 바뀐다'
+        - '글을 모두 소문자로 바꾼 뒤에 자르므로, 대소문자만 다른 두 문장의 token 이 같다'
+        - '대소문자는 token 에 남지 않지만, 대문자 수만큼 표시 token 이 하나씩 더해진다'
+      answer: 2
+      explanation: |
+        CLIP 논문에 따르면 text encoder 는 lower-cased BPE token 을 받는다. 글을 소문자로 바꾼 뒤 BPE 로 자른다는 뜻이라, 대소문자만 다른 두
+        문장은 같은 token 열이 된다. 소문자로 바꾼 뒤에 자르므로 대문자 byte 가 남지 않는다. 대문자로 쓴 단어를 바꾸는 이름용 special token 은
+        없다. 대문자를 표시하는 token 도 따로 더하지 않는다.
+    - question: |
+        영어 prompt "a photo of a cat wearing a red hat" 은 CLIP 의 tokenizer 로 token 9 개이고, 같은 뜻의 한국어 prompt "빨간 모자를 쓴 고양이 사진" 은 22 개다. 이 차이의 이유로 알맞은 것은?
+      choices:
+        - '한국어 prompt 는 글자 수가 영어보다 많아서, 글자 하나가 token 하나가 되기 때문이다'
+        - 'CLIP 의 tokenizer 는 한국어를 읽지 못해 한국어 글자를 모두 `<unk>` 로 바꾸기 때문이다'
+        - '한국어 문장은 띄어쓰기가 많아서, 공백이 나올 때마다 token 이 하나씩 따로 생기기 때문이다'
+        - '한국어 byte 쌍을 합친 merge 가 적어, 한글 한 글자가 byte 조각 여러 개로 남기 때문이다'
       answer: 3
       explanation: |
-        OpenVLA 논문에 따르면 Llama tokenizer 는 새로 더할 token 자리를 100 개만 마련해 두어 256 개에 모자랐고, 그래서 RT-2 를 따라
-        가장 드물게 쓰이는 256 개(vocabulary 끝의 256 개)를 덮어썼다. 자주 쓰는 token 을 덮어쓰면 지시문을 읽는 데 쓰는 token 이
-        사라진다. 숫자 token 을 그대로 쓴 것은 RT-2 의 PaLI-X 판이고 OpenVLA 는 그렇게 하지 않았다. OpenVLA 는 vocabulary 를 늘려
-        새 token 을 더하는 방법도 쓰지 않았다.
-    - question: |
-        text token, image patch token, action token 의 차이는 무엇인가?
-      choices:
-        - '셋 모두 vocabulary 의 정수 번호이고, 모델은 번호마다 같은 방식으로 embedding 을 찾아 쓴다'
-        - '셋 모두 번호 없이 숫자 묶음으로 들어가고, text 도 글자의 byte 값을 그대로 묶어 넣는다'
-        - 'text·action token 은 vocabulary 의 정수 번호이고, image patch token 은 pixel 숫자를 묶은 vector 다'
-        - 'text token 만 token 이라고 부르는 것이 맞고, image patch 와 action 은 token 이 아니라 그냥 입력값이다'
-      answer: 2
-      explanation: |
-        text 는 글자라서 vocabulary 로 번호를 붙여야 숫자가 되고, action token 도 움직임 값의 bin 번호를 vocabulary 의 token 에 짝지은
-        정수 번호다. 사진은 처음부터 pixel 마다 밝기 숫자가 있어서 번호로 바꿀 필요 없이 조각 안 숫자를 묶은 vector 가 그대로 들어간다.
-        image patch token 은 정수 번호가 아니므로 셋 모두 vocabulary 번호인 것은 아니다. text token 과 action token 은 번호로 들어가므로
-        셋 모두 번호 없는 숫자 묶음인 것도 아니다. 셋 모두 모델이 하나씩 받거나 내는 단위라서 token 이라고 부르는 것이 맞다.
+        한글 한 글자는 UTF-8 로 3 byte 다. 영어 단어는 merge 로 대부분 통째로 token 하나가 되지만, 한국어 byte 쌍은 merge 가 적어 글자 하나가 2 ~ 3
+        조각으로 남는다. 한국어 prompt 는 글자 수가 오히려 영어보다 적다. byte 에서 시작한 BPE 라 `<unk>` 는 생기지 않는다. 공백은 따로 token 이
+        되지 않고 단어 끝 표시 `</w>` 로 붙는다.
 
-- topic: fast
-  title: FAST action tokenization
+- topic: token-kinds
+  title: text token 과 patch token
   variants:
     - question: |
-        1 초에 50 번 행동을 내는 로봇에서 값마다 bin 하나를 쓰는 action tokenization 이 잘 안 되는 이유는 무엇인가?
+        text token 과 image patch token 의 차이는 무엇인가?
       choices:
-        - '값마다 token 이라 수백 개로 늘고 이웃 step 값이 거의 같아서, 모델이 앞 값을 되풀이하기 쉽기 때문이다'
-        - '50 Hz 에서는 한 step 의 시간이 짧아서, bin 을 256 개보다 많이 만들 수 없어 정밀도가 모자라기 때문이다'
-        - '주기가 높으면 이웃한 step 사이의 변화가 커져서, 행동 값이 bin 범위를 자주 벗어나기 때문이다'
-        - '주기가 높으면 action token 이 많이 필요해서, 덮어쓸 vocabulary 끝의 token 자리가 모자라기 때문이다'
-      answer: 0
-      explanation: |
-        값마다 token 하나라서 14 차원 두 팔 로봇의 1 초 분량은 $14 \times 50 = 700$ 개가 된다. 게다가 이웃한 step 의 값이 거의 같아
-        다음 token 이 앞 token 과 같은 bin 일 때가 많다. FAST 논문의 실험에서 이런 모델은 주기를 높일수록 오차가 커지다가 첫 action 을
-        그대로 되풀이했다. bin 개수는 주기와 관계없이 정한다. 행동 값이 bin 범위를 벗어나는 정도도 주기와 관계없다. 덮어쓸 token 자리
-        수는 bin 개수로 정해지므로 주기가 높아도 모자라지 않는다.
-    - question: |
-        FAST tokenizer 는 action chunk 를 어떤 절차로 token 으로 바꾸는가?
-      choices:
-        - '값마다 256 개 bin 으로 나눈 뒤, 같은 bin 이 이어지는 자리만 지워 token 수를 줄인다'
-        - 'action chunk 를 DCT 로 주파수 계수로 바꾸고, scale 을 곱해 반올림한 정수열을 BPE 로 압축한다'
-        - 'action chunk 를 시간에 따른 그래프 그림으로 그려서, image patch token 으로 잘라 넣는다'
-        - 'action 값을 소수점 숫자 글자로 적은 뒤, 그 글자열을 GPT-2 tokenizer 로 잘라 token 으로 만든다'
+        - '둘 다 vocabulary 의 정수 번호이고, 번호를 매기는 표를 사진용과 글용으로 따로 둘 뿐이다'
+        - 'text token 은 vocabulary 번호이고, image patch token 은 조각의 숫자를 묶은 vector 다'
+        - 'text token 만 token 이라고 부르는 것이 맞고, image patch 는 token 이 아니라 그냥 입력값이다'
+        - 'image patch token 은 vocabulary 의 정수 번호이고, text token 은 글자의 숫자를 묶은 vector 다'
       answer: 1
       explanation: |
-        FAST 는 DCT 로 action chunk 를 천천히 출렁이는 파형부터 빠르게 출렁이는 파형까지의 계수로 바꾼다. 부드러운 움직임은 앞의 몇
-        계수만 커서, scale(논문은 10)을 곱해 반올림하면 대부분 0 이 된다. 이 정수열을 BPE 로 압축하면 이어진 0 과 자주 나오는 조합이
-        token 하나로 합쳐진다. FAST 에는 값마다 256 개 bin 으로 나누는 단계가 없다. action chunk 를 그림으로 그리지도 않는다. action
-        값을 글자로 적어 GPT-2 tokenizer 에 넣지도 않는다.
+        text 는 글자라서 vocabulary 로 번호를 붙여야 숫자가 되고, 모델은 그 번호로 표에서 숫자 묶음을 꺼낸다. 사진은 처음부터 pixel 마다 숫자라서
+        조각 안의 숫자를 그대로 묶어 vector 로 넣고, 번호를 붙이지 않는다. 둘 다 vocabulary 번호라는 보기는 사진에도 번호를 붙인다고 보아서
+        틀렸다. patch 가 번호이고 text 가 vector 라는 보기는 둘을 뒤집었다. 둘 다 모델이 한 번에 하나씩 받는 단위라서 patch 도 token 이라고
+        부른다.
     - question: |
-        π0-FAST 처럼 FAST token 을 하나씩 생성하는 VLA 와, π0 처럼 action chunk 를 한꺼번에 만드는 방식을 비교하면 FAST 쪽의 약점은 무엇인가?
+        DiT 는 VAE 가 줄인 $32 \times 32 \times 4$ latent 를 $2 \times 2$ 조각으로 잘라 patch token 으로 쓴다. token 은 몇 개이고, token 하나에 숫자는 몇 개 들어가는가?
       choices:
-        - 'token 을 만드는 DCT 와 BPE 단계가 더해져서, 같은 성능까지 학습하는 데 GPU 시간이 훨씬 더 든다'
-        - 'action token 이 팔 하나에 맞춰져 있어서, 두 팔 로봇처럼 차원이 많은 행동은 표현할 수 없다'
-        - '1 초 분량 chunk 에도 token 수십 개를 하나씩 내야 해서, π0 보다 실행이 몇 배 느리다'
-        - '반올림으로 계수를 잘라 냈기 때문에, 생성한 token 에서 행동 값으로 되돌릴 수 없다'
+        - 'token 1,024 개, token 하나에 숫자 4 개. latent 의 칸마다 token 을 하나씩 만든다'
+        - 'token 64 개, token 하나에 숫자 16 개. latent 의 한 변을 4 로 나눠 조각 수를 센다'
+        - 'token 256 개, token 하나에 숫자 16 개. 조각마다 $2 \times 2 \times 4$ 를 묶는다'
+        - 'token 256 개, token 하나에 숫자 4 개. 조각마다 channel 수만큼만 token 에 들어간다'
       answer: 2
       explanation: |
-        FAST 는 1 초 분량을 팔 하나에 30 개 안팎의 token 으로 줄이지만, 생성은 여전히 한 token 씩이라 30 ~ 60 번 계산해야 한다.
-        π0-FAST 의 학습에 든 GPU 시간은 오히려 π0 의 5 분의 1 이었다. FAST 는 두 팔 로봇(Shirt Fold)의 행동도 평균 53 개 token 으로
-        표현했다. DCT·BPE 는 반올림을 빼면 되돌릴 수 있으므로 token 에서 행동을 다시 계산할 수 있다.
+        한 변의 조각 수는 $32 \div 2 = 16$ 이라 token 은 $16 \times 16 = 256$ 개다. 조각 하나는 $2 \times 2$ 자리에 channel 4 개라서 숫자
+        $2 \times 2 \times 4 = 16$ 개를 묶는다. 1,024 개는 칸마다 token 을 만든 경우다. 64 개는 조각을 $4 \times 4$ 로 자른 경우다. 조각 안의
+        네 자리 숫자를 모두 묶으므로 channel 4 개만 들어가지는 않는다.
+    - question: |
+        사진의 patch 는 text 처럼 vocabulary 번호를 붙이지 않고 숫자 묶음 그대로 모델에 넣는다. 그렇게 할 수 있는 이유는 무엇인가?
+      choices:
+        - '사진은 pixel 마다 밝기가 이미 숫자라서, 번호로 바꾸지 않아도 곧바로 계산할 수 있기 때문이다'
+        - '사진의 조각은 종류가 너무 적어서, 번호표를 따로 만들어도 쓸 번호가 몇 개 되지 않기 때문이다'
+        - '사진을 다루는 모델은 곱셈과 덧셈 대신 다른 계산을 하므로 번호가 따로 필요 없기 때문이다'
+        - '사진의 조각은 모두 같은 숫자를 담고 있어서, 어떤 조각이든 번호 하나로 나타내도 충분하기 때문이다'
+      answer: 0
+      explanation: |
+        모델은 숫자에 곱하고 더하는 계산만 한다. 글자는 숫자가 아니라서 번호로 바꾼 뒤 표에서 숫자 묶음을 꺼내지만, 사진 조각은 이미 숫자 묶음이라
+        그대로 넣으면 된다. 사진 조각의 숫자 조합은 오히려 셀 수 없이 많아서 번호표를 만들기 어렵다. 사진을 다루는 모델도 곱셈과 덧셈을 한다.
+        조각마다 담긴 숫자가 다르므로 번호 하나로 모든 조각을 나타낼 수 없다.
