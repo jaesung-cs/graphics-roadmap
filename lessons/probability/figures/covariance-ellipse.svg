@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 390" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
-  <title>GPS 위치 5 개와 공분산 행렬로 그린 오차 타원. 왼쪽은 x 와 y 의 공분산이 1.6 이라 오차가 오른쪽 위로 기운 타원이고 긴 축 σ 는 1.90 m, 짧은 축 σ 는 0.63 m 다. 오른쪽은 공분산이 0 이라 반지름 1.41 m 인 원이다</title>
+  <title>나란한 두 pixel 의 편차 5 쌍과 공분산 행렬로 그린 오차 타원. 왼쪽은 x 와 y 의 공분산이 1.6 이라 오른쪽 위로 기운 타원이고 긴 축 σ 는 1.90, 짧은 축 σ 는 0.63 이다. 오른쪽은 공분산이 0 이라 반지름 1.41 인 원이다</title>
   <defs><marker id="am" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="aa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="as" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f472b6"/></marker></defs>
   <rect x="1" y="1" width="678" height="388" rx="12" fill="#0b1220" stroke="#1e293b"/>
   <line x1="50.0" y1="190.0" x2="300.0" y2="190.0" stroke="#475569" stroke-width="1.2" marker-end="url(#am)"/>
@@ -19,9 +19,9 @@
   <circle cx="207.0" cy="126.0" r="5" fill="#e2e8f0"/>
   <circle cx="143.0" cy="254.0" r="5" fill="#e2e8f0"/>
   <circle cx="175.0" cy="190.0" r="5" fill="#e2e8f0"/>
-  <text x="175.0" y="34.0" fill="#38bdf8" font-size="13" text-anchor="middle" font-weight="600">x 와 y 가 함께 움직이는 오차</text>
-  <text x="175.0" y="342.0" fill="#e2e8f0" font-size="12" text-anchor="middle">공분산 행렬 [[2, 1.6], [1.6, 2]] m²</text>
-  <text x="175.0" y="364.0" fill="#94a3b8" font-size="12" text-anchor="middle">상관계수 0.8 · 긴 축 σ 1.90 m · 짧은 축 σ 0.63 m</text>
+  <text x="175.0" y="34.0" fill="#38bdf8" font-size="13" text-anchor="middle" font-weight="600">x 와 y 가 함께 움직이는 경우</text>
+  <text x="175.0" y="342.0" fill="#e2e8f0" font-size="12" text-anchor="middle">공분산 행렬 [[2, 1.6], [1.6, 2]]</text>
+  <text x="175.0" y="364.0" fill="#94a3b8" font-size="12" text-anchor="middle">상관계수 0.8 · 긴 축 σ 1.90 · 짧은 축 σ 0.63</text>
   <line x1="380.0" y1="190.0" x2="630.0" y2="190.0" stroke="#475569" stroke-width="1.2" marker-end="url(#am)"/>
   <line x1="505.0" y1="315.0" x2="505.0" y2="65.0" stroke="#475569" stroke-width="1.2" marker-end="url(#am)"/>
   <text x="633.0" y="194.0" fill="#64748b" font-size="12" text-anchor="start">x</text>
@@ -39,8 +39,8 @@
   <circle cx="537.0" cy="126.0" r="5" fill="#e2e8f0"/>
   <circle cx="473.0" cy="254.0" r="5" fill="#e2e8f0"/>
   <circle cx="505.0" cy="190.0" r="5" fill="#e2e8f0"/>
-  <text x="505.0" y="34.0" fill="#f59e0b" font-size="13" text-anchor="middle" font-weight="600">x 와 y 가 따로 움직이는 오차</text>
-  <text x="505.0" y="342.0" fill="#e2e8f0" font-size="12" text-anchor="middle">공분산 행렬 [[2, 0], [0, 2]] m²</text>
-  <text x="505.0" y="364.0" fill="#94a3b8" font-size="12" text-anchor="middle">상관계수 0 · 모든 방향 σ 1.41 m</text>
-  <text x="340.0" y="56.0" fill="#64748b" font-size="11" text-anchor="middle">점: GPS 위치 5 개 (m, 평균 기준) · 실선 1σ 타원 · 점선 2σ 타원</text>
+  <text x="505.0" y="34.0" fill="#f59e0b" font-size="13" text-anchor="middle" font-weight="600">x 와 y 가 따로 움직이는 경우</text>
+  <text x="505.0" y="342.0" fill="#e2e8f0" font-size="12" text-anchor="middle">공분산 행렬 [[2, 0], [0, 2]]</text>
+  <text x="505.0" y="364.0" fill="#94a3b8" font-size="12" text-anchor="middle">상관계수 0 · 모든 방향 σ 1.41</text>
+  <text x="340.0" y="56.0" fill="#64748b" font-size="11" text-anchor="middle">점: 두 pixel 의 편차 5 쌍 · 실선 1σ · 점선 2σ</text>
 </svg>

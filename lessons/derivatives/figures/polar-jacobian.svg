@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>polar 변환에서 r = 2, φ = 90° 인 점 (0, 2) 의 Jacobian. r 을 늘리면 점이 바깥쪽인 위로 (0, 1) 씩, φ 를 늘리면 원을 따라 왼쪽으로 (−2, 0) 씩 움직인다. (Δr, Δφ) = (0.02, 0.01) 이면 첫째 열 × 0.02 = (0, 0.02) 와 둘째 열 × 0.01 = (−0.02, 0) 을 더한 (−0.02, 0.02) 만큼 움직인다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="718" height="378" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <line x1="40.0" y1="336.0" x2="40.0" y2="72.0" stroke="#1e293b" stroke-width="1"/>
+  <text x="40.0" y="352.0" fill="#64748b" font-size="11" text-anchor="middle">−3</text>
+  <line x1="100.0" y1="336.0" x2="100.0" y2="72.0" stroke="#1e293b" stroke-width="1"/>
+  <text x="100.0" y="352.0" fill="#64748b" font-size="11" text-anchor="middle">−2</text>
+  <line x1="160.0" y1="336.0" x2="160.0" y2="72.0" stroke="#1e293b" stroke-width="1"/>
+  <text x="160.0" y="352.0" fill="#64748b" font-size="11" text-anchor="middle">−1</text>
+  <line x1="220.0" y1="336.0" x2="220.0" y2="72.0" stroke="#1e293b" stroke-width="1"/>
+  <text x="220.0" y="352.0" fill="#64748b" font-size="11" text-anchor="middle">0</text>
+  <line x1="280.0" y1="336.0" x2="280.0" y2="72.0" stroke="#1e293b" stroke-width="1"/>
+  <text x="280.0" y="352.0" fill="#64748b" font-size="11" text-anchor="middle">1</text>
+  <line x1="340.0" y1="336.0" x2="340.0" y2="72.0" stroke="#1e293b" stroke-width="1"/>
+  <text x="340.0" y="352.0" fill="#64748b" font-size="11" text-anchor="middle">2</text>
+  <line x1="400.0" y1="336.0" x2="400.0" y2="72.0" stroke="#1e293b" stroke-width="1"/>
+  <text x="400.0" y="352.0" fill="#64748b" font-size="11" text-anchor="middle">3</text>
+  <line x1="28.0" y1="300.0" x2="412.0" y2="300.0" stroke="#1e293b" stroke-width="1"/>
+  <text x="20.0" y="304.0" fill="#64748b" font-size="11" text-anchor="end">0</text>
+  <line x1="28.0" y1="240.0" x2="412.0" y2="240.0" stroke="#1e293b" stroke-width="1"/>
+  <text x="20.0" y="244.0" fill="#64748b" font-size="11" text-anchor="end">1</text>
+  <line x1="28.0" y1="180.0" x2="412.0" y2="180.0" stroke="#1e293b" stroke-width="1"/>
+  <text x="20.0" y="184.0" fill="#64748b" font-size="11" text-anchor="end">2</text>
+  <line x1="28.0" y1="120.0" x2="412.0" y2="120.0" stroke="#1e293b" stroke-width="1"/>
+  <text x="20.0" y="124.0" fill="#64748b" font-size="11" text-anchor="end">3</text>
+  <path d="M340.0,300.0 A120,120 0 0,0 100.0,300.0" fill="none" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <text x="316.0" y="226.0" fill="#94a3b8" font-size="11" text-anchor="start">r = 2 인 원</text>
+  <circle cx="220.0" cy="300.0" r="5" fill="#f87171" stroke="none" stroke-width="1"/>
+  <text x="228.0" y="320.0" fill="#f87171" font-size="11" text-anchor="start">r = 0: 모든 φ 가 이 한 점으로 접힌다</text>
+  <line x1="220.0" y1="180.0" x2="220.0" y2="120.0" stroke="#34d399" stroke-width="2.6" marker-end="url(#arrow-green)"/>
+  <line x1="220.0" y1="180.0" x2="100.0" y2="180.0" stroke="#f59e0b" stroke-width="2.6" marker-end="url(#arrow-amber)"/>
+  <circle cx="220.0" cy="180.0" r="6" fill="#38bdf8" stroke="none" stroke-width="1"/>
+  <text x="230.0" y="198.0" fill="#38bdf8" font-size="12" text-anchor="start">(0, 2)</text>
+  <text x="228.0" y="124.0" fill="#34d399" font-size="12" text-anchor="start">첫째 열 ∂(x, y)/∂r = (0, 1)</text>
+  <text x="160.0" y="162.0" fill="#f59e0b" font-size="12" text-anchor="middle">둘째 열 ∂(x, y)/∂φ = (−2, 0)</text>
+  <text x="470.0" y="78.0" fill="#e2e8f0" font-size="13" text-anchor="start">J(2, 90°) =</text>
+  <text x="562.0" y="72.0" fill="#94a3b8" font-size="22" text-anchor="middle">[</text>
+  <text x="630.0" y="72.0" fill="#94a3b8" font-size="22" text-anchor="middle">]</text>
+  <text x="582.0" y="64.0" fill="#e2e8f0" font-size="13" text-anchor="middle">0</text>
+  <text x="610.0" y="64.0" fill="#e2e8f0" font-size="13" text-anchor="middle">−2</text>
+  <text x="582.0" y="84.0" fill="#e2e8f0" font-size="13" text-anchor="middle">1</text>
+  <text x="610.0" y="84.0" fill="#e2e8f0" font-size="13" text-anchor="middle">0</text>
+  <text x="470.0" y="130.0" fill="#e2e8f0" font-size="12" text-anchor="start">(Δr, Δφ) = (0.02, 0.01) 이면</text>
+  <text x="470.0" y="152.0" fill="#34d399" font-size="12" text-anchor="start">0.02 × (0, 1) = (0, 0.02)</text>
+  <text x="470.0" y="172.0" fill="#f59e0b" font-size="12" text-anchor="start">0.01 × (−2, 0) = (−0.02, 0)</text>
+  <text x="470.0" y="194.0" fill="#e2e8f0" font-size="12" text-anchor="start">합 (−0.02, 0.02)</text>
+  <text x="470.0" y="236.0" fill="#e2e8f0" font-size="12" text-anchor="start">determinant = 0 × 0 − (−2) × 1 = 2</text>
+  <text x="470.0" y="256.0" fill="#94a3b8" font-size="12" text-anchor="start">작은 칸이 두 배 넓이로 늘어난다</text>
+</svg>

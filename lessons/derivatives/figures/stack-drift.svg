@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 360" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>빛이 없는 장면을 찍은 사진의 한 pixel 을 60 장까지 더한 값. 장마다 0.1 단계인 bias 는 60 장에서 6 으로 쌓이고, 그보다 다섯 배 큰 0.5 단계의 무작위 noise 는 서로 상쇄되어 이 한 번의 실험에서는 −1.6 에 머문다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="678" height="358" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <line x1="70.0" y1="40.0" x2="70.0" y2="300.0" stroke="#1e293b" stroke-width="1"/>
+  <text x="70.0" y="316.0" fill="#64748b" font-size="11" text-anchor="middle">0</text>
+  <line x1="140.0" y1="40.0" x2="140.0" y2="300.0" stroke="#1e293b" stroke-width="1"/>
+  <text x="140.0" y="316.0" fill="#64748b" font-size="11" text-anchor="middle">10</text>
+  <line x1="210.0" y1="40.0" x2="210.0" y2="300.0" stroke="#1e293b" stroke-width="1"/>
+  <text x="210.0" y="316.0" fill="#64748b" font-size="11" text-anchor="middle">20</text>
+  <line x1="280.0" y1="40.0" x2="280.0" y2="300.0" stroke="#1e293b" stroke-width="1"/>
+  <text x="280.0" y="316.0" fill="#64748b" font-size="11" text-anchor="middle">30</text>
+  <line x1="350.0" y1="40.0" x2="350.0" y2="300.0" stroke="#1e293b" stroke-width="1"/>
+  <text x="350.0" y="316.0" fill="#64748b" font-size="11" text-anchor="middle">40</text>
+  <line x1="420.0" y1="40.0" x2="420.0" y2="300.0" stroke="#1e293b" stroke-width="1"/>
+  <text x="420.0" y="316.0" fill="#64748b" font-size="11" text-anchor="middle">50</text>
+  <line x1="490.0" y1="40.0" x2="490.0" y2="300.0" stroke="#1e293b" stroke-width="1"/>
+  <text x="490.0" y="316.0" fill="#64748b" font-size="11" text-anchor="middle">60</text>
+  <line x1="70.0" y1="300.0" x2="490.0" y2="300.0" stroke="#1e293b" stroke-width="1"/>
+  <text x="62.0" y="304.0" fill="#64748b" font-size="11" text-anchor="end">-4</text>
+  <line x1="70.0" y1="252.7" x2="490.0" y2="252.7" stroke="#1e293b" stroke-width="1"/>
+  <text x="62.0" y="256.7" fill="#64748b" font-size="11" text-anchor="end">-2</text>
+  <line x1="70.0" y1="205.5" x2="490.0" y2="205.5" stroke="#1e293b" stroke-width="1"/>
+  <text x="62.0" y="209.5" fill="#64748b" font-size="11" text-anchor="end">0</text>
+  <line x1="70.0" y1="158.2" x2="490.0" y2="158.2" stroke="#1e293b" stroke-width="1"/>
+  <text x="62.0" y="162.2" fill="#64748b" font-size="11" text-anchor="end">2</text>
+  <line x1="70.0" y1="110.9" x2="490.0" y2="110.9" stroke="#1e293b" stroke-width="1"/>
+  <text x="62.0" y="114.9" fill="#64748b" font-size="11" text-anchor="end">4</text>
+  <line x1="70.0" y1="63.6" x2="490.0" y2="63.6" stroke="#1e293b" stroke-width="1"/>
+  <text x="62.0" y="67.6" fill="#64748b" font-size="11" text-anchor="end">6</text>
+  <line x1="70.0" y1="300.0" x2="490.0" y2="300.0" stroke="#475569" stroke-width="1.4"/>
+  <line x1="70.0" y1="40.0" x2="70.0" y2="300.0" stroke="#475569" stroke-width="1.4"/>
+  <text x="490.0" y="332.0" fill="#94a3b8" font-size="11" text-anchor="end">더한 장수</text>
+  <text x="70.0" y="30.0" fill="#94a3b8" font-size="11" text-anchor="start">더한 오차 (밝기 단계)</text>
+  <path d="M70.0,205.5 L77.0,203.1 L84.0,200.7 L91.0,198.4 L98.0,196.0 L105.0,193.6 L112.0,191.3 L119.0,188.9 L126.0,186.5 L133.0,184.2 L140.0,181.8 L147.0,179.5 L154.0,177.1 L161.0,174.7 L168.0,172.4 L175.0,170.0 L182.0,167.6 L189.0,165.3 L196.0,162.9 L203.0,160.5 L210.0,158.2 L217.0,155.8 L224.0,153.5 L231.0,151.1 L238.0,148.7 L245.0,146.4 L252.0,144.0 L259.0,141.6 L266.0,139.3 L273.0,136.9 L280.0,134.5 L287.0,132.2 L294.0,129.8 L301.0,127.5 L308.0,125.1 L315.0,122.7 L322.0,120.4 L329.0,118.0 L336.0,115.6 L343.0,113.3 L350.0,110.9 L357.0,108.5 L364.0,106.2 L371.0,103.8 L378.0,101.5 L385.0,99.1 L392.0,96.7 L399.0,94.4 L406.0,92.0 L413.0,89.6 L420.0,87.3 L427.0,84.9 L434.0,82.5 L441.0,80.2 L448.0,77.8 L455.0,75.5 L462.0,73.1 L469.0,70.7 L476.0,68.4 L483.0,66.0 L490.0,63.6" fill="none" stroke="#f59e0b" stroke-width="2.4"/>
+  <path d="M70.0,205.5 L77.0,216.6 L84.0,213.9 L91.0,198.7 L98.0,180.5 L105.0,166.6 L112.0,166.0 L119.0,162.1 L126.0,165.0 L133.0,180.4 L140.0,185.9 L147.0,174.7 L154.0,171.8 L161.0,175.5 L168.0,187.9 L175.0,189.0 L182.0,195.9 L189.0,195.4 L196.0,189.7 L203.0,216.5 L210.0,217.6 L217.0,234.7 L224.0,245.7 L231.0,260.3 L238.0,247.2 L245.0,239.3 L252.0,233.5 L259.0,242.2 L266.0,259.1 L273.0,263.6 L280.0,261.2 L287.0,262.0 L294.0,254.0 L301.0,258.2 L308.0,237.0 L315.0,229.4 L322.0,205.9 L329.0,203.1 L336.0,205.8 L343.0,215.7 L350.0,206.2 L357.0,194.0 L364.0,192.1 L371.0,187.3 L378.0,190.5 L385.0,195.5 L392.0,198.9 L399.0,221.0 L406.0,232.9 L413.0,232.5 L420.0,231.0 L427.0,218.3 L434.0,210.9 L441.0,205.9 L448.0,205.4 L455.0,232.0 L462.0,231.5 L469.0,241.9 L476.0,236.2 L483.0,239.6 L490.0,243.6" fill="none" stroke="#38bdf8" stroke-width="1.8"/>
+  <text x="496.0" y="67.6" fill="#f59e0b" font-size="12" text-anchor="start">bias 0.1 × 60 = 6</text>
+  <text x="496.0" y="247.6" fill="#38bdf8" font-size="12" text-anchor="start">noise 합 −1.6</text>
+  <text x="520.0" y="120.0" fill="#e2e8f0" font-size="12" text-anchor="start">bias: 장마다 같은 쪽으로</text>
+  <text x="520.0" y="138.0" fill="#e2e8f0" font-size="12" text-anchor="start">더해져 장수에 비례</text>
+  <text x="520.0" y="176.0" fill="#e2e8f0" font-size="12" text-anchor="start">noise: 방향이 매번 달라</text>
+  <text x="520.0" y="194.0" fill="#e2e8f0" font-size="12" text-anchor="start">서로 상쇄, 보통 크기는</text>
+  <text x="520.0" y="212.0" fill="#94a3b8" font-size="12" text-anchor="start">0.5 × √60 ≈ 3.9</text>
+</svg>

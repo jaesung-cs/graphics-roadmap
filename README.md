@@ -137,8 +137,9 @@ graphics-roadmap/
 
 - 로보틱스 강의(ROS 2, 좌표 변환·kinematics·제어, 상태 추정·SLAM·navigation·자율주행, 강화학습, imitation learning, VLA, world model)를
   지웠습니다
-- 남긴 강의(수학 기초, 신경망 기초, Vision, Language, VAE·DDPM·flow matching)는 원본 그대로 두고, 지운 강의로 가는 링크만 풀었습니다.
-  그래서 본문의 예시와 다음 강의 예고에 로봇 이야기가 남아 있습니다
+- 남긴 강의(수학 기초, 신경망 기초, Vision, Language, VAE·DDPM·flow matching)에서 지운 강의로 가는 링크를 풀었습니다
+- 남긴 강의 가운데 Vectors & Matrices, Derivatives & Gradients, Probability & Gaussians 는 로봇 예시를 사진·그림 예시로 바꾸고, 로봇에만 해당하는
+  절을 지웠습니다. 본문·그림·퀴즈를 모두 고쳤습니다. 나머지 남긴 강의는 아직 원본의 로봇 예시가 남아 있습니다
 - Stable Diffusion branch 의 강의를 새로 썼습니다
 - 지도를 가운데에서 여러 트리가 뻗는 원형에서 맨 위의 첫 강의부터 아래로 자라는 트리 하나로 바꿨고, 퀴즈가 없는 강의를 "다 읽음" 으로 완료하는 기능을 사이트에
   더했습니다
