@@ -633,7 +633,7 @@ token 앞에 넣는다.
 action token 도 [autoregressive 생성](#autoregressive-생성) 에서처럼 고른 token 을 다음 forward 의 입력 끝에 붙여 가며 하나씩 생성하는데, 행동
 하나마다 70 억 개 parameter 의 forward 를 7 번 하므로 1초에 6 번 정도밖에 행동을 내지 못한다. 논문에 따르면 A5000 GPU 에서 8-bit 로 줄인
 모델은 1초에 1.2 번만 행동을 내서, 1초에 5 번 명령하며 모은 시연 데이터와 로봇의 움직임이 달라지고 성공률이 크게 떨어졌다. 행동을 bin 으로
-자를 때 잃는 정밀도, 1초에 내는 행동 수의 한계, action token 대신 별도의 출력 층을 붙이는 방식은 [RT-2 → OpenVLA](../vla-tokens/README.md)
+자를 때 잃는 정밀도, 1초에 내는 행동 수의 한계, action token 대신 별도의 출력 층을 붙이는 방식은 RT-2 → OpenVLA
 에서 다룬다.
 
 **확인 문제.** 0 ~ 8 cm 의 집게 벌림을 1 cm 씩 bin 8 개(bin 0 ~ bin 7)로 나눈다고 하자. 5.6 cm 는 몇 번 bin 이고, 그 bin 을 가운데 값으로 되돌리면
@@ -657,7 +657,7 @@ action token 도 [autoregressive 생성](#autoregressive-생성) 에서처럼 �
   때마다 loss 가 약 0.95 배가 된다. RT-2 와 OpenVLA 는 이런 language model 위에서 행동을 bin 256 개의 token 으로 바꿔 하나씩 생성한다
 
 GPT-2 는 text 만 읽는 모델이라 카메라 영상을 보지 못한다. 사진과 설명 글을 같은 숫자 공간에 놓아 서로 맞춰 보는 모델은 [CLIP](../clip/README.md)
-에서 다루고, language model 에 image encoder 와 action token 을 더해 만든 VLA 의 구조와 약점은 [RT-2 → OpenVLA](../vla-tokens/README.md) 에서
+에서 다루고, language model 에 image encoder 와 action token 을 더해 만든 VLA 의 구조와 약점은 RT-2 → OpenVLA 에서
 다룬다.
 
 ## 참고 자료

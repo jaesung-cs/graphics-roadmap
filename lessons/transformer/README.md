@@ -633,7 +633,7 @@ encoder 와 decoder 를 어떻게 쓰느냐에 따라 세 가지 조합이 있�
 
 | 조합 | 하는 일 | 예 |
 | --- | --- | --- |
-| encoder-decoder | 입력 sequence 를 읽고 출력 sequence 를 쓴다 | 원래 Transformer(번역), [ACT](../act/README.md) |
+| encoder-decoder | 입력 sequence 를 읽고 출력 sequence 를 쓴다 | 원래 Transformer(번역), ACT |
 | decoder 만 | causal mask 를 쓴 self-attention 으로 다음 token 을 이어 쓴다 | [GPT-2](../gpt/README.md) |
 | encoder 만 | 입력 전체를 읽어 token 마다 vector 를 낸다 | [ViT](../vit/README.md) |
 
@@ -665,7 +665,7 @@ ACT 의 decoder 는 번역 decoder 와 달리 query 100 개를 한꺼번에 넣�
 
 논문 표에는 decoder 가 7 층으로 적혀 있지만, 공개 코드에서는 7 층을 모두 계산한 뒤 마지막 층이 아니라 첫째 층의 출력을 action 에
 쓴다. 그래서 2 ~ 7 층의 결과는 action 에 쓰이지 않고, gradient 도 닿지 않아 학습으로 고쳐지지 않는다. LeRobot 은 이 동작에 맞춰
-decoder 층 1 개를 기본값으로 둔다. 원인이 된 코드는 [ACT](../act/README.md) 에서 다룬다.
+decoder 층 1 개를 기본값으로 둔다. 원인이 된 코드는 ACT 에서 다룬다.
 
 attention 은 모든 token 쌍의 점수를 매기므로 점수 표의 칸 수가 token 수의 제곱이다. 카메라가 1 대인 시뮬레이션에서는 token 이 302 개라
 점수 표가 $302 \times 302 = 91{,}204$ 칸이고, 카메라가 4 대인 실제 ALOHA 에서는 $1202 \times 1202 = 1{,}444{,}804$ 칸이라 약 16 배다.
@@ -694,8 +694,8 @@ attention 은 모든 token 쌍의 점수를 매기므로 점수 표의 칸 수�
 
 decoder 만 쌓은 Transformer 를 다음 token 맞히기로 학습시키고 글을 생성하는 방법은 [GPT-2](../gpt/README.md) 에서 다루고, 사진을
 patch token 으로 잘라 encoder 에 넣는 방법은 [ViT](../vit/README.md) 에서 다룬다. 로봇 쪽에서는 action 을 256 구간으로 나눠 token 으로
-바꾼 뒤 Transformer 로 고르는 [RT-1](../rt1/README.md) 과, action chunk 와 CVAE 를 Transformer encoder-decoder 에 결합한
-[ACT](../act/README.md) 가 이 강의의 구조를 그대로 쓴다.
+바꾼 뒤 Transformer 로 고르는 RT-1 과, action chunk 와 CVAE 를 Transformer encoder-decoder 에 결합한
+ACT 가 이 강의의 구조를 그대로 쓴다.
 
 ## 참고 자료
 

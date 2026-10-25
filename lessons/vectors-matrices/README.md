@@ -44,7 +44,7 @@ vector 는 위치(position)를 적기도 하고, 어디서 어디로 움직였�
 적기도 한다. 뜻은 달라도 다음 절부터 볼 계산 규칙은 같다. 다만 숫자만으로는 뜻이 정해지지 않아서, 어디를 원점으로 잡았는지, 첫째
 component 가 어느 방향인지, 단위가 m 인지 mm 인지를 함께 정해야 한다. 이렇게 원점과 축 방향을 정해 둔 기준을 frame(좌표계)이라고 한다.
 서론의 문제를 frame 으로 다시 적으면 LiDAR frame 의 숫자를 로봇 frame 의 숫자로 바꾸는 일이고, frame 은
-[Rigid Transforms](../transforms/README.md) 에서 자세히 다룬다.
+Rigid Transforms 에서 자세히 다룬다.
 
 ## vector 덧셈과 scalar 곱
 
@@ -209,7 +209,7 @@ $$
 
 사진 가운데에서 오른쪽 150 pixel, 아래 100 pixel 인 물체는 책상 위 $(0.3, -0.2)$ m 에 있다. 대각선 밖이 0 인 행렬은 축마다 따로
 늘이거나 줄이고 음수는 그 축을 뒤집어서, 둘째 행의 − 를 빠뜨리면 로봇은 위아래가 뒤집힌 자리로 손을 뻗는다. 실제 카메라에서는 물체까지의
-거리에 따라 pixel 한 칸의 크기가 달라지는데, 이 계산은 [Camera Geometry](../camera-geometry/README.md) 에서 다룬다.
+거리에 따라 pixel 한 칸의 크기가 달라지는데, 이 계산은 Camera Geometry 에서 다룬다.
 
 neural network의 층 하나도 행렬과 vector 의 곱이라서, 숫자 세 개 $\mathbf{x} = (1, 2, 3)$ 을 받아 숫자 두 개를 내는 층은 행이 2 개, 열이 3 개인
 행렬 $W$ 를 곱한다.
@@ -258,7 +258,7 @@ $(2, 1)$ 에 놓여 있다.
 
 2×2 행렬에 $(0, 0)$ 을 곱하면 언제나 $(0, 0)$ 이 나오는데 이동은 $(0, 0)$ 을 $(3, 0)$ 으로 보내야 하므로, 이동은 2×2 행렬로 적을 수 없다.
 vector 끝에 1 을 하나 붙여 회전과 이동을 3×3 행렬 하나로 함께 적는 방법을 homogeneous transform 이라고 하며 Rigid Transforms 에서
-다룬다. 관절마다 이 행렬을 곱해 손끝 위치를 구하는 계산은 [Forward Kinematics](../forward-kinematics/README.md) 에서 다룬다.
+다룬다. 관절마다 이 행렬을 곱해 손끝 위치를 구하는 계산은 Forward Kinematics 에서 다룬다.
 
 <details><summary><b>심화: 첨자와 Σ 로 쓰는 행렬 곱</b></summary>
 
@@ -418,7 +418,7 @@ singular matrix 는 앞 절의 카메라 calibration 에서도 생긴다. 위치
 ![calibration 의 두 식을 (s, c) 평면의 직선으로 그린 모습. 표식이 0.1 m 와 0.3 m 면 두 직선이 뚜렷하게 만나 pixel 1 칸 오차에도 교점이 (500, 100) 에서 (505, 99.5) 로 조금 움직이고, 0.1 m 와 0.101 m 면 두 직선이 거의 겹쳐 교점이 (1500, 0) 까지 옮겨 간다](figures/calib-lines.svg)
 
 로봇 팔에도 같은 문제가 있다. 마디 길이가 1 m 인 관절 두 개짜리 팔에서 관절 속도 $(a, b)$ rad/s 를 손끝 속도로 바꾸는 행렬은 자세마다 다른데,
-[Inverse Kinematics](../inverse-kinematics/README.md) 에서 Jacobian 이라는 이름으로 구하는 이 행렬을 두 자세에서 비교하면 아래와 같다.
+Inverse Kinematics 에서 Jacobian 이라는 이름으로 구하는 이 행렬을 두 자세에서 비교하면 아래와 같다.
 
 | 자세 | 행렬 | 손끝 속도 | determinant |
 | --- | --- | --- | --- |
@@ -480,7 +480,7 @@ singular 면 오류 없이 답이 나오지만, 앞의 calibration 표처럼 입
 
 이 강의는 고정된 행렬 하나가 vector 를 어떻게 바꾸는지만 다뤘다. 관절을 조금 돌릴 때 손끝이 얼마나 움직이는지처럼 값이 변하는 비율을
 구하려면 미분이 필요한데, 미분은 [Derivatives & Gradients](../derivatives/README.md) 에서 다룬다. 회전과 이동을 행렬 하나로 묶는
-homogeneous transform 은 [Rigid Transforms](../transforms/README.md) 에서 다루고, 식이 모르는 값보다 많을 때 오차가 가장 작은 답을 행렬
+homogeneous transform 은 Rigid Transforms 에서 다루고, 식이 모르는 값보다 많을 때 오차가 가장 작은 답을 행렬
 곱으로 구하는 방법은 [Linear Regression](../linear-regression/README.md) 에서 다룬다.
 
 ## 참고 자료

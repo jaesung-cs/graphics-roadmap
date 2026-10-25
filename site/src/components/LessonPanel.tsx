@@ -51,9 +51,9 @@ function LessonChip({ c, p, id, onSelect }: { c: Curriculum; p: ProgressFile; id
 }
 
 function statusText(status: Status, passedDate: string | undefined, tries: number, quiz: boolean): string {
-  if (status === 'done') return `퀴즈 통과 · ${passedDate}`
+  if (status === 'done') return quiz ? `퀴즈 통과 · ${passedDate}` : `다 읽음 · ${passedDate}`
   if (status === 'in_progress') return `퀴즈 ${tries}회 응시 · 아직 통과 전`
-  return quiz ? '강의를 끝까지 읽고 퀴즈로 마무리' : '퀴즈 준비 중'
+  return quiz ? '강의를 끝까지 읽고 퀴즈로 마무리' : '강의를 끝까지 읽고 다 읽음으로 표시'
 }
 
 /** Where the learner stands on this lesson, with a jump to the quiz at the end of the lecture. */
@@ -69,11 +69,9 @@ function StatusCard({ progressFile, lessonId, onJump }: { progressFile: Progress
         <span className="record-dot" aria-hidden="true" />
         {statusText(status, passedOn(progressFile, lessonId), attemptsOf(progressFile, lessonId).length, quiz)}
       </p>
-      {quiz && (
-        <button type="button" className="text-button record-jump" onClick={onJump}>
-          <ArrowDown size={15} aria-hidden="true" /> 퀴즈로 이동
-        </button>
-      )}
+      <button type="button" className="text-button record-jump" onClick={onJump}>
+        <ArrowDown size={15} aria-hidden="true" /> {quiz ? '퀴즈로 이동' : '다 읽음 표시로 이동'}
+      </button>
     </section>
   )
 }

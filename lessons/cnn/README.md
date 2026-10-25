@@ -568,7 +568,7 @@ encoder 라고 부른다.
 
 ![ACT 의 image encoder. 카메라 한 대의 480×640×3 사진(숫자 921,600 개)을 ResNet-18 이 전체 stride 32 로 줄여 15×20×512 feature map(153,600 개)을 만들고, 위치 300 곳의 feature 512 개씩을 카메라 4 대 모아 1,200 곳으로 transformer 에 넣는다. 관절 각도 14 개도 함께 들어가 action chunk 를 낸다](figures/act-encoder.svg)
 
-[ACT](../act/README.md) 는 ALOHA 의 카메라 네 대가 보내는 480×640×3 사진을 ResNet-18 로 각각 15×20×512 feature map 으로 바꾼다. ResNet-18 은
+ACT 는 ALOHA 의 카메라 네 대가 보내는 480×640×3 사진을 ResNet-18 로 각각 15×20×512 feature map 으로 바꾼다. ResNet-18 은
 stride 2 인 층을 다섯 번 지나 가로세로가 $2^5 = 32$ 분의 1 이 되므로 $480 \div 32 = 15$, $640 \div 32 = 20$ 이다. 이 map 을 위치 300 곳, 곳마다
 숫자 512 개로 펴고, 카메라 네 대를 이으면 1,200 곳이 된다. 거기에 관절 각도 14 개를 더해 transformer 에 넣으면 앞으로 $k$ step 동안의 관절
 목표 $k \times 14$ 개가 나온다.
@@ -644,12 +644,12 @@ policy 의 loss 로 conv 층까지 함께 학습할 수 있다.
 
 CNN 은 policy 의 image encoder 말고 로봇의 인식 모듈에도 쓰인다. 아래 두 예는 모두 입력을 CNN 이 받을 수 있는 격자로 먼저 바꾼다.
 
-[Grasp Planning](../grasping/README.md) 에서 다루는 Dex-Net 2.0 의 GQ-CNN 은 grasp 후보마다 성공 확률을 낸다. 후보의 중심이 가운데에 오고
+Grasp Planning 에서 다루는 Dex-Net 2.0 의 GQ-CNN 은 grasp 후보마다 성공 확률을 낸다. 후보의 중심이 가운데에 오고
 gripper 축이 가로가 되도록 depth image 를 옮기고 돌려 32×32 로 자른 뒤, gripper 의 깊이 $z$ 와 함께 넣는다. convolution 의 equivariance 는 평행 이동에만 성립하고
 회전에는 성립하지 않아서, 사진을 grasp 방향에 맞춰 돌려 넣으면 network 가 grasp 방향마다 따로 배울 필요가 없다. 학습 방법은
 [filter 학습](#filter-학습) 에서 본 것과 같아서, 합성 데이터 670 만 개마다 붙은 "견고한 grasp 인가" label 로 cross-entropy loss 를 줄인다.
 
-[LiDAR Perception](../lidar-perception/README.md) 에서 다루는 PointPillars 는 LiDAR 의 점 구름을 위에서 내려다본 0.16 m × 0.16 m 칸(pillar)으로
+LiDAR Perception 에서 다루는 PointPillars 는 LiDAR 의 점 구름을 위에서 내려다본 0.16 m × 0.16 m 칸(pillar)으로
 나누고, 칸마다 점들을 숫자 64 개로 요약해 64 channel 사진처럼 만든다(pseudo-image). 여기에 3×3 conv 층을 쌓은 2D CNN 을 대어 물체를 감싸는
 3D 상자를 낸다. KITTI 에서 차량을 찾는 범위 70.4 m × 80 m 를 0.16 m 로 나누면 $440 \times 500 = 220{,}000$ 칸인데, 논문에 따르면 점이 든 칸은 6,000 ~ 9,000 개뿐이다.
 
@@ -669,8 +669,8 @@ gripper 축이 가로가 되도록 depth image 를 옮기고 돌려 32×32 로 �
 
 LeNet 은 conv 층이 둘뿐이라 작고 단순한 사진만 다룰 수 있다. 그렇다고 층을 수십 개 쌓기만 하면 gradient 가 앞쪽 층까지 잘 전해지지 않아
 오히려 학습이 잘 되지 않는다. 다음 강의인 [ResNet](../resnet/README.md) 은 입력을 출력에 더하는 연결로 이 문제를 푼다. [DDPM](../ddpm/README.md) 은
-conv 층으로 그림의 noise 를 제거하는 생성 모델을 다룬다. grasp 후보를 고르는 전체 계획은 [Grasp Planning](../grasping/README.md) 에서 다루고,
-점 구름에서 물체를 찾는 pipeline 은 [LiDAR Perception](../lidar-perception/README.md) 에서 다룬다.
+conv 층으로 그림의 noise 를 제거하는 생성 모델을 다룬다. grasp 후보를 고르는 전체 계획은 Grasp Planning 에서 다루고,
+점 구름에서 물체를 찾는 pipeline 은 LiDAR Perception 에서 다룬다.
 
 ## 참고 자료
 

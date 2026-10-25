@@ -12,6 +12,8 @@ const ROOT = join(__dirname, '..', '..', 'lessons')
 const REQUIRED_SECTIONS = ['## 학습 목표', '## 정리', '## 참고 자료']
 // a lesson is a lecture, its figures and its quiz; anything else (code, environments) does not belong
 const LESSON_FILES = new Set(['README.md', 'quiz.yaml', 'figures'])
+// branches whose lessons have no quiz; the learner marks them read instead
+const QUIZLESS_BRANCHES = new Set(['stable-diffusion'])
 
 function load() {
   const branches = parseBranches(readFileSync(join(ROOT, 'branches.yaml'), 'utf8'))
@@ -41,13 +43,18 @@ describe('curriculum', () => {
     }
   })
 
-  it('every lesson ends with a quiz', () => {
-    for (const p of c.lessons) expect(existsSync(join(ROOT, p.id, 'quiz.yaml')), `${p.id}/quiz.yaml`).toBe(true)
+  it('ends every lesson with a quiz, except the Stable Diffusion lessons, which the learner marks read', () => {
+    for (const p of c.lessons) {
+      expect(existsSync(join(ROOT, p.id, 'quiz.yaml')), `${p.id}/quiz.yaml`).toBe(!QUIZLESS_BRANCHES.has(p.branch))
+    }
   })
+
+  // a lesson's files that exist: README.md always, quiz.yaml unless it is read-only
+  const textFiles = (id: string) => ['README.md', 'quiz.yaml'].filter((f) => existsSync(join(ROOT, id, f)))
 
   it('holds no control characters, which a script writing "\\times" as "\\t" leaves in a formula', () => {
     for (const p of c.lessons) {
-      for (const file of ['README.md', 'quiz.yaml']) {
+      for (const file of textFiles(p.id)) {
         const bad = readFileSync(join(ROOT, p.id, file), 'utf8').match(/[\x00-\x08\x0b-\x1f]/)
         expect(bad, `${p.id}/${file} has control character U+${bad?.[0].charCodeAt(0).toString(16).padStart(4, '0')}`).toBeNull()
       }
@@ -58,7 +65,7 @@ describe('curriculum', () => {
     // code, math and URLs keep their own tildes
     const protectedSpans = /```[\s\S]*?```|`[^`\n]*`|\$\$[\s\S]*?\$\$|\$[^$\n]*\$|\]\([^)\s]*\)|https?:\/\/\S+/g
     for (const p of c.lessons) {
-      for (const file of ['README.md', 'quiz.yaml']) {
+      for (const file of textFiles(p.id)) {
         const prose = readFileSync(join(ROOT, p.id, file), 'utf8').replace(protectedSpans, '')
         const tight = prose.match(/[^\s~]~[^\s~]/)
         expect(tight, `${p.id}/${file} has a tight tilde "${tight?.[0]}"; write "A ~ B"`).toBeNull()

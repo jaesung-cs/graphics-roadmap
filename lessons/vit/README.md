@@ -490,7 +490,7 @@ ResNet 인 BiT 는 ImageNet 으로만 미리 학습하면 ViT 보다 높았고 �
 실험에서도 계산량이 비슷한 ViT-B/32 가 ResNet50 보다 900만 장에서는 훨씬 낮았고 9,000만 장 이상에서는 더 높았다. 저자들은 convolution 의
 inductive bias 가 작은 데이터에서는 쓸모 있지만 큰 데이터에서는 패턴을 데이터에서 바로 배우는 편이 낫다고 정리했다.
 
-로봇 policy 들의 image encoder 선택도 이 결과와 들어맞는다. [ACT](../act/README.md) 는 과제마다 시연 50 개 정도로 학습하고, image encoder 로는 ImageNet
+로봇 policy 들의 image encoder 선택도 이 결과와 들어맞는다. ACT 는 과제마다 시연 50 개 정도로 학습하고, image encoder 로는 ImageNet
 으로 미리 학습한 ResNet-18 을 쓴다. 반면 VLA 는 인터넷의 사진과 글 수억 쌍 이상으로 미리 학습한 VLM 위에 만들기 때문에, image encoder 가 ViT
 구조다.
 
@@ -551,8 +551,8 @@ SigLIP 의 구조는 이 강의의 ViT 그대로이고, 학습 방법은 [CLIP](
 | VLA | image encoder | 사진 크기 | 사진 한 장의 image token |
 | --- | --- | --- | --- |
 | OpenVLA | SigLIP So400m/14 와 DINOv2 ViT-L/14 | 224×224 | 256 |
-| [π0](../pi0/README.md) | PaliGemma 의 SigLIP So400m/14 | 224×224 | 256 |
-| [GR00T N1](../groot/README.md) | Eagle-2 VLM 의 SigLIP-2 | 224×224 | 64 |
+| π0 | PaliGemma 의 SigLIP So400m/14 | 224×224 | 256 |
+| GR00T N1 | Eagle-2 VLM 의 SigLIP-2 | 224×224 | 64 |
 
 So400m 은 층 수와 폭을 다듬은 parameter 약 4억 개의 ViT 이고, /14 는 patch 크기다. OpenVLA 와 π0 는 patch 출력 256 개를 그대로 넘기고,
 GR00T N1 은 이웃한 token 을 합치는 pixel shuffle 로 64 개까지 줄여 언어 모델의 계산을 덜어 준다.
@@ -600,7 +600,7 @@ WidowX 로봇 과제 8 개의 평균 성공률이 45.6% 에서 40.6% 로 5%p 떨
 분류용으로 학습한 ViT 는 ImageNet 의 1,000 class 처럼 미리 정한 종류 안에서만 고를 수 있어서, "빨간 컵" 같은 새 개념을 알아보게 하려면
 그 이름표를 단 사진이 다시 필요하다. image encoder 를 글을 vector 로 바꾸는 text encoder 와 함께 학습해 문장으로 개념을 지정하게 만드는 방법은
 [CLIP](../clip/README.md) 에서 다룬다. 이런 image encoder 를 언어 모델에 붙여 로봇 action 을 token 으로 내는 VLA 는
-[RT-2 → OpenVLA](../vla-tokens/README.md) 에서 다루고, PaliGemma 위에 action expert 를 붙인 VLA 는 [π0](../pi0/README.md) 에서 다룬다.
+RT-2 → OpenVLA 에서 다루고, PaliGemma 위에 action expert 를 붙인 VLA 는 π0 에서 다룬다.
 
 ## 참고 자료
 

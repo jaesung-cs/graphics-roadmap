@@ -58,7 +58,7 @@ derivative 는 $\frac{d\theta}{dt}$ 로 쓰고 "디 세타 디 티" 라고 읽�
 미분한 값이 속도이고 속도를 미분한 값이 가속도이며, 가속도를 한 번 더 미분한 값은 **jerk** 라고 부른다. 표의 관절은 가속도가 일정해서
 jerk 가 0 인데, 가속도가 0.01 초 만에 0 에서 1000 °/s² 로 뛰면 jerk 는 $1000 \div 0.01 = 100{,}000$ °/s³ 이다. jerk 가 크면 motor 가
 내야 할 torque 가 갑자기 바뀌어 팔이 흔들리고 gear 에 충격이 간다. 그래서 로봇 팔의 목표 경로는 jerk 가 작아지도록 설계하는데,
-[PID Control](../pid-control/README.md) 에서 본 minimum-jerk 목표가 그런 경로다.
+PID Control 에서 본 minimum-jerk 목표가 그런 경로다.
 
 <details><summary><b>심화: limit 으로 쓰는 derivative 의 정의</b></summary>
 
@@ -110,7 +110,7 @@ encoder 는 각도를 연속으로 재지 못하고 정해진 눈금 단위로�
 같아서, 위 그림 아래쪽처럼 8.8 ~ 13.2 °/s 에 머문다. 대신 평균은 지난 0.02 초 동안의 속도라서 실제 움직임보다 약 0.01 초 늦게 따라간다.
 관절이 갑자기 멈춰도 속도가 0 이 되기까지 0.02 초가 걸린다. 천천히 변하는 값은 통과시키고 빠르게 오르내리는 값은 줄이는 계산을
 **low-pass filter** 라고 하며, 평균은 그 가장 간단한 예다. noise 를 많이 줄이는 filter 일수록 더 늦게 반응한다.
-[PID Control](../pid-control/README.md) 의 D 항도 오차의 변화율을 계산하므로 같은 문제를 겪고, 그래서 D 항에는 low-pass filter 를 거친
+PID Control 의 D 항도 오차의 변화율을 계산하므로 같은 문제를 겪고, 그래서 D 항에는 low-pass filter 를 거친
 값을 쓰는 경우가 많다.
 
 **흔한 오해.** "각도를 더 자주 읽을수록 속도가 정확해진다." 각도의 quantization error 는 그대로인데 나누는 $\Delta t$ 만 작아져서, 미분한
@@ -183,7 +183,7 @@ $\sqrt{n}$ 배 정도로만 커진다. 60 초면 6000 번을 더하므로 $0.5 \
 
 encoder 의 영점이 3° 어긋나 있어도 미분한 속도는 맞지만, 속도에 섞인 0.1 °/s 의 bias 는 적분하면 1 분에 6° 가 된다. 가속도를 두 번 적분해
 위치를 구하면 bias 가 시간의 제곱으로 쌓이므로, IMU 하나로는 위치를 오래 정확하게 구할 수 없다. 이 drift 를 GPS 같은 다른 센서로
-바로잡는 방법은 [Kalman Filter](../kalman-filter/README.md) 에서 다룬다.
+바로잡는 방법은 Kalman Filter 에서 다룬다.
 
 **확인 문제.** 바닥 청소 로봇의 gyro 에 0.02 °/s 의 bias 가 있다. 이 값을 그대로 적분하면 10 분 뒤 방향 오차는?
 
@@ -262,7 +262,7 @@ $\frac{d\theta}{d\varphi} = 1 \div 50 = 0.02$ 이고, 손끝 높이 $y = 0.4\sin
 
 지금까지는 바꾸는 값이 하나였지만, 관절이 둘인 팔은 손끝 위치가 두 관절 각도에 함께 달려 있다. 길이 0.5 m 인 link 두 개를 이은 평면 팔이
 $(\theta_1, \theta_2) = (0°, 90°)$, radian 으로 $(0, 1.571)$ 자세에 있다고 하자. $\theta_2$ 는 첫째 link 가 뻗은 방향에서 잰 각도다.
-[Forward Kinematics](../forward-kinematics/README.md) 에서 다루는 식으로 손끝 위치를 계산하면 $(0.5, 0.5)$ 이고, 컵이 $(0.4, 0.6)$ 에 있을
+Forward Kinematics 에서 다루는 식으로 손끝 위치를 계산하면 $(0.5, 0.5)$ 이고, 컵이 $(0.4, 0.6)$ 에 있을
 때 손끝과 컵 사이 거리의 제곱을 $D$ 라고 하자.
 
 $$
@@ -405,7 +405,7 @@ $$
 자세 $(0°, 90°)$ 에서 손끝으로 책상을 아래로 10 N 누르려면 $\mathbf F = (0, -10)$ 이다. $J^\top$ 의 첫째 행은 $J$ 의 첫째 열 $(-0.5, 0.5)$
 라서 $\tau_1 = (-0.5)(0) + (0.5)(-10) = -5$ N·m 이고, 둘째 행은 $J$ 의 둘째 열 $(-0.5, 0)$ 이라서 $\tau_2 = 0$ 이다. 음수는 시계 방향이다.
 손끝이 팔꿈치 바로 위에 있어서 아래로 누르는 힘은 팔꿈치를 돌리지 않고, 어깨는 손끝에서 가로로 0.5 m 떨어져 있어 $0.5 \times 10 = 5$ N·m 가
-필요하다. 이 식이 transpose 가 되는 이유와 이 식으로 만드는 힘 제어는 [Force & Impedance Control](../impedance-control/README.md) 에서 다룬다.
+필요하다. 이 식이 transpose 가 되는 이유와 이 식으로 만드는 힘 제어는 Force & Impedance Control 에서 다룬다.
 
 ### 손끝이 움직일 수 없는 방향
 
@@ -438,9 +438,9 @@ $\sin(60° + 0.1\text{ rad}) \approx \sin 60° + \cos 60° \times 0.1 = 0.916$ �
 제어하는 팔은 한 주기가 1 ms 라서, 관절이 1 rad/s 로 돌아도 한 주기에 0.001 rad 밖에 돌지 않아 위 표의 첫 줄보다 움직임이 훨씬 작다.
 선형 근사는 곡선 도로도 아주 짧게 잘라 보면 직선처럼 보이는 것과 같다.
 
-[Kalman Filter](../kalman-filter/README.md) 의 EKF 는 로봇의 휘어진 움직임을 지금 추정값 근처에서 Jacobian 으로 이렇게 직선으로 바꿔 계산한다.
+Kalman Filter 의 EKF 는 로봇의 휘어진 움직임을 지금 추정값 근처에서 Jacobian 으로 이렇게 직선으로 바꿔 계산한다.
 반대로 손끝을 원하는 만큼 옮기는 데 필요한 관절 회전량은 $J$ 를 거꾸로 풀어 구하는데, 이 계산은
-[Inverse Kinematics](../inverse-kinematics/README.md) 에서 다룬다. 서론에서 본 MoveIt 의 KDL plugin 이 하는 일도 이 계산이다.
+Inverse Kinematics 에서 다룬다. 서론에서 본 MoveIt 의 KDL plugin 이 하는 일도 이 계산이다.
 
 <details><summary><b>심화: 2 관절 팔의 Jacobian</b></summary>
 

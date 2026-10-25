@@ -581,7 +581,7 @@ $k$ 는 두 점 각각의 비율 2 와 1.8 사이에 있고, 전류가 커서 �
 
 linear regression 은 연속된 숫자 하나를 직선으로 예측하는데, 물체를 잡았는지 놓쳤는지처럼 답이 둘 중 하나인 문제에서 출력이 문턱을 넘는지로
 둘을 가르는 학습 규칙은 [Perceptron](../perceptron/README.md) 에서 다룬다. 사람이 조종한 시연을 정답으로 삼아 같은 loss 와 gradient 로 policy
-를 학습하는 방법은 [Behavior Cloning](../behavior-cloning/README.md) 에서 다룬다.
+를 학습하는 방법은 Behavior Cloning 에서 다룬다.
 
 ## 참고 자료
 

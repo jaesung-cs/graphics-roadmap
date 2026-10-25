@@ -154,7 +154,7 @@ $3\sigma$ 보다 멀게 읽힌 점이 1 초에 $43{,}000 \times 0.00135 \approx 
 | 100 | 0.2 cm | 2.5 초 |
 
 표준편차를 반으로 줄이려면 측정이 네 배 필요한데, 0.5 m/s 로 달리는 로봇은 100 개를 모으는 2.5 초 동안 벌써 1.25 m 를 간다. 그래서 오래
-평균하는 방법은 로봇이 서 있을 때나 천천히 변하는 값에만 쓸 수 있다. 움직이는 로봇에서 측정을 모아 쓰는 방법은 [Kalman Filter](../kalman-filter/README.md)
+평균하는 방법은 로봇이 서 있을 때나 천천히 변하는 값에만 쓸 수 있다. 움직이는 로봇에서 측정을 모아 쓰는 방법은 Kalman Filter
 에서 다룬다.
 
 $\sqrt N$ 규칙은 측정끼리 독립일 때만 맞아서, 같은 반사면 때문에 연속한 측정이 같은 쪽으로 틀리면 평균해도 그 오차는 남는다. 센서가 매번
@@ -365,7 +365,7 @@ $0.67 \times 0.9 \div (0.67 \times 0.9 + 0.33 \times 0.05) \approx 0.97$ 이 되
 로봇이 지도 위에서 자기 위치를 찾는 localization 도 같은 계산으로 한다. 복도 위치마다 "로봇이 지금 여기 있을 확률" 을 prior 로 두고, 감지기 결과가
 들어올 때마다 위치마다 Bayes rule 을 적용하면 지도의 문 위치와 맞는 자리의 확률만 커진다. 로봇이 움직이면 그 확률을 이동한 만큼 옮기고
 odometry 오차만큼 넓게 퍼뜨린 뒤 다시 측정으로 좁히는데, 이 두 단계를 되풀이하는 방법을 Bayes filter 라고 한다. 확률을 Gaussian 하나로
-나타내면 [Kalman Filter](../kalman-filter/README.md) 가 되고, 점 수백 ~ 수천 개로 나타내면 particle filter 가 된다. ROS 2 의 Nav2 가 지도
+나타내면 Kalman Filter 가 되고, 점 수백 ~ 수천 개로 나타내면 particle filter 가 된다. ROS 2 의 Nav2 가 지도
 위에서 위치를 찾는 데 쓰는 AMCL(Adaptive Monte Carlo Localization)이 particle filter 이고, 기본 설정은 점을 500 ~ 2000 개 쓴다.
 
 <details><summary><b>심화: 두 Gaussian 의 곱과 Kalman update</b></summary>
@@ -378,7 +378,7 @@ $$
 $$
 
 예측이 2 m(분산 2), GPS 가 3 m(분산 2)이면 $\mu = (2 \times 2 + 2 \times 3) \div 4 = 2.5$ m, $\sigma^2 = 4 \div 4 = 1$ 이다. 이 계산은
-[Kalman Filter](../kalman-filter/README.md) 강의의 보정 단계 예시와 같다. 서로 독립인 정보 두 개를 합쳤기 때문에 분산이 어느 쪽보다도 작아진다.
+Kalman Filter 강의의 보정 단계 예시와 같다. 서로 독립인 정보 두 개를 합쳤기 때문에 분산이 어느 쪽보다도 작아진다.
 
 </details>
 
@@ -401,7 +401,7 @@ B 는 70 번 성공해 700 이다. 한 번으로 나누면 4 와 7 이므로, �
 
 reinforcement learning(강화 학습)은 로봇이 받을 보상의 기댓값이 가장 커지는 행동을 찾는 방법이다. 위 예에서는 성공 확률을 안다고 했지만
 실제 로봇은 확률을 모르고, 직접 해 보며 어림해야 한다. 해 볼수록 정확해지지만 그동안 덜 좋은 선택도 해야 하는 이 문제를
-[Bandits & MDPs](../bandit-mdp/README.md) 에서 다룬다.
+Bandits & MDPs 에서 다룬다.
 
 **확인 문제.** 방법 C 는 60% 로 성공해 보상 10, 40% 로 실패해 보상 −5 다. 기댓값은 얼마이고, A·B 와 비교하면 어떤가?
 
@@ -438,7 +438,7 @@ $\epsilon = -0.5$ 일 때 $2.00 - 0.01 = 1.99$ m 를 내면 된다. Gazebo 같�
   0.67, 두 번 뒤 0.97 이다. 기댓값은 "결과 × 확률" 의 합이고, sampling 은 분포에서 값을 뽑는 일이다
 
 이 강의에서는 측정을 Bayes rule 로 한 번씩 합쳤다. 로봇이 움직이는 동안 움직임으로 위치를 예측하고 센서로 보정하기를 1초에 수십 번 되풀이하면서
-Gaussian 의 평균과 분산을 함께 고쳐 가는 방법을 다음 강의 [Kalman Filter](../kalman-filter/README.md) 에서 다룬다.
+Gaussian 의 평균과 분산을 함께 고쳐 가는 방법을 다음 강의 Kalman Filter 에서 다룬다.
 
 ## 참고 자료
 

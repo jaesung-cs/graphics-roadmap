@@ -504,7 +504,7 @@ OpenVLA 논문에 따르면 Llama 의 tokenizer 는 새로 더할 token 자리�
 token 가운데 가장 드물게 쓰이는 256 개(vocabulary 끝의 256 개)를 action token 으로 덮어썼다. 드물게 쓰이는 token 은 지시문에 거의 나오지
 않으므로, action 용으로 바꿔도 지시문을 읽는 데 쓰는 token 은 그대로 남는다. OpenVLA 는 bin 을 나눌 범위도 학습 데이터 action 의 최솟값 ~
 최댓값이 아니라 하위 1% 지점부터 상위 1% 지점까지(1st ~ 99th quantile)로 잡아서, 드물게 튄 값 때문에 bin 이 넓어지지 않게 했다. bin 이 vocabulary 의 어느 token 에 대응하는지와 action token 을 하나씩 생성하는 과정은
-[RT-2 → OpenVLA](../vla-tokens/README.md) 에서 다룬다.
+RT-2 → OpenVLA 에서 다룬다.
 
 이 방식은 행동 숫자 하나가 token 하나라서, 한 번에 여러 step 의 행동(action chunk)을 내면 token 수가 차원 수 × step 수가 된다.
 
@@ -595,7 +595,7 @@ FAST 논문은 dataset 마다 따로 만든 tokenizer 에서 BPE vocabulary 크�
 PaliGemma 기반의 로봇 policy π0 에 붙인 π0-FAST 는 이 token 을 VLM(사진과 글을 함께 읽는 language model)의 vocabulary 에서 가장 드물게
 쓰이는 token 자리에 덮어쓰고, 다음 token 을 맞히는 방식으로 학습했다. FAST 논문에 따르면 π0-FAST 는 잡음에서 시작해 조금씩 고쳐 가며
 행동을 만드는 원래 π0 와 비슷한 성능을 내면서, 학습에 든 GPU 시간은 π0 의 5 분의 1 이었다. 다만 실행할 때는 token 30 ~ 60 개를 하나씩
-내야 해서 느리다. 논문이 NVIDIA RTX 4090 에서 잰 시간은 1 초 분량 chunk 하나에 π0 가 100 ms 안쪽이고 π0-FAST 가 약 750 ms 다. π0 가 행동을 만드는 방식은 [π0](../pi0/README.md) 에서 다룬다.
+내야 해서 느리다. 논문이 NVIDIA RTX 4090 에서 잰 시간은 1 초 분량 chunk 하나에 π0 가 100 ms 안쪽이고 π0-FAST 가 약 750 ms 다. π0 가 행동을 만드는 방식은 π0 에서 다룬다.
 
 BPE 를 dataset 마다 다시 학습하는 수고를 덜려고, FAST 저자들은 팔 하나·두 팔·이동 로봇의 1 초 분량 action chunk 약 100만 개로 학습한
 범용 tokenizer FAST+ 도 공개했다. Hugging Face 에 공개된 FAST+ 설정 파일에서는 scale 이 10 이고 vocabulary 크기가 2048 이다.

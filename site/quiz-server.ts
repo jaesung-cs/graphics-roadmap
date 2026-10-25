@@ -41,17 +41,24 @@ export function quizServer(repoRoot: string): Plugin {
   const progressDir = path.join(repoRoot, CONFIG.quiz.progressDir)
 
   async function submit(id: string, body: unknown): Promise<Attempt> {
-    const bankSource = await readText(path.join(repoRoot, 'lessons', id, CONFIG.quiz.bankFile))
-    if (bankSource === null) throw new Error('이 강의에는 퀴즈가 없습니다')
-    const answers = (body as { answers?: Submission[] } | null)?.answers
-    if (!Array.isArray(answers)) throw new Error('답안이 없습니다')
-    const graded = grade(
-      parseBank(bankSource),
-      answers.map(({ topic, variant }) => ({ topic, variant })),
-      answers.map((a) => a.choice),
-    )
-    const attempt: Attempt = { date: today(), answers: graded }
     const file = path.join(progressDir, `${id}.json`)
+    const bankSource = await readText(path.join(repoRoot, 'lessons', id, CONFIG.quiz.bankFile))
+    let attempt: Attempt
+    if (bankSource === null) {
+      // a lesson without a quiz is done once the learner marks it read: an attempt with no answers
+      if (!(await readText(path.join(repoRoot, 'lessons', id, 'README.md')))) throw new Error('없는 강의입니다')
+      if ((body as { read?: unknown } | null)?.read !== true) throw new Error('이 강의에는 퀴즈가 없습니다')
+      attempt = { date: today(), answers: [] }
+    } else {
+      const answers = (body as { answers?: Submission[] } | null)?.answers
+      if (!Array.isArray(answers)) throw new Error('답안이 없습니다')
+      const graded = grade(
+        parseBank(bankSource),
+        answers.map(({ topic, variant }) => ({ topic, variant })),
+        answers.map((a) => a.choice),
+      )
+      attempt = { date: today(), answers: graded }
+    }
     const attempts = [...parseResult(await readText(file)).attempts, attempt]
     await writeFile(file, `${JSON.stringify({ attempts }, null, 2)}\n`)
     return attempt

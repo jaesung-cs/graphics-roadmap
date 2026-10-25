@@ -1,4 +1,4 @@
-import { Check, ListChecks, X } from 'lucide-react'
+import { BookCheck, Check, ListChecks, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { CONFIG } from '../config'
 import { hasQuiz, loadBank } from '../curriculum/load'
@@ -18,12 +18,62 @@ async function request<T>(id: string, init?: RequestInit): Promise<T> {
 
 const score = (a: Attempt) => `${a.answers.filter((x) => x.correct).length} / ${a.answers.length}`
 
-/** Quiz card at the end of a lecture. Renders nothing for lessons without a bank. */
+/** Card at the end of a lecture without a quiz: the learner marks it read, which opens the lessons that follow. */
+function ReadCard({ lessonId, attempts }: { lessonId: string; attempts: readonly Attempt[] }) {
+  const [sending, setSending] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const read = attempts.at(clearedAt(attempts))
+
+  async function markRead() {
+    setSending(true)
+    setError(null)
+    try {
+      // a built site has no dev server: keep the mark only until reload
+      const attempt: Attempt = !import.meta.env.DEV
+        ? { date: new Date().toISOString().slice(0, 10), answers: [] }
+        : await request<Attempt>(lessonId, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ read: true }),
+          })
+      progress.add(lessonId, attempt)
+    } catch (e) {
+      setError(e instanceof Error && e.message !== 'offline' ? e.message : '기록하지 못했습니다. dev server 가 켜져 있는지 확인합니다')
+    } finally {
+      setSending(false)
+    }
+  }
+
+  return (
+    <section className="quiz-card" aria-labelledby="quiz-card-title">
+      <h3 id="quiz-card-title">
+        <BookCheck size={15} aria-hidden="true" /> 다 읽음
+      </h3>
+      {read ? (
+        <p className="quiz-card-last is-pass">{read.date} 에 다 읽음으로 표시했습니다.</p>
+      ) : (
+        <>
+          <p className="quiz-card-text">이 강의에는 퀴즈가 없습니다. 끝까지 읽었으면 다 읽음으로 표시해 이어지는 강의를 엽니다.</p>
+          <button type="button" className="primary-button quiz-start" onClick={markRead} disabled={sending}>
+            {sending ? '기록 중…' : '다 읽음으로 표시'}
+          </button>
+        </>
+      )}
+      {error && (
+        <p className="quiz-error" role="alert">
+          {error}
+        </p>
+      )}
+    </section>
+  )
+}
+
+/** Quiz card at the end of a lecture, or the read card for lessons without a bank. */
 export function QuizSection({ lessonId, title, attempts }: { lessonId: string; title: string; attempts: readonly Attempt[] }) {
   const [open, setOpen] = useState(false)
   // bumped by "틀린 문제 다시 풀기" so the dialog remounts and picks its questions from the attempts that include the last one
   const [run, setRun] = useState(0)
-  if (!hasQuiz(lessonId)) return null
+  if (!hasQuiz(lessonId)) return <ReadCard lessonId={lessonId} attempts={attempts} />
   const last = attempts.at(-1)
   const cleared = clearedAt(attempts) >= 0
   const wrong = cleared ? 0 : wrongTopics(attempts).length

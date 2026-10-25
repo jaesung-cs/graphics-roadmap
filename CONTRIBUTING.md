@@ -6,9 +6,10 @@
 
 ## 강의 폴더와 frontmatter
 
-강의 하나는 `lessons/<id>/` 폴더 하나이고, 그 안에는 강의 본문 `README.md`, 그림 `figures/`, 퀴즈 `quiz.yaml` 만 둔다. 응시
-기록은 강의 폴더가 아니라 `progress/<id>.json` 에 쌓인다. 강의 `README.md` 앞의 YAML frontmatter 가 지도에 쓰이는 정보(branch,
-선수 강의, 예상 시간, 논문)다. branch 의 이름·색·순서와 각 branch 가 가운데 hub 와 세 트리 중 어디에 놓이는지는 [`lessons/branches.yaml`](lessons/branches.yaml) 에서 정한다.
+강의 하나는 `lessons/<id>/` 폴더 하나이고, 그 안에는 강의 본문 `README.md`, 그림 `figures/`, 퀴즈 `quiz.yaml` 만 둔다.
+Stable Diffusion branch 의 강의에는 퀴즈가 없고, 학습자가 "다 읽음" 으로 표시해 완료한다. 응시·읽음 기록은 강의 폴더가 아니라
+`progress/<id>.json` 에 쌓인다. 강의 `README.md` 앞의 YAML frontmatter 가 지도에 쓰이는 정보(branch, 선수 강의, 예상 시간, 논문)다.
+branch 의 이름·색·순서와 각 branch 가 가운데 hub 와 두 트리 중 어디에 놓이는지는 [`lessons/branches.yaml`](lessons/branches.yaml) 에서 정한다.
 
 | frontmatter | 내용 |
 | --- | --- |
@@ -16,16 +17,17 @@
 | `title` | 지도와 강의 창의 제목 |
 | `branch` | `branches.yaml` 의 branch id |
 | `requires` | 먼저 읽어 두면 좋은 강의 id 목록 |
-| `hours` | 강의를 읽고 퀴즈를 푸는 데 드는 예상 시간 |
+| `hours` | 강의를 읽고 퀴즈를 푸는 데 드는 예상 시간(퀴즈가 없으면 읽는 시간) |
 | `summary` | 지도에 보이는 한 줄 설명 |
 | `papers` | 강의가 다루는 논문(`title`·`authors`·`year`, 선택으로 `url`) |
 
 ## 강의 본문 규칙
 
-강의는 로보틱스 분야에 취업하려는 사람이 개념을 이해하고, 면접에서 설명하고, 실제 로봇에 써먹을 수 있게 하는 것이 목적이다. 로봇에 바로
-쓰이는 메커니즘(계산 주기와 gain 의 관계, gravity torque, feedforward, 센서 오차가 쌓이는 방식처럼 실제 로봇이 왜 그렇게 동작하는지)은 본문에서
-숫자 예시와 표로 깊게 다루고, 길이를 줄이려고 빼지 않는다. 대신 문장은 군더더기 없이 쓰고, 일반 식·유도·긴 손계산은 접는 "심화" 블록에
-넣는다. 기준본은 [PID Control](lessons/pid-control/README.md) 와 [Kalman Filter](lessons/kalman-filter/README.md) 다.
+강의는 Stable Diffusion 이 글 한 줄에서 이미지를 만드는 과정을 바닥부터 이해하고, 설명하고, 실제 도구(diffusers, WebUI)의 설정값을 보고
+무엇이 바뀌는지 알 수 있게 하는 것이 목적이다. 생성 결과를 바로 바꾸는 메커니즘(latent 의 크기와 계산량, guidance scale 과 이미지의 변화,
+step 수와 sampler 의 관계처럼 실제 모델이 왜 그렇게 동작하는지)은 본문에서 숫자 예시와 표로 깊게 다루고, 길이를 줄이려고 빼지 않는다.
+대신 문장은 군더더기 없이 쓰고, 일반 식·유도·긴 손계산은 접는 "심화" 블록에 넣는다. 기준본은 [DDPM](lessons/ddpm/README.md) 과
+[VAE](lessons/vae/README.md) 다.
 
 ### 구성
 
@@ -39,8 +41,8 @@
    흐름이 끊기지 않아야 한다
 5. **확인 문제**: 큰 절 끝에 작은 숫자로 풀 수 있는 문제 하나를 두고 답은 `<details><summary>답 보기</summary>` 안에 둔다. `<summary>`
    뒤에 빈 줄을 두어야 표가 렌더된다
-6. **로봇에 쓰는 법**: 논문·공식 문서·실전 자료에서 뽑은 구현 함정과 설정 요령은 따로 모은 목록으로 두지 않고, 그 개념을 설명하는 절 안에서
-   숫자와 함께 다룬다(예: derivative kick 은 D 항 절에서, 계산 주기는 gain 절에서)
+6. **실제 모델에 쓰는 법**: 논문·공식 문서·소스 코드에서 뽑은 구현 함정과 설정 요령은 따로 모은 목록으로 두지 않고, 그 개념을 설명하는
+   절 안에서 숫자와 함께 다룬다(예: VAE latent 의 scaling factor 는 latent space 절에서, guidance scale 의 범위는 classifier-free guidance 절에서)
 7. `## 정리`: bullet 3개 안팎, 이어서 다음 강의 예고 한 문단
 8. `## 참고 자료`: 직접 열어 확인한 자료만, 줄마다 무엇을 읽으면 되는지 한 줄을 붙인다
 
@@ -48,18 +50,18 @@
 
 - **독자**: 가정하는 지식은 중학교 산수다. vector·행렬·미분·확률처럼 기초 수학이 필요하면 수학 기초 강의로 링크하고, 본문에서는 그 자리에
   필요한 만큼만 한두 문장으로 짚는다. 처음 나오는 용어·기호·약어는 등장한 자리에서 뜻을 설명한다
-- **필요성**: 새 개념은 정의 바로 앞이나 뒤에 왜 필요한지를 적는다. 앞에서 본 방법이 어디서 막히는지(gimbal lock, 칸마다 평균하면 쪼그라드는
-  rotation matrix)를 먼저 보이고 그것을 푸는 개념으로 소개한다. 움직임처럼 머릿속으로 그리기 어려운 필요성은 그림으로 보인다
-- **다른 강의 언급**: 링크와 " ~ 에서 본" 같은 언급은 그 강의의 주제·논문에서 나온 개념(VAE 의 reparameterization trick, ACT 의 action
-  chunking)이거나 그 강의의 예시·표·숫자를 다시 쓸 때만 붙인다. Σ·loss·sigmoid·Adam 처럼 앞 강의에서 처음 설명했을 뿐인 일반 개념은
+- **필요성**: 새 개념은 정의 바로 앞이나 뒤에 왜 필요한지를 적는다. 앞에서 본 방법이 어디서 막히는지(512×512 pixel 위에서 바로 denoise 할 때의
+  계산량, 글을 무시하고 그려지는 이미지)를 먼저 보이고 그것을 푸는 개념으로 소개한다. 움직임처럼 머릿속으로 그리기 어려운 필요성은 그림으로 보인다
+- **다른 강의 언급**: 링크와 " ~ 에서 본" 같은 언급은 그 강의의 주제·논문에서 나온 개념(VAE 의 reparameterization trick, DDPM 의 ε 예측
+  loss)이거나 그 강의의 예시·표·숫자를 다시 쓸 때만 붙인다. Σ·loss·sigmoid·Adam 처럼 앞 강의에서 처음 설명했을 뿐인 일반 개념은
   강의를 언급하지 않는다. 같은 강의의 다른 절은 `[절 제목](#절-제목)` 처럼 GitHub 의 제목 slug 로 링크한다
 - **숫자와 출처**: 숫자는 논문·공식 문서·직접 계산한 결과에서만 가져온다. 앞에서 구한 숫자를 다시 쓸 때는 그 자리에서 출처 계산을 한 번 더
   적는다. 범위는 `10 ~ 50` 처럼 물결표 앞뒤를 띄운다(붙여 쓰면 GitHub 이 두 물결표 사이를 취소선으로 그린다)
 - **그림**: 개념마다 그림 하나를 기본으로 한다. `figures/` 에 SVG 로 두고 `![설명](figures/<이름>.svg)` 로 넣는다. 강의 창이 어두운
-  배경이라 [Kalman filter 의 그림](lessons/kalman-filter/figures/kf-loop.svg) 과 같은 어두운 카드와 색을 쓰고, 그림 속 숫자는 본문 예시와
+  배경이라 [DDPM 의 그림](lessons/ddpm/figures/network-io.svg) 과 같은 어두운 카드와 색을 쓰고, 그림 속 숫자는 본문 예시와
   같은 값을 쓴다. 넣기 전에 렌더해서 글자 겹침을 확인한다
 - **코드 없음**: 프로그래밍 코드 블록을 넣지 않는다
-- **용어**: technical term 은 영어 원어로 쓴다(behavior cloning, gradient, loss)
+- **용어**: technical term 은 영어 원어로 쓴다(latent, gradient, loss)
 - **제목**: 섹션·표 라벨은 대상 이름을 그대로 적은 명사구로 쓴다. 비유나 "X: 부제" 꼴을 쓰지 않는다
 
 ### 문장
@@ -74,10 +76,11 @@
 
 ## 퀴즈 규칙
 
-퀴즈는 [Kalman Filter](lessons/kalman-filter/quiz.yaml) 와 같은 모양의 `quiz.yaml` 이다. 강의의 원리 하나가 topic 하나이고, 처음
+퀴즈는 [DDPM](lessons/ddpm/quiz.yaml) 과 같은 모양의 `quiz.yaml` 이다. Stable Diffusion branch 의 강의에는 퀴즈를 두지
+않는다(`npm test` 가 검사한다). 강의의 원리 하나가 topic 하나이고, 처음
 응시하면 topic 마다 한 문항을 낸다. 다시 풀 때는 틀린 topic 만 그 topic 의 다음 variant 로 낸다.
 
-- 문항은 로보틱스 면접에서 물을 법한 개념 질문으로 쓰고, 질문 글에는 `면접관:` 같은 화자 표시나 따옴표 없이 질문만 적는다. 말투는 시험
+- 문항은 면접에서 물을 법한 개념 질문으로 쓰고, 질문 글에는 `면접관:` 같은 화자 표시나 따옴표 없이 질문만 적는다. 말투는 시험
   문제처럼 "~는가?", "~인가?", "~다." 로 쓰고 "~나요?", "~습니다.", "~해 보세요." 같은 존댓말은 쓰지 않는다
 - 보기의 길이로 답이 드러나지 않게 쓴다. 정답만 이유를 붙여 길게 쓰지 말고, 오답도 그럴듯한 이유를 붙여 비슷한 길이로 쓴다. 한 강의에서
   정답이 가장 긴 보기인 문항과 가장 짧은 보기인 문항은 각각 35% 이하여야 하고, 정답이 다른 보기보다 20% 넘게(5자 넘게) 길면 안 된다
@@ -94,7 +97,8 @@
 ## 지도 사이트
 
 `site/` 는 `lessons/` 의 frontmatter 와 퀴즈 기록을 읽어 선수 관계 지도를 그리는 Vite + React 앱이다. `npm run dev` 로
-띄우면 `site/quiz-server.ts` 가 퀴즈 답안을 채점해 `progress/<강의>.json` 에 쌓는다. `npm run build` 결과물(예시 사이트)에는
+띄우면 `site/quiz-server.ts` 가 퀴즈 답안을 채점해 `progress/<강의>.json` 에 쌓는다. 퀴즈가 없는 강의에서 "다 읽음" 을 누르면 답안이 빈 기록 하나를 쌓고, 그 강의는
+완료가 된다. `npm run build` 결과물(예시 사이트)에는
 dev server 가 없어서 페이지 안에서 채점하고, 결과는 새로고침하면 사라진다.
 
 dev server 는 시작할 때 `site/update-server.ts` 로 원본 리포를 `upstream` remote 에 받아 와(없으면 remote 를 더한다) fork 가 몇 커밋
@@ -105,9 +109,9 @@ dev server 는 기본으로 localhost 에서만 받는다. 다른 기기(같은 
 `site/dev-server.local.json` 에 `{ "host": true, "allowedHosts": ["내-컴퓨터-이름", ".ts.net"] }` 처럼 적는다.
 
 지도는 시작 강의를 가운데 두고, [`lessons/branches.yaml`](lessons/branches.yaml) 의 `hub`(공통 기초) 강의를 그 둘레의 동심원에
-놓는다. `hub.rings` 가 안쪽부터 동심원 하나에 놓을 강의를 정하는데, 비슷한 부류끼리 한 원에 모은다(수학·ROS 2, 좌표 변환·제어·카메라). branch 전체는 `branches` 로, 트리 두 개 이상이 쓰는 강의는 `lessons` 로 하나씩 넣고, hub 강의의 선수 강의는 같은
+놓는다. `hub.rings` 가 안쪽부터 동심원 하나에 놓을 강의를 정하는데, 비슷한 부류끼리 한 원에 모은다(지금은 수학 한 원). branch 전체는 `branches` 로, 트리 두 개 이상이 쓰는 강의는 `lessons` 로 하나씩 넣고, hub 강의의 선수 강의는 같은
 원이나 그 안쪽에 있어야 한다. 강의는 원 위에서 자기가 이어지는 트리 쪽을 향하고, 같은 원 위의 선수 관계는 원을 따라 잇는다. hub
-강의에서 트리로 가는 선은 그리지 않고, 가장 바깥의 테두리 원에서 트리의 강의로 선을 잇는다. 그 테두리 밖으로 `trees`(직무별 트리)마다
+강의에서 트리로 가는 선은 그리지 않고, 가장 바깥의 테두리 원에서 트리의 강의로 선을 잇는다. 그 테두리 밖으로 `trees`(Deep Learning, Image Generation)마다
 트리 하나를 그 트리의 `angle` 방향으로 뻗는다([`site/src/curriculum/layout.ts`](site/src/curriculum/layout.ts)). 이웃한 두 트리 사이에는
 테두리에서 바깥으로 점선을 그어 구역을 나누고, 구역마다 그 트리의 `title` 을 크게 쓴다. 트리 하나는 시작 강의와 그
 트리의 강의만으로 만든 layered 배치다. [`site/src/curriculum/order.ts`](site/src/curriculum/order.ts) 가 선 교차가 가장 적은 층과 층 안의
@@ -118,6 +122,6 @@ dev server 는 기본으로 localhost 에서만 받는다. 다른 기기(같은 
 
 ```bash
 cd site
-npm test        # frontmatter·선수 관계·섹션 순서·강의 폴더 구성·기록 파일 이름·레이아웃(트리 방향·이름표 겹침·선 교차)·퀴즈 형식 검사
+npm test        # frontmatter·선수 관계·섹션 순서·강의 폴더 구성·퀴즈 유무·기록 파일 이름·레이아웃(트리 방향·이름표 겹침·선 교차)·퀴즈 형식 검사
 npm run build   # site/dist
 ```

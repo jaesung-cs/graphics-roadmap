@@ -29,15 +29,15 @@ export function Intro({ firstLessonId, lessonCount, onClose, onStart }: Props) {
         <X size={20} aria-hidden="true" />
       </button>
       <p className="intro-kicker">lecture &amp; quiz self-study</p>
-      <h2 id="intro-title">Robotics Roadmap</h2>
+      <h2 id="intro-title">Graphics Roadmap</h2>
       <p className="intro-lead">
-        제어·상태 추정·딥러닝부터 VLA 까지, 로보틱스 일을 하는 데 필요한 아이디어 {lessonCount}개를 강의로 읽고 면접에서 나올
-        법한 퀴즈로 확인하는 지도입니다. 원 하나가 강의 하나이고, 선은 먼저 읽어 두면 좋은 강의를 잇습니다.
+        vector·미분에서 출발해 신경망과 생성 모델을 거쳐 Stable Diffusion 까지, 글 한 줄로 이미지를 만드는 데 필요한 아이디어{' '}
+        {lessonCount}개를 강의로 읽고 퀴즈로 확인하는 지도입니다. 원 하나가 강의 하나이고, 선은 먼저 읽어 두면 좋은 강의를 잇습니다.
       </p>
       <ol className="intro-steps">
         <li>
           <strong>가운데 동심원에서 출발</strong>
-          <span>세 트리가 함께 쓰는 수학·ROS 2·좌표 변환·제어 기초가 가운데 동심원에 있습니다. 그 바깥으로 아래는 robot learning, 왼쪽 위는 manipulation, 오른쪽 위는 mobile robot·자율주행 트리가 뻗고, 지원하는 직무의 트리를 따라 읽어 나갑니다.</span>
+          <span>두 트리가 함께 쓰는 수학 기초가 가운데 동심원에 있습니다. 그 바깥으로 아래는 신경망의 기초인 deep learning, 위는 VAE·diffusion 에서 Stable Diffusion 으로 이어지는 image generation 트리가 뻗습니다.</span>
         </li>
         <li>
           <strong>원을 눌러 강의 읽기</strong>
@@ -47,7 +47,7 @@ export function Intro({ firstLessonId, lessonCount, onClose, onStart }: Props) {
           <strong>강의 끝의 퀴즈 풀기</strong>
           <span>
             틀린 문항은 해설을 보여 주고, 틀린 문항만 같은 원리의 다른 문항으로 다시 풉니다. 틀린 문항이 남지 않으면 통과이고 이어지는 강의가 밝아집니다.
-            답안은 <code>progress/&lt;강의&gt;.json</code> 에 저장되고, fork 에 커밋해 두면 다른 기기에서도 이어서 볼 수 있습니다.
+            퀴즈가 없는 Stable Diffusion 강의는 다 읽은 뒤 다 읽음으로 표시합니다. 기록은 <code>progress/&lt;강의&gt;.json</code> 에 저장되고, fork 에 커밋해 두면 다른 기기에서도 이어서 볼 수 있습니다.
           </span>
         </li>
       </ol>

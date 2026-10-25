@@ -82,12 +82,15 @@ export function latestAnswers(attempts: readonly Attempt[]): Map<string, Answer>
 /**
  * Index of the attempt that cleared the lesson: the first one after which every topic asked so far has its latest answer right.
  * The first attempt asks every topic and a retry asks only the ones still wrong, so this is when no wrong answer is left.
+ * An attempt with no answers marks a lesson without a quiz as read, and clears it; the dev server writes one only for such
+ * a lesson.
  */
 export function clearedAt(attempts: readonly Attempt[]): number {
   const latest = new Map<string, boolean>()
   return attempts.findIndex((a) => {
+    if (a.answers.length === 0) return true
     for (const x of a.answers) latest.set(x.topic, x.correct)
-    return latest.size > 0 && [...latest.values()].every(Boolean)
+    return [...latest.values()].every(Boolean)
   })
 }
 

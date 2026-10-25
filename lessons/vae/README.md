@@ -612,8 +612,8 @@ $z$ 를 policy 에 넣는다. encoder 는 같은 장면에서도 시연마다 �
 
 시연이 왼쪽으로 잡기와 오른쪽으로 잡기처럼 정반대인 두 무리로 반반 갈리는 경우를 생각해 보자. policy 는 실행할 때 $z = 0$ 하나만 받고
 $\beta = 10$ 이라 $z$ 에 담긴 정보도 적어서, $z = 0$ 에서 나온 chunk 가 두 무리 중 하나를 고른다는 보장이 없다. ACT 가 chunk 를 겹쳐
-평균하는 temporal ensembling 은 [ACT](../act/README.md) 에서 다루고, 무작위 출발점에서 시작해 두 무리 중 하나에 도착하게 만드는 방법은
-[Diffusion Policy](../diffusion-policy/README.md) 에서 다룬다.
+평균하는 temporal ensembling 은 ACT 에서 다루고, 무작위 출발점에서 시작해 두 무리 중 하나에 도착하게 만드는 방법은
+Diffusion Policy 에서 다룬다.
 
 **흔한 오해.** ACT 가 CVAE 를 쓰니 실행할 때마다 $z$ 를 뽑아 여러 움직임 중 하나를 고른다고 생각하기 쉽다. CVAE 의 encoder 는 학습할 때
 시연마다 다른 움직임을 $z$ 에 담아 policy 에 넘기는 데만 쓰인다. 실행할 때는 $z$ 를 0 하나로 고정하므로 같은 관측에는 늘 같은 chunk 가
@@ -642,8 +642,8 @@ $\beta = 10$ 이라 $z$ 에 담긴 정보도 적어서, $z = 0$ 에서 나온 ch
 
 VAE 는 decoder 한 번으로 sample 을 내서 빠르지만, decoder 가 겹친 범위에서 평균에 가까운 그림을 내기 때문에 sample 이 흐릿하다. 생성을
 수백 번의 작은 noise 제거 단계로 나눠 더 선명한 sample 을 만드는 방법은 [DDPM](../ddpm/README.md) 에서 다룬다. CVAE 로 시연의 움직임을
-latent 에 담아 양팔 로봇을 움직이는 policy 는 [ACT](../act/README.md) 에서 다루고, 카메라 장면을 latent 로 줄인 뒤 그 latent 안에서 다음
-장면을 예측하는 모델은 [World Model](../world-model/README.md) 에서 다룬다.
+latent 에 담아 양팔 로봇을 움직이는 policy 는 ACT 에서 다루고, 카메라 장면을 latent 로 줄인 뒤 그 latent 안에서 다음
+장면을 예측하는 모델은 World Model 에서 다룬다.
 
 ## 참고 자료
 

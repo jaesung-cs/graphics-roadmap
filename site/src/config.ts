@@ -1,19 +1,19 @@
 // Single source of truth for site settings. Curriculum content lives in ../lessons/.
 
 export const CONFIG = {
-  repoUrl: 'https://github.com/woolimi/robotics-roadmap',
+  repoUrl: 'https://github.com/jaesung-cs/graphics-roadmap',
   repoBranch: 'main',
 
   // link previews on LinkedIn, KakaoTalk and Slack (Open Graph). Crawlers need absolute URLs, so they point at the
   // published example site; vite.config.ts writes these into index.html
   share: {
-    siteUrl: 'https://woolimi.github.io/robotics-roadmap/',
-    title: 'Robotics Roadmap',
-    description: '로보틱스 개발자가 되기 위한 오픈소스 독학 커리큘럼. 강의 56개를 선수 관계 지도로 따라가며 읽고 면접형 퀴즈로 확인합니다.',
+    siteUrl: 'https://jaesung-cs.github.io/graphics-roadmap/',
+    title: 'Graphics Roadmap',
+    description: 'Stable Diffusion 을 이해하기 위한 오픈소스 독학 커리큘럼. vector·미분에서 출발해 CNN·Transformer·CLIP, VAE·DDPM 을 거쳐 Stable Diffusion 까지 선수 관계 지도로 따라 읽습니다.',
     image: 'og.png', // site/public/og.png
     imageWidth: 1200,
     imageHeight: 630,
-    imageAlt: 'Robotics Roadmap 커리큘럼 지도. 가운데 공통 기초 동심원에서 Robot Learning, Manipulation, Mobile Robotics 트리가 뻗는다',
+    imageAlt: 'Graphics Roadmap 커리큘럼 지도. 가운데 수학 기초에서 Deep Learning 과 Image Generation 트리가 뻗는다',
     locale: 'ko_KR',
   },
 

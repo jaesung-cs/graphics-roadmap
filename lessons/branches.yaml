@@ -1,47 +1,36 @@
-# The curriculum map: the basics at the centre, one tree per job track (robot learning, manipulation, mobile robots and
-# autonomous driving) growing out of them, and the branches inside the trees.
+# The curriculum map: the math at the centre, and two trees growing out of it: the deep learning foundations, and the
+# image generation that builds on them up to Stable Diffusion.
 
 # hub: the basics every tree starts from, on rings around the start at the centre, innermost first. A ring holds
 # lessons of one kind: whole branches, and single lessons of tree branches that two or more trees build on. A hub
 # lesson's prerequisites sit on its own ring or inside it; the trees start from the outermost ring.
 hub:
   rings:
-    - branches: [math, ros2]
-    - lessons: [transforms, pid-control, camera-geometry]
+    - branches: [math]
 
 # title: the name written in the tree's area of the map, which lines from the hub mark off from the other trees.
 # color: the faint tint of that area.
 # angle: the direction a tree grows from the centre, degrees clockwise from up (0 up, 90 right, 180 down).
 # branches: the tree's branches, laid side by side in this order, clockwise around the centre.
 trees:
-  - id: learning
-    title: Robot Learning
+  - id: foundations
+    title: Deep Learning
     color: "#a78bfa"
     angle: 180
-    branches: [language, vision, generative, core, vla, frontier, imitation, rl]
-  - id: manipulation
-    title: Manipulation
-    color: "#2dd4bf"
-    angle: 300
-    branches: [grasping, kinematics, motion]
-  - id: mobile
-    title: Mobile Robotics · Autonomous Driving
-    color: "#fbbf24"
-    angle: 60
-    branches: [estimation, navigation, driving]
+    branches: [language, core, vision]
+  - id: generation
+    title: Image Generation
+    color: "#e879f9"
+    angle: 0
+    branches: [generative, stable-diffusion]
 
 # Listed in legend order. core: true marks the foundations every other branch builds on (exactly one); the map draws
 # its chain as the trunk.
 branches:
   - id: math
     title: Math
-    summary: vector·matrix, 미분, 확률. 로봇의 좌표·속도·센서 noise 를 숫자로 다루는 기초
+    summary: vector·matrix, 미분, 확률. 이미지의 pixel 값과 학습, noise 를 숫자로 다루는 기초
     color: "#d6d3d1"
-
-  - id: ros2
-    title: ROS 2
-    summary: node·topic·tf2. 센서와 제어기, 학습한 policy 를 한 로봇 위에서 잇는 소프트웨어
-    color: "#38bdf8"
 
   - id: core
     title: Foundations
@@ -51,65 +40,20 @@ branches:
 
   - id: language
     title: Language
-    summary: tokenizer 와 Transformer, GPT 까지 이어지는 sequence 모델링. VLA 의 backbone 이 여기서 나온다
+    summary: tokenizer 와 Transformer, GPT 까지 이어지는 sequence 모델링. 글을 읽는 text encoder 가 여기서 나온다
     color: "#a78bfa"
 
   - id: vision
     title: Vision
-    summary: CNN 에서 ViT·CLIP 까지, 로봇 policy 가 카메라 영상을 읽는 image encoder
+    summary: CNN 에서 ResNet·ViT·CLIP 까지, 이미지를 읽고 글과 같은 공간에 놓는 image encoder
     color: "#60a5fa"
-
-  - id: imitation
-    title: Imitation Learning
-    summary: 사람의 시연을 따라 하는 policy. behavior cloning 에서 Diffusion Policy·ACT, 실물 배포까지
-    color: "#fb923c"
 
   - id: generative
     title: Generative Models
-    summary: VAE·diffusion·flow matching. 한 입력에 정답이 여럿인 action 분포를 생성하는 수학
+    summary: VAE·diffusion·flow matching. noise 에서 새 이미지를 만들어 내는 생성 모델의 수학
     color: "#e879f9"
 
-  - id: rl
-    title: Reinforcement Learning
-    summary: 시연 없이 보상만으로 배우는 길. tabular RL 에서 PPO·SAC, sim-to-real 보행까지
-    color: "#a3e635"
-
-  - id: kinematics
-    title: Kinematics & Control
-    summary: 좌표 변환·kinematics·관절 제어·simulation·ros2_control. 로봇팔이 목표 자세까지 정확히 움직이는 바탕
-    color: "#2dd4bf"
-
-  - id: motion
-    title: Motion Planning
-    summary: 속도·가속도 한계를 지키는 trajectory 와 장애물을 피하는 팔의 경로. RRT·OMPL·MoveIt 2
-    color: "#818cf8"
-
-  - id: grasping
-    title: Perception & Grasping
-    summary: 카메라로 물체 위치를 로봇 좌표로 옮기고, 미끄러지지 않게 잡을 자세를 고르는 방법
-    color: "#fb7185"
-
-  - id: estimation
-    title: State Estimation
-    summary: 믿을 수 없는 움직임과 센서를 섞어 로봇이 자기 위치를 아는 방법. Kalman filter 에서 SLAM 까지
-    color: "#f472b6"
-
-  - id: navigation
-    title: Navigation
-    summary: 지도 위에서 장애물을 피하는 경로를 찾고, 그 경로를 바퀴 명령으로 따라가는 방법. A* 에서 Nav2·MPC 까지
-    color: "#4ade80"
-
-  - id: driving
-    title: Autonomous Driving
-    summary: LiDAR 로 주변 물체를 찾고, 인지·예측·계획·제어를 한 차량 위에서 잇는 자율주행 stack
-    color: "#fbbf24"
-
-  - id: vla
-    title: VLA
-    summary: 이미지와 언어 지시를 받아 action 을 내는 Vision-Language-Action 모델
-    color: "#facc15"
-
-  - id: frontier
-    title: Frontier
-    summary: 정답이 아직 굳지 않은 최전선 연구. 세상을 예측하는 world model 과 VLA 의 RL fine-tuning
-    color: "#f87171"
+  - id: stable-diffusion
+    title: Stable Diffusion
+    summary: U-Net, latent space, text conditioning, guidance, sampler. 글 한 줄로 이미지를 만드는 Stable Diffusion 의 부품
+    color: "#f59e0b"

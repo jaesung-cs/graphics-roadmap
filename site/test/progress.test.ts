@@ -47,6 +47,13 @@ describe('progress', () => {
     expect(statusOf({ a: [pass, fail] }, 'a')).toBe('done')
   })
 
+  it('is done once a lesson without a quiz is marked read', () => {
+    const read: Attempt = { date: '2026-10-25', answers: [] }
+    expect(statusOf({ a: [read] }, 'a')).toBe('done')
+    expect(passedOn({ a: [read] }, 'a')).toBe('2026-10-25')
+    expect(nodeState(c, { a: [read] }, 'b')).toBe('available')
+  })
+
   it('derives availability from passed prerequisites', () => {
     const p = { a: [pass] }
     expect(nodeState(c, p, 'a')).toBe('done')

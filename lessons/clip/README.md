@@ -475,7 +475,7 @@ CLIP 식으로 학습한 encoder 를 로봇에서 쓰는 방식은 아래 그림
 
 ### open-vocabulary detection 과 picking
 
-[Classical Pick & Place](../classical-pick/README.md) 에서 본 YOLO-World 는 물체 이름을 숫자로 바꾸는 데 CLIP 의 text encoder 를 그대로 쓴다.
+Classical Pick & Place 에서 본 YOLO-World 는 물체 이름을 숫자로 바꾸는 데 CLIP 의 text encoder 를 그대로 쓴다.
 사용자가 "cup" 을 주면 text encoder 가 그 embedding 을 만들고, detector 는 사진에서 물체가 있을 만한 영역마다 계산한 embedding 과 비교해 점수가
 높은 영역에 bounding box 를 그린다. zero-shot 분류가 사진 전체를 문장과 비교했다면, 이 detector 는 같은 비교를 영역 하나하나에 한다. 정해진
 단어 목록에 묶이지 않아서 이런 detector 를 open-vocabulary detector 라고 부른다.
@@ -511,7 +511,7 @@ VLM 의 image encoder 로 SigLIP 을 많이 쓴다. SigLIP 은 사진과 설명 
 | model | 사진 입력 |
 | --- | --- |
 | PaliGemma (2024, VLM) | SigLIP So400m image encoder + Gemma-2B 언어 model |
-| [π0](../pi0/README.md) (2024) | PaliGemma 의 weight 에서 출발해 로봇 데이터로 더 학습 |
+| π0 (2024) | PaliGemma 의 weight 에서 출발해 로봇 데이터로 더 학습 |
 | OpenVLA (2024) | SigLIP 과 DINOv2 의 출력을 이어 붙여 Llama 2 에 넣는다 |
 | SmolVLA (2025) | SmolVLM-2 의 SigLIP 을 쓰고, 사진 한 장을 visual token 64 개로 줄인다 |
 
@@ -546,8 +546,8 @@ OpenVLA 저자들은 SigLIP 에 DINOv2 를 더하면 공간 추론이 나아진�
   encoder 로 쓰인다
 
 CLIP 은 점수를 낼 뿐 문장이나 로봇 action 을 만들어 내지는 못한다. 사진 encoder 의 patch token 을 언어 model 에 넘기고 action 까지 token 으로
-생성하게 만든 VLA 는 [RT-2 → OpenVLA](../vla-tokens/README.md) 에서 다룬다. SigLIP 을 쓰는 PaliGemma 에 action 을 내는 부분을 따로 붙인
-VLA 는 [π0](../pi0/README.md) 에서 다룬다.
+생성하게 만든 VLA 는 RT-2 → OpenVLA 에서 다룬다. SigLIP 을 쓰는 PaliGemma 에 action 을 내는 부분을 따로 붙인
+VLA 는 π0 에서 다룬다.
 
 ## 참고 자료
 

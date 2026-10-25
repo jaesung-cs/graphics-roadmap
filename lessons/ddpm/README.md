@@ -290,7 +290,7 @@ $t = 3$ 이면 $1.42 = 0.71 \times 2 + 0.70 \times \epsilon$ 에서 $\epsilon = 
 
 network 의 출력은 언제나 입력 $x_t$ 와 모양이 같다. 숫자 하나나 2 차원 점에는 MLP 를 쓰고, 그림에는 [CNN](../cnn/README.md) 에서 본
 convolution 층으로 그림을 줄였다가 다시 키워 pixel 마다 출력을 내는 U-Net 을 쓴다. step 번호 $t$ 는 정해진 계산으로 숫자 수십 개짜리
-vector(time embedding)로 늘려 넣는다. Diffusion Policy 가 action 에 쓰는 1D U-Net 은 [Diffusion Policy](../diffusion-policy/README.md) 에서 다룬다.
+vector(time embedding)로 늘려 넣는다. Diffusion Policy 가 action 에 쓰는 1D U-Net 은 Diffusion Policy 에서 다룬다.
 
 ![숫자 하나와 2 차원 점은 MLP 에 넣고 32×32 이미지는 U-Net 에 넣는다. 어느 network 든 t 를 함께 받아 입력과 같은 모양의 noise 를 낸다](figures/network-io.svg)
 
@@ -672,7 +672,7 @@ LeRobot 에 올라 있는 PushT 용 Diffusion Policy(`lerobot/diffusion_pusht`)�
 
 DDIM 으로 줄여도 Diffusion Policy 는 action 을 만들 때마다 network 를 10 번 쓴다. noise 에서 데이터로 가는 경로를 처음부터 곧게 학습해 몇
 step 만에 sample 을 만드는 방법은 [Flow Matching](../flow-matching/README.md) 에서 다루고, 관측을 조건으로 넣는 network 와 action chunk 를
-실행하는 방식은 [Diffusion Policy](../diffusion-policy/README.md) 에서 다룬다.
+실행하는 방식은 Diffusion Policy 에서 다룬다.
 
 ## 참고 자료
 

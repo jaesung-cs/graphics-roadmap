@@ -613,7 +613,7 @@ freeze 는 backbone 을 고정하므로 학습하는 parameter 도 3,591 개다.
 ## 로봇 policy 의 ResNet-18 encoder
 
 policy 는 지금 보이는 것(observation)을 받아 다음 행동(action)을 내는 모델이고, 사진을 policy 가 쓸 숫자로 바꾸는 부분을 image encoder
-라고 한다. [ACT](../act/README.md) 와 [Diffusion Policy](../diffusion-policy/README.md) 는 둘 다 ResNet-18 을 image encoder 로 쓰지만
+라고 한다. ACT 와 Diffusion Policy 는 둘 다 ResNet-18 을 image encoder 로 쓰지만
 feature 를 꺼내는 방식과 normalization 이 다르다.
 
 ![ACT 는 480×640 사진을 512×15×20 feature map 으로 줄여 token 300 개로 쓰고, Diffusion Policy 는 96×96 사진을 512×3×3 으로 줄여 spatial softmax 로 keypoint 32 개를 뽑는다](figures/robot-encoder.svg)
@@ -674,7 +674,7 @@ pretrained weight 를 지정하면 오류를 낸다. pretrained weight 의 conv 
 
 ResNet 은 convolution 으로 가까운 칸끼리만 계산하므로, 사진에서 멀리 떨어진 두 구역의 관계는 층을 많이 쌓아야 반영된다. 사진을 patch
 로 잘라 patch 끼리 서로 참고하게 하는 모델은 [ViT](../vit/README.md) 에서 다룬다. ResNet 의 feature map 을 token 으로 쓰는 policy 는
-[ACT](../act/README.md) 에서 다루고, CNN 의 image token 에 지시 문장을 섞는 policy 는 [RT-1](../rt1/README.md) 에서 다룬다.
+ACT 에서 다루고, CNN 의 image token 에 지시 문장을 섞는 policy 는 RT-1 에서 다룬다.
 
 ## 참고 자료
 

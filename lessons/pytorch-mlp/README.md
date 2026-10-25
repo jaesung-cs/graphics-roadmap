@@ -562,8 +562,8 @@ activation 은 따로 더 든다.
 이 강의의 MLP 는 사진을 784 개 숫자로 펴서 받기 때문에 어느 pixel 이 어느 pixel 옆에 있었는지를 쓰지 못한다. 입력 길이도 정해져 있어서
 길이가 제각각인 문장이나 시간에 따라 이어지는 센서 값을 다루지 못한다. 다음으로 볼 모델은 가까운 pixel 끼리 묶어 계산하는
 [CNN](../cnn/README.md), 입력 조각들이 서로를 참고하게 하는 [Transformer](../transformer/README.md), 데이터를 숫자 몇 개로 압축했다가
-되살리는 [VAE](../vae/README.md) 다. 시연을 따라 하도록 policy 를 학습시키는 [Behavior Cloning](../behavior-cloning/README.md) 과 reward 를
-보고 행동을 고치는 [Policy Gradient](../policy-gradient/README.md), [DQN → SAC](../off-policy/README.md) 도 모두 이 강의의 training loop 를
+되살리는 [VAE](../vae/README.md) 다. 시연을 따라 하도록 policy 를 학습시키는 Behavior Cloning 과 reward 를
+보고 행동을 고치는 Policy Gradient, DQN → SAC 도 모두 이 강의의 training loop 를
 그대로 쓴다.
 
 ## 참고 자료
