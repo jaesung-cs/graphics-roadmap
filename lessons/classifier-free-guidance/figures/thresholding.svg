@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>guidance scale 이 커지면 원래 값의 추정이 데이터 범위 −1 ~ 1 을 벗어난다. static thresholding 은 범위 밖을 잘라 내고, dynamic thresholding 은 백분위 값으로 나눠 안쪽으로 당긴다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="718" height="298" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="24.0" y="74.0" fill="#e2e8f0" font-size="13" text-anchor="start">추정 (그대로)</text>
+  <line x1="294.0" y1="70.0" x2="598.0" y2="70.0" stroke="#94a3b8" stroke-width="1"/>
+  <rect x="310.0" y="54.0" width="160.0" height="32.0" rx="0" fill="#38bdf8" stroke="none" stroke-width="1" fill-opacity="0.08"/>
+  <line x1="310.0" y1="52.0" x2="310.0" y2="88.0" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3 3"/>
+  <line x1="470.0" y1="52.0" x2="470.0" y2="88.0" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3 3"/>
+  <circle cx="430.0" cy="70.0" r="6" fill="#94a3b8" stroke="none" stroke-width="1"/>
+  <circle cx="326.0" cy="70.0" r="6" fill="#94a3b8" stroke="none" stroke-width="1"/>
+  <circle cx="518.0" cy="70.0" r="6" fill="#94a3b8" stroke="none" stroke-width="1"/>
+  <circle cx="582.0" cy="70.0" r="6" fill="#94a3b8" stroke="none" stroke-width="1"/>
+  <text x="696.0" y="74.0" fill="#94a3b8" font-size="12" text-anchor="end">0.5, -0.8, 1.6, 2.4</text>
+  <text x="24.0" y="154.0" fill="#e2e8f0" font-size="13" text-anchor="start">static: −1 ~ 1 로 자름</text>
+  <line x1="294.0" y1="150.0" x2="598.0" y2="150.0" stroke="#94a3b8" stroke-width="1"/>
+  <rect x="310.0" y="134.0" width="160.0" height="32.0" rx="0" fill="#38bdf8" stroke="none" stroke-width="1" fill-opacity="0.08"/>
+  <line x1="310.0" y1="132.0" x2="310.0" y2="168.0" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3 3"/>
+  <line x1="470.0" y1="132.0" x2="470.0" y2="168.0" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3 3"/>
+  <circle cx="430.0" cy="150.0" r="6" fill="#f87171" stroke="none" stroke-width="1"/>
+  <circle cx="326.0" cy="150.0" r="6" fill="#f87171" stroke="none" stroke-width="1"/>
+  <circle cx="470.0" cy="150.0" r="6" fill="#f87171" stroke="none" stroke-width="1"/>
+  <circle cx="470.0" cy="150.0" r="6" fill="#f87171" stroke="none" stroke-width="1"/>
+  <text x="696.0" y="154.0" fill="#f87171" font-size="12" text-anchor="end">0.5, -0.8, 1, 1</text>
+  <text x="24.0" y="234.0" fill="#e2e8f0" font-size="13" text-anchor="start">dynamic: ±1.6 으로 자르고 ÷ 1.6</text>
+  <line x1="294.0" y1="230.0" x2="598.0" y2="230.0" stroke="#94a3b8" stroke-width="1"/>
+  <rect x="310.0" y="214.0" width="160.0" height="32.0" rx="0" fill="#38bdf8" stroke="none" stroke-width="1" fill-opacity="0.08"/>
+  <line x1="310.0" y1="212.0" x2="310.0" y2="248.0" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3 3"/>
+  <line x1="470.0" y1="212.0" x2="470.0" y2="248.0" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3 3"/>
+  <circle cx="414.8" cy="230.0" r="6" fill="#34d399" stroke="none" stroke-width="1"/>
+  <circle cx="350.0" cy="230.0" r="6" fill="#34d399" stroke="none" stroke-width="1"/>
+  <circle cx="470.0" cy="230.0" r="6" fill="#34d399" stroke="none" stroke-width="1"/>
+  <circle cx="470.0" cy="230.0" r="6" fill="#34d399" stroke="none" stroke-width="1"/>
+  <text x="696.0" y="234.0" fill="#34d399" font-size="12" text-anchor="end">0.31, -0.5, 1, 1</text>
+  <text x="310.0" y="290.0" fill="#38bdf8" font-size="11" text-anchor="middle">−1</text>
+  <text x="470.0" y="290.0" fill="#38bdf8" font-size="11" text-anchor="middle">+1</text>
+  <text x="390.0" y="290.0" fill="#38bdf8" font-size="11" text-anchor="middle">학습 때의 범위</text>
+</svg>

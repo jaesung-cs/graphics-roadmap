@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 270" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>고양이 글이 붙은 그림이 +2 에 75%, −2 에 25% 있을 때 guidance scale 1, 2, 3, 7.5 에서 +2 에서 끝나는 sample 의 비율은 75%, 90%, 96.4%, 99.97% 로 커진다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="718" height="268" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="24.0" y="34.0" fill="#94a3b8" font-size="13" text-anchor="start">+2 에서 끝나는 sample 의 비율 (예측이 정확할 때)</text>
+  <text x="110.0" y="77.0" fill="#e2e8f0" font-size="13" text-anchor="end">s = 1</text>
+  <rect x="124.0" y="56.0" width="360.0" height="30.0" rx="0" fill="#34d399" stroke="none" stroke-width="1" fill-opacity="0.4"/>
+  <rect x="124.0" y="56.0" width="360.0" height="30.0" rx="0" fill="none" stroke="#34d399" stroke-width="1.2"/>
+  <rect x="484.0" y="56.0" width="120.0" height="30.0" rx="0" fill="#f87171" stroke="none" stroke-width="1" fill-opacity="0.5"/>
+  <text x="616.0" y="77.0" fill="#34d399" font-size="13" text-anchor="start">75%</text>
+  <text x="110.0" y="125.0" fill="#e2e8f0" font-size="13" text-anchor="end">s = 2</text>
+  <rect x="124.0" y="104.0" width="432.0" height="30.0" rx="0" fill="#34d399" stroke="none" stroke-width="1" fill-opacity="0.4"/>
+  <rect x="124.0" y="104.0" width="432.0" height="30.0" rx="0" fill="none" stroke="#34d399" stroke-width="1.2"/>
+  <rect x="556.0" y="104.0" width="48.0" height="30.0" rx="0" fill="#f87171" stroke="none" stroke-width="1" fill-opacity="0.5"/>
+  <text x="616.0" y="125.0" fill="#34d399" font-size="13" text-anchor="start">90%</text>
+  <text x="110.0" y="173.0" fill="#e2e8f0" font-size="13" text-anchor="end">s = 3</text>
+  <rect x="124.0" y="152.0" width="462.7" height="30.0" rx="0" fill="#34d399" stroke="none" stroke-width="1" fill-opacity="0.4"/>
+  <rect x="124.0" y="152.0" width="462.7" height="30.0" rx="0" fill="none" stroke="#34d399" stroke-width="1.2"/>
+  <rect x="586.7" y="152.0" width="17.3" height="30.0" rx="0" fill="#f87171" stroke="none" stroke-width="1" fill-opacity="0.5"/>
+  <text x="616.0" y="173.0" fill="#34d399" font-size="13" text-anchor="start">96.4%</text>
+  <text x="110.0" y="221.0" fill="#e2e8f0" font-size="13" text-anchor="end">s = 7.5</text>
+  <rect x="124.0" y="200.0" width="479.9" height="30.0" rx="0" fill="#34d399" stroke="none" stroke-width="1" fill-opacity="0.4"/>
+  <rect x="124.0" y="200.0" width="479.9" height="30.0" rx="0" fill="none" stroke="#34d399" stroke-width="1.2"/>
+  <rect x="603.9" y="200.0" width="0.1" height="30.0" rx="0" fill="#f87171" stroke="none" stroke-width="1" fill-opacity="0.5"/>
+  <text x="616.0" y="221.0" fill="#34d399" font-size="13" text-anchor="start">99.97%</text>
+  <text x="124.0" y="260.0" fill="#34d399" font-size="12" text-anchor="start">초록: +2 (고양이다운 그림)</text>
+  <text x="400.0" y="260.0" fill="#f87171" font-size="12" text-anchor="start">빨강: −2 (글과 덜 맞는 그림)</text>
+</svg>

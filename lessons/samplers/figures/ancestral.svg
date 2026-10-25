@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>결정적 sampler 는 σ 1.749 에서 0.914 로 곧게 가고, ancestral sampler 는 0.478 까지 더 내려갔다가 크기 0.779 의 새 noise 를 더해 0.914 로 돌아온다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="718" height="258" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <line x1="60.0" y1="220.0" x2="680.0" y2="220.0" stroke="#94a3b8" stroke-width="1"/>
+  <line x1="56.0" y1="179.4" x2="680.0" y2="179.4" stroke="#1e293b" stroke-width="1" stroke-dasharray="2 4"/>
+  <text x="52.0" y="183.4" fill="#94a3b8" font-size="11" text-anchor="end">σ 0.478</text>
+  <line x1="56.0" y1="142.3" x2="680.0" y2="142.3" stroke="#1e293b" stroke-width="1" stroke-dasharray="2 4"/>
+  <text x="52.0" y="146.3" fill="#94a3b8" font-size="11" text-anchor="end">σ 0.914</text>
+  <line x1="56.0" y1="71.3" x2="680.0" y2="71.3" stroke="#1e293b" stroke-width="1" stroke-dasharray="2 4"/>
+  <text x="52.0" y="75.3" fill="#94a3b8" font-size="11" text-anchor="end">σ 1.749</text>
+  <text x="220.0" y="30.0" fill="#f59e0b" font-size="13" text-anchor="middle">결정적 (Euler)</text>
+  <circle cx="150.0" cy="71.3" r="6" fill="#f59e0b" stroke="none" stroke-width="1"/>
+  <circle cx="290.0" cy="142.3" r="6" fill="#f59e0b" stroke="none" stroke-width="1"/>
+  <line x1="156.0" y1="74.3" x2="284.0" y2="139.3" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow-amber)"/>
+  <text x="500.0" y="30.0" fill="#34d399" font-size="13" text-anchor="middle">ancestral (Euler a)</text>
+  <circle cx="420.0" cy="71.3" r="6" fill="#34d399" stroke="none" stroke-width="1"/>
+  <circle cx="520.0" cy="179.4" r="6" fill="#34d399" stroke="none" stroke-width="1"/>
+  <circle cx="600.0" cy="142.3" r="6" fill="#a78bfa" stroke="none" stroke-width="1"/>
+  <line x1="426.0" y1="74.3" x2="514.0" y2="176.4" stroke="#34d399" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <text x="450.0" y="143.5" fill="#34d399" font-size="11" text-anchor="end">σ_down 0.478 까지</text>
+  <line x1="526.0" y1="176.4" x2="594.0" y2="145.3" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrow-purple)" stroke-dasharray="5 3"/>
+  <text x="610.0" y="169.0" fill="#a78bfa" font-size="11" text-anchor="start">새 noise σ_up 0.779</text>
+  <text x="370.0" y="248.0" fill="#94a3b8" font-size="12" text-anchor="middle">0.478² + 0.779² ≈ 0.914²</text>
+</svg>

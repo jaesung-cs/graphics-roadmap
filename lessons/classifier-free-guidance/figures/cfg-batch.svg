@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 260" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>CFG 의 한 step. 같은 latent x_t 를 두 장으로 복사해 빈 글과 글의 vector 를 각각 붙여 U-Net 에 한 batch 로 넣고, 나온 두 예측을 무조건 + s × (조건부 − 무조건) 으로 섞어 scheduler 에 넘긴다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="738" height="258" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <rect x="24.0" y="96.0" width="100.0" height="56.0" rx="8" fill="#111a2e" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="74.0" y="120.0" fill="#e2e8f0" font-size="14" text-anchor="middle">x_t</text>
+  <text x="74.0" y="140.0" fill="#94a3b8" font-size="11" text-anchor="middle">64×64×4</text>
+  <line x1="126.0" y1="112.0" x2="166.0" y2="80.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="126.0" y1="136.0" x2="166.0" y2="168.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="170.0" y="54.0" width="170.0" height="48.0" rx="8" fill="#111a2e" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="255.0" y="75.0" fill="#e2e8f0" font-size="12" text-anchor="middle">x_t + 빈 글 ""</text>
+  <text x="255.0" y="93.0" fill="#94a3b8" font-size="10" text-anchor="middle">(또는 negative prompt)</text>
+  <rect x="170.0" y="146.0" width="170.0" height="48.0" rx="8" fill="#111a2e" stroke="#34d399" stroke-width="1.5"/>
+  <text x="255.0" y="175.0" fill="#e2e8f0" font-size="12" text-anchor="middle">x_t + 글 vector</text>
+  <line x1="342.0" y1="78.0" x2="382.0" y2="112.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="342.0" y1="170.0" x2="382.0" y2="136.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="386.0" y="96.0" width="110.0" height="56.0" rx="8" fill="#111a2e" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="441.0" y="120.0" fill="#e2e8f0" font-size="14" text-anchor="middle">U-Net</text>
+  <text x="441.0" y="140.0" fill="#94a3b8" font-size="11" text-anchor="middle">batch 2 장</text>
+  <line x1="498.0" y1="124.0" x2="528.0" y2="124.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="532.0" y="86.0" width="184.0" height="76.0" rx="8" fill="#111a2e" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="624.0" y="112.0" fill="#e2e8f0" font-size="12" text-anchor="middle">무조건 + s ×</text>
+  <text x="624.0" y="130.0" fill="#e2e8f0" font-size="12" text-anchor="middle">(조건부 − 무조건)</text>
+  <text x="624.0" y="150.0" fill="#94a3b8" font-size="11" text-anchor="middle">s = 7.5</text>
+  <text x="624.0" y="196.0" fill="#94a3b8" font-size="11" text-anchor="middle">→ scheduler 가 다음 latent 를 만든다</text>
+  <text x="370.0" y="240.0" fill="#e2e8f0" font-size="12" text-anchor="middle">50 step × 2 장 = U-Net 계산 100 장 분량</text>
+</svg>

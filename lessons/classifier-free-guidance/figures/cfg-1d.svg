@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>x_5 = 0.2 에서 무조건 예측의 원래 값 추정 0.36 과 고양이 조건부 추정 2.00. guidance scale 3 과 7.5 는 같은 방향으로 더 나아가 5.28, 12.66 을 가리킨다. 데이터는 −2 와 +2 에만 있다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="718" height="248" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <line x1="97.2" y1="140.0" x2="697.6" y2="140.0" stroke="#94a3b8" stroke-width="1.5"/>
+  <line x1="120.0" y1="134.0" x2="120.0" y2="146.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="120.0" y="166.0" fill="#94a3b8" font-size="11" text-anchor="middle">-2</text>
+  <line x1="196.0" y1="134.0" x2="196.0" y2="146.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="196.0" y="166.0" fill="#94a3b8" font-size="11" text-anchor="middle">0</text>
+  <line x1="272.0" y1="134.0" x2="272.0" y2="146.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="272.0" y="166.0" fill="#94a3b8" font-size="11" text-anchor="middle">2</text>
+  <line x1="348.0" y1="134.0" x2="348.0" y2="146.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="348.0" y="166.0" fill="#94a3b8" font-size="11" text-anchor="middle">4</text>
+  <line x1="424.0" y1="134.0" x2="424.0" y2="146.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="424.0" y="166.0" fill="#94a3b8" font-size="11" text-anchor="middle">6</text>
+  <line x1="500.0" y1="134.0" x2="500.0" y2="146.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="500.0" y="166.0" fill="#94a3b8" font-size="11" text-anchor="middle">8</text>
+  <line x1="576.0" y1="134.0" x2="576.0" y2="146.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="576.0" y="166.0" fill="#94a3b8" font-size="11" text-anchor="middle">10</text>
+  <line x1="652.0" y1="134.0" x2="652.0" y2="146.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="652.0" y="166.0" fill="#94a3b8" font-size="11" text-anchor="middle">12</text>
+  <circle cx="120.0" cy="140.0" r="7" fill="#a78bfa" stroke="none" stroke-width="1"/>
+  <circle cx="272.0" cy="140.0" r="7" fill="#a78bfa" stroke="none" stroke-width="1"/>
+  <text x="196.0" y="196.0" fill="#a78bfa" font-size="12" text-anchor="middle">데이터 (−2, +2)</text>
+  <line x1="209.7" y1="100.0" x2="209.7" y2="132.0" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+  <text x="209.7" y="92.0" fill="#38bdf8" font-size="12" text-anchor="middle">s = 0 · 무조건 0.36</text>
+  <line x1="272.0" y1="68.0" x2="272.0" y2="132.0" stroke="#34d399" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+  <text x="272.0" y="60.0" fill="#34d399" font-size="12" text-anchor="middle">s = 1 · 조건부 2.00</text>
+  <line x1="396.6" y1="100.0" x2="396.6" y2="132.0" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrow-amber)"/>
+  <text x="396.6" y="92.0" fill="#f59e0b" font-size="12" text-anchor="middle">s = 3 · 5.28</text>
+  <line x1="677.1" y1="68.0" x2="677.1" y2="132.0" stroke="#f87171" stroke-width="1.5" marker-end="url(#arrow-red)"/>
+  <text x="677.1" y="60.0" fill="#f87171" font-size="12" text-anchor="middle">s = 7.5 · 12.66</text>
+  <line x1="209.7" y1="210.0" x2="677.1" y2="210.0" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrow-amber)" stroke-dasharray="5 4"/>
+  <text x="462.0" y="232.0" fill="#f59e0b" font-size="12" text-anchor="middle">원래 값의 추정 = 0.36 + s × 1.64 (차이를 s 배로 연장)</text>
+</svg>

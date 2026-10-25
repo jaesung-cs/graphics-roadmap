@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 350" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>Stable Diffusion 의 attention block. 64×64×320 을 4096 × 320 으로 펼친 뒤 self-attention, cross-attention, feed-forward 를 지나며 각각 원래 값에 더하고, 다시 64×64×320 으로 접는다. cross-attention 의 key 와 value 는 77 × 768 의 글 vector 를 320 으로 바꿔 만든다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="738" height="348" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <rect x="24.0" y="120.0" width="96.0" height="56.0" rx="8" fill="#111a2e" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="72.0" y="144.0" fill="#e2e8f0" font-size="13" text-anchor="middle">입력</text>
+  <text x="72.0" y="162.0" fill="#94a3b8" font-size="11" text-anchor="middle">64×64×320</text>
+  <rect x="140.0" y="120.0" width="106.0" height="56.0" rx="8" fill="#111a2e" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="193.0" y="144.0" fill="#e2e8f0" font-size="12" text-anchor="middle">펼치기</text>
+  <text x="193.0" y="162.0" fill="#94a3b8" font-size="10" text-anchor="middle">4096 × 320</text>
+  <line x1="122.0" y1="148.0" x2="138.0" y2="148.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="258.0" y="120.0" width="106.0" height="56.0" rx="8" fill="#111a2e" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="311.0" y="144.0" fill="#e2e8f0" font-size="12" text-anchor="middle">self-attention</text>
+  <text x="311.0" y="162.0" fill="#94a3b8" font-size="10" text-anchor="middle">위치끼리</text>
+  <line x1="240.0" y1="148.0" x2="256.0" y2="148.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M248,148 C248,98 374,98 374,140" fill="none" stroke="#a78bfa" stroke-width="1.2" stroke-dasharray="4 3"/>
+  <text x="311.0" y="104.0" fill="#a78bfa" font-size="10" text-anchor="middle">+ 원래 값</text>
+  <rect x="376.0" y="120.0" width="106.0" height="56.0" rx="8" fill="#111a2e" stroke="#34d399" stroke-width="1.5"/>
+  <text x="429.0" y="144.0" fill="#e2e8f0" font-size="12" text-anchor="middle">cross-attention</text>
+  <text x="429.0" y="162.0" fill="#94a3b8" font-size="10" text-anchor="middle">위치 → 단어 77 개</text>
+  <line x1="358.0" y1="148.0" x2="374.0" y2="148.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M366,148 C366,98 492,98 492,140" fill="none" stroke="#a78bfa" stroke-width="1.2" stroke-dasharray="4 3"/>
+  <text x="429.0" y="104.0" fill="#a78bfa" font-size="10" text-anchor="middle">+ 원래 값</text>
+  <rect x="494.0" y="120.0" width="106.0" height="56.0" rx="8" fill="#111a2e" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="547.0" y="144.0" fill="#e2e8f0" font-size="12" text-anchor="middle">feed-forward</text>
+  <text x="547.0" y="162.0" fill="#94a3b8" font-size="10" text-anchor="middle">GEGLU MLP</text>
+  <line x1="476.0" y1="148.0" x2="492.0" y2="148.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M484,148 C484,98 610,98 610,140" fill="none" stroke="#a78bfa" stroke-width="1.2" stroke-dasharray="4 3"/>
+  <text x="547.0" y="104.0" fill="#a78bfa" font-size="10" text-anchor="middle">+ 원래 값</text>
+  <rect x="612.0" y="120.0" width="106.0" height="56.0" rx="8" fill="#111a2e" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="665.0" y="144.0" fill="#e2e8f0" font-size="12" text-anchor="middle">접기</text>
+  <text x="665.0" y="162.0" fill="#94a3b8" font-size="10" text-anchor="middle">64×64×320</text>
+  <line x1="594.0" y1="148.0" x2="610.0" y2="148.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="300.0" y="216.0" width="220.0" height="48.0" rx="8" fill="#111a2e" stroke="#34d399" stroke-width="1.5"/>
+  <text x="410.0" y="236.0" fill="#e2e8f0" font-size="13" text-anchor="middle">글 vector 77 × 768</text>
+  <text x="410.0" y="254.0" fill="#94a3b8" font-size="11" text-anchor="middle">W_K, W_V: 768 → 320</text>
+  <line x1="410.0" y1="214.0" x2="410.0" y2="180.0" stroke="#34d399" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <text x="416.0" y="202.0" fill="#34d399" font-size="11" text-anchor="start">key · value</text>
+  <path d="M72,180 C72,345 664,345 664,180" fill="none" stroke="#a78bfa" stroke-width="1.2" stroke-dasharray="4 3"/>
+  <text x="600.0" y="322.0" fill="#a78bfa" font-size="11" text-anchor="middle">block 전체에도 + 원래 값</text>
+  <text x="24.0" y="40.0" fill="#94a3b8" font-size="12" text-anchor="start">1 단계 (64×64, channel 320) 의 예 · head 8 개 × 크기 40</text>
+</svg>

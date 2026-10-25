@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>Stable Diffusion 의 VAE. 512×512×3 그림이 encoder 에서 512, 256, 128, 64 로 줄고 64×64 위치마다 평균과 log 분산 4 개씩을 낸 뒤 뽑은 4 개가 latent 가 된다. decoder 는 64×64×4 를 512×512×3 으로 되살린다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="718" height="298" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="24.0" y="34.0" fill="#38bdf8" font-size="12" text-anchor="start">encoder · parameter 약 3416 만</text>
+  <rect x="24.0" y="55.0" width="86.0" height="70.0" rx="8" fill="#111a2e" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="67.0" y="86.0" fill="#e2e8f0" font-size="12" text-anchor="middle">512×512</text>
+  <text x="67.0" y="104.0" fill="#94a3b8" font-size="11" text-anchor="middle">channel 3</text>
+  <rect x="124.0" y="59.0" width="86.0" height="62.0" rx="8" fill="#111a2e" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="167.0" y="86.0" fill="#e2e8f0" font-size="12" text-anchor="middle">512×512</text>
+  <text x="167.0" y="104.0" fill="#94a3b8" font-size="11" text-anchor="middle">channel 128</text>
+  <line x1="112.0" y1="90.0" x2="122.0" y2="90.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="224.0" y="63.0" width="86.0" height="54.0" rx="8" fill="#111a2e" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="267.0" y="86.0" fill="#e2e8f0" font-size="12" text-anchor="middle">256×256</text>
+  <text x="267.0" y="104.0" fill="#94a3b8" font-size="11" text-anchor="middle">channel 256</text>
+  <line x1="212.0" y1="90.0" x2="222.0" y2="90.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="324.0" y="67.0" width="86.0" height="46.0" rx="8" fill="#111a2e" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="367.0" y="86.0" fill="#e2e8f0" font-size="12" text-anchor="middle">128×128</text>
+  <text x="367.0" y="104.0" fill="#94a3b8" font-size="11" text-anchor="middle">channel 512</text>
+  <line x1="312.0" y1="90.0" x2="322.0" y2="90.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="424.0" y="71.0" width="86.0" height="38.0" rx="8" fill="#111a2e" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="467.0" y="86.0" fill="#e2e8f0" font-size="12" text-anchor="middle">64×64</text>
+  <text x="467.0" y="104.0" fill="#94a3b8" font-size="11" text-anchor="middle">channel 512</text>
+  <line x1="412.0" y1="90.0" x2="422.0" y2="90.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="524.0" y="75.0" width="86.0" height="30.0" rx="8" fill="#111a2e" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="567.0" y="86.0" fill="#e2e8f0" font-size="12" text-anchor="middle">64×64</text>
+  <text x="567.0" y="104.0" fill="#94a3b8" font-size="11" text-anchor="middle">channel 8</text>
+  <line x1="512.0" y1="90.0" x2="522.0" y2="90.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="567.0" y="140.0" fill="#94a3b8" font-size="11" text-anchor="middle">평균 4 + log 분산 4</text>
+  <line x1="610.0" y1="90.0" x2="640.0" y2="90.0" stroke="#34d399" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <rect x="644.0" y="66.0" width="60.0" height="48.0" rx="8" fill="#111a2e" stroke="#34d399" stroke-width="1.5"/>
+  <text x="674.0" y="86.0" fill="#e2e8f0" font-size="14" text-anchor="middle">z</text>
+  <text x="674.0" y="104.0" fill="#94a3b8" font-size="10" text-anchor="middle">64×64×4</text>
+  <text x="674.0" y="132.0" fill="#34d399" font-size="11" text-anchor="middle">뽑은 값</text>
+  <text x="24.0" y="186.0" fill="#f59e0b" font-size="12" text-anchor="start">decoder · parameter 약 4949 만</text>
+  <rect x="24.0" y="206.0" width="120.0" height="50.0" rx="8" fill="#111a2e" stroke="#34d399" stroke-width="1.5"/>
+  <text x="84.0" y="236.0" fill="#e2e8f0" font-size="13" text-anchor="middle">z 64×64×4</text>
+  <line x1="146.0" y1="231.0" x2="196.0" y2="231.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="200.0" y="206.0" width="300.0" height="50.0" rx="8" fill="#111a2e" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="350.0" y="228.0" fill="#e2e8f0" font-size="13" text-anchor="middle">두 배로 키우기 × 3</text>
+  <text x="350.0" y="246.0" fill="#94a3b8" font-size="11" text-anchor="middle">64 → 128 → 256 → 512</text>
+  <line x1="502.0" y1="231.0" x2="552.0" y2="231.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="556.0" y="206.0" width="140.0" height="50.0" rx="8" fill="#111a2e" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="626.0" y="236.0" fill="#e2e8f0" font-size="13" text-anchor="middle">그림 512×512×3</text>
+  <text x="360.0" y="288.0" fill="#94a3b8" font-size="12" text-anchor="middle">KL 무게 약 10⁻⁶ · perceptual loss + patch-based adversarial loss 로 학습</text>
+</svg>

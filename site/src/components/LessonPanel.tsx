@@ -25,8 +25,8 @@ const STATE_TEXT: Record<NodeState, string> = {
   locked: '선수 강의 남음',
 }
 
-function formatHours(h: number): string {
-  return `강의와 퀴즈 약 ${h}시간`
+function formatHours(h: number, quiz: boolean): string {
+  return `${quiz ? '강의와 퀴즈' : '강의'} 약 ${h}시간`
 }
 
 function LessonChip({ c, p, id, onSelect }: { c: Curriculum; p: ProgressFile; id: string; onSelect(id: string): void }) {
@@ -126,7 +126,7 @@ export const LessonPanel = memo(function LessonPanel({ curriculum: c, progressFi
           <p className="panel-summary">{lesson.summary}</p>
           <p className="panel-meta">
             <Clock size={15} aria-hidden="true" />
-            {formatHours(lesson.hours)}
+            {formatHours(lesson.hours, hasQuiz(lessonId))}
           </p>
 
           <StatusCard

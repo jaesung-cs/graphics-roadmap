@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>t = 1000 에서 x_t 의 두 몫. 표준편차 5.49 인 latent 는 원래 값 몫이 0.375 로 noise 0.998 의 37.6% 가 남고, 0.18215 를 곱해 표준편차 1 로 맞추면 0.068 로 6.8% 만 남는다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="718" height="298" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="24.0" y="34.0" fill="#94a3b8" font-size="12" text-anchor="start">t = 1000 에서 x_t 를 이루는 두 몫의 표준편차 (√ᾱ = 0.068, √(1 − ᾱ) = 0.998)</text>
+  <text x="24.0" y="70.0" fill="#e2e8f0" font-size="13" text-anchor="start">곱하지 않음 (표준편차 5.49)</text>
+  <text x="170.0" y="102.0" fill="#94a3b8" font-size="12" text-anchor="end">원래 값 몫</text>
+  <rect x="180.0" y="84.0" width="142.5" height="26.0" rx="0" fill="#f87171" stroke="none" stroke-width="1" fill-opacity="0.4"/>
+  <rect x="180.0" y="84.0" width="142.5" height="26.0" rx="0" fill="none" stroke="#f87171" stroke-width="1.5"/>
+  <text x="330.5" y="102.0" fill="#f87171" font-size="12" text-anchor="start">0.068 × 5.49 = 0.375</text>
+  <text x="170.0" y="136.0" fill="#94a3b8" font-size="12" text-anchor="end">noise 몫</text>
+  <rect x="180.0" y="118.0" width="379.2" height="26.0" rx="0" fill="#38bdf8" stroke="none" stroke-width="1" fill-opacity="0.3"/>
+  <rect x="180.0" y="118.0" width="379.2" height="26.0" rx="0" fill="none" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="567.2" y="136.0" fill="#38bdf8" font-size="12" text-anchor="start">0.998</text>
+  <text x="696.0" y="102.0" fill="#f87171" font-size="14" text-anchor="end">37.6%</text>
+  <text x="24.0" y="180.0" fill="#e2e8f0" font-size="13" text-anchor="start">0.18215 를 곱함 (표준편차 1)</text>
+  <text x="170.0" y="212.0" fill="#94a3b8" font-size="12" text-anchor="end">원래 값 몫</text>
+  <rect x="180.0" y="194.0" width="25.8" height="26.0" rx="0" fill="#34d399" stroke="none" stroke-width="1" fill-opacity="0.4"/>
+  <rect x="180.0" y="194.0" width="25.8" height="26.0" rx="0" fill="none" stroke="#34d399" stroke-width="1.5"/>
+  <text x="213.8" y="212.0" fill="#34d399" font-size="12" text-anchor="start">0.068 × 1 = 0.068</text>
+  <text x="170.0" y="246.0" fill="#94a3b8" font-size="12" text-anchor="end">noise 몫</text>
+  <rect x="180.0" y="228.0" width="379.2" height="26.0" rx="0" fill="#38bdf8" stroke="none" stroke-width="1" fill-opacity="0.3"/>
+  <rect x="180.0" y="228.0" width="379.2" height="26.0" rx="0" fill="none" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="567.2" y="246.0" fill="#38bdf8" font-size="12" text-anchor="start">0.998</text>
+  <text x="696.0" y="212.0" fill="#34d399" font-size="14" text-anchor="end">6.8%</text>
+  <text x="360.0" y="288.0" fill="#94a3b8" font-size="12" text-anchor="middle">생성은 N(0, 1) 에서 출발한다. x_1000 이 N(0, 1) 에 가까우려면 원래 값의 몫이 작아야 한다</text>
+</svg>

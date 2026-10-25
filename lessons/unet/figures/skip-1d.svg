@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>한 줄짜리 그림 2, 2, 2, 8, 8, 2, 2, 2 를 두 칸씩 평균해 2, 5, 5, 2 로 줄였다가 칸을 복사해 키우면 2, 2, 5, 5, 5, 5, 2, 2 가 되어 차이가 0, 0, −3, +3, +3, −3, 0, 0 이다. skip connection 은 줄이기 전의 값을 키우는 길로 건네 경계를 되살린다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="718" height="398" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="24.0" y="49.0" fill="#e2e8f0" font-size="13" text-anchor="start">원래 값</text>
+  <rect x="150.0" y="30.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#38bdf8" stroke-width="1"/>
+  <text x="172.0" y="50.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <rect x="194.0" y="30.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#38bdf8" stroke-width="1"/>
+  <text x="216.0" y="50.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <rect x="238.0" y="30.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#38bdf8" stroke-width="1"/>
+  <text x="260.0" y="50.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <rect x="282.0" y="30.0" width="44.0" height="30.0" rx="0" fill="#1f3b57" stroke="#38bdf8" stroke-width="1"/>
+  <text x="304.0" y="50.0" fill="#e2e8f0" font-size="13" text-anchor="middle">8</text>
+  <rect x="326.0" y="30.0" width="44.0" height="30.0" rx="0" fill="#1f3b57" stroke="#38bdf8" stroke-width="1"/>
+  <text x="348.0" y="50.0" fill="#e2e8f0" font-size="13" text-anchor="middle">8</text>
+  <rect x="370.0" y="30.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#38bdf8" stroke-width="1"/>
+  <text x="392.0" y="50.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <rect x="414.0" y="30.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#38bdf8" stroke-width="1"/>
+  <text x="436.0" y="50.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <rect x="458.0" y="30.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#38bdf8" stroke-width="1"/>
+  <text x="480.0" y="50.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <text x="24.0" y="119.0" fill="#e2e8f0" font-size="13" text-anchor="start">절반으로 줄임</text>
+  <rect x="150.0" y="100.0" width="88.0" height="30.0" rx="0" fill="#111a2e" stroke="#34d399" stroke-width="1"/>
+  <text x="194.0" y="120.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <rect x="238.0" y="100.0" width="88.0" height="30.0" rx="0" fill="#111a2e" stroke="#34d399" stroke-width="1"/>
+  <text x="282.0" y="120.0" fill="#e2e8f0" font-size="13" text-anchor="middle">5</text>
+  <rect x="326.0" y="100.0" width="88.0" height="30.0" rx="0" fill="#111a2e" stroke="#34d399" stroke-width="1"/>
+  <text x="370.0" y="120.0" fill="#e2e8f0" font-size="13" text-anchor="middle">5</text>
+  <rect x="414.0" y="100.0" width="88.0" height="30.0" rx="0" fill="#111a2e" stroke="#34d399" stroke-width="1"/>
+  <text x="458.0" y="120.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <line x1="194.0" y1="62.0" x2="194.0" y2="98.0" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="282.0" y1="62.0" x2="282.0" y2="98.0" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="370.0" y1="62.0" x2="370.0" y2="98.0" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="458.0" y1="62.0" x2="458.0" y2="98.0" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="518.0" y="119.0" fill="#94a3b8" font-size="12" text-anchor="start">두 칸씩 평균</text>
+  <text x="24.0" y="189.0" fill="#e2e8f0" font-size="13" text-anchor="start">다시 키움</text>
+  <rect x="150.0" y="170.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1"/>
+  <text x="172.0" y="190.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <rect x="194.0" y="170.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1"/>
+  <text x="216.0" y="190.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <rect x="238.0" y="170.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1"/>
+  <text x="260.0" y="190.0" fill="#e2e8f0" font-size="13" text-anchor="middle">5</text>
+  <rect x="282.0" y="170.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1"/>
+  <text x="304.0" y="190.0" fill="#e2e8f0" font-size="13" text-anchor="middle">5</text>
+  <rect x="326.0" y="170.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1"/>
+  <text x="348.0" y="190.0" fill="#e2e8f0" font-size="13" text-anchor="middle">5</text>
+  <rect x="370.0" y="170.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1"/>
+  <text x="392.0" y="190.0" fill="#e2e8f0" font-size="13" text-anchor="middle">5</text>
+  <rect x="414.0" y="170.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1"/>
+  <text x="436.0" y="190.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <rect x="458.0" y="170.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1"/>
+  <text x="480.0" y="190.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <text x="518.0" y="189.0" fill="#94a3b8" font-size="12" text-anchor="start">칸을 복사</text>
+  <line x1="194.0" y1="132.0" x2="194.0" y2="168.0" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="282.0" y1="132.0" x2="282.0" y2="168.0" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="370.0" y1="132.0" x2="370.0" y2="168.0" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="458.0" y1="132.0" x2="458.0" y2="168.0" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="24.0" y="249.0" fill="#e2e8f0" font-size="13" text-anchor="start">차이</text>
+  <text x="24.0" y="266.0" fill="#94a3b8" font-size="11" text-anchor="start">원래 − 키운 값</text>
+  <rect x="150.0" y="232.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f87171" stroke-width="1"/>
+  <text x="172.0" y="252.0" fill="#e2e8f0" font-size="13" text-anchor="middle">0</text>
+  <rect x="194.0" y="232.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f87171" stroke-width="1"/>
+  <text x="216.0" y="252.0" fill="#e2e8f0" font-size="13" text-anchor="middle">0</text>
+  <rect x="238.0" y="232.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f87171" stroke-width="1"/>
+  <text x="260.0" y="252.0" fill="#e2e8f0" font-size="13" text-anchor="middle">−3</text>
+  <rect x="282.0" y="232.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f87171" stroke-width="1"/>
+  <text x="304.0" y="252.0" fill="#e2e8f0" font-size="13" text-anchor="middle">+3</text>
+  <rect x="326.0" y="232.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f87171" stroke-width="1"/>
+  <text x="348.0" y="252.0" fill="#e2e8f0" font-size="13" text-anchor="middle">+3</text>
+  <rect x="370.0" y="232.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f87171" stroke-width="1"/>
+  <text x="392.0" y="252.0" fill="#e2e8f0" font-size="13" text-anchor="middle">−3</text>
+  <rect x="414.0" y="232.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f87171" stroke-width="1"/>
+  <text x="436.0" y="252.0" fill="#e2e8f0" font-size="13" text-anchor="middle">0</text>
+  <rect x="458.0" y="232.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f87171" stroke-width="1"/>
+  <text x="480.0" y="252.0" fill="#e2e8f0" font-size="13" text-anchor="middle">0</text>
+  <text x="518.0" y="251.0" fill="#f87171" font-size="12" text-anchor="start">경계가 흐려짐</text>
+  <line x1="20.0" y1="290.0" x2="700.0" y2="290.0" stroke="#1e293b" stroke-width="1"/>
+  <text x="24.0" y="322.0" fill="#a78bfa" font-size="13" text-anchor="start">skip connection</text>
+  <rect x="150.0" y="304.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1"/>
+  <text x="172.0" y="324.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <rect x="194.0" y="304.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1"/>
+  <text x="216.0" y="324.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <rect x="238.0" y="304.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1"/>
+  <text x="260.0" y="324.0" fill="#e2e8f0" font-size="13" text-anchor="middle">5</text>
+  <rect x="282.0" y="304.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1"/>
+  <text x="304.0" y="324.0" fill="#e2e8f0" font-size="13" text-anchor="middle">5</text>
+  <rect x="326.0" y="304.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1"/>
+  <text x="348.0" y="324.0" fill="#e2e8f0" font-size="13" text-anchor="middle">5</text>
+  <rect x="370.0" y="304.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1"/>
+  <text x="392.0" y="324.0" fill="#e2e8f0" font-size="13" text-anchor="middle">5</text>
+  <rect x="414.0" y="304.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1"/>
+  <text x="436.0" y="324.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <rect x="458.0" y="304.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1"/>
+  <text x="480.0" y="324.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <text x="512.0" y="324.0" fill="#e2e8f0" font-size="16" text-anchor="middle">+</text>
+  <text x="24.0" y="362.0" fill="#94a3b8" font-size="11" text-anchor="start">키우는 길이 받는 값</text>
+  <rect x="150.0" y="344.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1"/>
+  <text x="172.0" y="364.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <rect x="194.0" y="344.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1"/>
+  <text x="216.0" y="364.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <rect x="238.0" y="344.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1"/>
+  <text x="260.0" y="364.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <rect x="282.0" y="344.0" width="44.0" height="30.0" rx="0" fill="#1f3b57" stroke="#a78bfa" stroke-width="1"/>
+  <text x="304.0" y="364.0" fill="#e2e8f0" font-size="13" text-anchor="middle">8</text>
+  <rect x="326.0" y="344.0" width="44.0" height="30.0" rx="0" fill="#1f3b57" stroke="#a78bfa" stroke-width="1"/>
+  <text x="348.0" y="364.0" fill="#e2e8f0" font-size="13" text-anchor="middle">8</text>
+  <rect x="370.0" y="344.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1"/>
+  <text x="392.0" y="364.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <rect x="414.0" y="344.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1"/>
+  <text x="436.0" y="364.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <rect x="458.0" y="344.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1"/>
+  <text x="480.0" y="364.0" fill="#e2e8f0" font-size="13" text-anchor="middle">2</text>
+  <text x="518.0" y="364.0" fill="#a78bfa" font-size="12" text-anchor="start">줄이기 전의 값을 나란히 붙인다</text>
+</svg>

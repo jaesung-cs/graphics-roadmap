@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>CFG 논문 표 1 의 ImageNet 64×64 결과(p_uncond = 0.1). w 가 0 에서 4 로 커지면 FID 는 0.1 에서 1.55 로 가장 좋았다가 26.22 까지 나빠지고, IS 는 53.71 에서 260.2 로 계속 커진다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="718" height="318" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <line x1="80.0" y1="260.0" x2="640.0" y2="260.0" stroke="#94a3b8" stroke-width="1"/>
+  <line x1="80.0" y1="50.0" x2="80.0" y2="260.0" stroke="#38bdf8" stroke-width="1"/>
+  <line x1="640.0" y1="50.0" x2="640.0" y2="260.0" stroke="#f59e0b" stroke-width="1"/>
+  <line x1="80.0" y1="260.0" x2="80.0" y2="265.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="80.0" y="280.0" fill="#94a3b8" font-size="11" text-anchor="middle">w = 0</text>
+  <line x1="171.3" y1="260.0" x2="171.3" y2="265.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="171.3" y="280.0" fill="#94a3b8" font-size="11" text-anchor="middle">w = 0.3</text>
+  <line x1="321.2" y1="260.0" x2="321.2" y2="265.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="321.2" y="280.0" fill="#94a3b8" font-size="11" text-anchor="middle">w = 1</text>
+  <line x1="462.3" y1="260.0" x2="462.3" y2="265.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="462.3" y="280.0" fill="#94a3b8" font-size="11" text-anchor="middle">w = 2</text>
+  <line x1="640.0" y1="260.0" x2="640.0" y2="265.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="640.0" y="280.0" fill="#94a3b8" font-size="11" text-anchor="middle">w = 4</text>
+  <text x="360.0" y="304.0" fill="#94a3b8" font-size="11" text-anchor="middle">guidance 무게 w (가로축은 s = 1 + w 의 log 눈금)</text>
+  <text x="72.0" y="264.0" fill="#38bdf8" font-size="10" text-anchor="end">0</text>
+  <text x="72.0" y="194.0" fill="#38bdf8" font-size="10" text-anchor="end">10</text>
+  <text x="72.0" y="124.0" fill="#38bdf8" font-size="10" text-anchor="end">20</text>
+  <text x="72.0" y="54.0" fill="#38bdf8" font-size="10" text-anchor="end">30</text>
+  <text x="648.0" y="264.0" fill="#f59e0b" font-size="10" text-anchor="start">0</text>
+  <text x="648.0" y="194.0" fill="#f59e0b" font-size="10" text-anchor="start">100</text>
+  <text x="648.0" y="124.0" fill="#f59e0b" font-size="10" text-anchor="start">200</text>
+  <text x="648.0" y="54.0" fill="#f59e0b" font-size="10" text-anchor="start">300</text>
+  <text x="72.0" y="36.0" fill="#38bdf8" font-size="12" text-anchor="end">FID ↓</text>
+  <text x="648.0" y="36.0" fill="#f59e0b" font-size="12" text-anchor="start">IS ↑</text>
+  <path d="M80.0,247.4 L113.2,249.2 L143.4,245.7 L171.3,238.8 L197.1,229.9 L221.1,219.8 L243.5,209.7 L264.6,199.7 L284.5,189.4 L303.3,180.1 L321.2,171.8 L462.3,112.8 L562.4,86.2 L640.0,76.5" fill="none" stroke="#38bdf8" stroke-width="2"/>
+  <path d="M80.0,222.4 L113.2,213.7 L143.4,204.8 L171.3,195.0 L197.1,185.7 L221.1,176.5 L243.5,168.2 L264.6,160.7 L284.5,153.9 L303.3,147.3 L321.2,140.9 L462.3,102.2 L562.4,84.7 L640.0,77.9" fill="none" stroke="#f59e0b" stroke-width="2"/>
+  <circle cx="80.0" cy="247.4" r="3" fill="#38bdf8" stroke="none" stroke-width="1"/>
+  <circle cx="80.0" cy="222.4" r="3" fill="#f59e0b" stroke="none" stroke-width="1"/>
+  <circle cx="113.2" cy="249.2" r="3" fill="#38bdf8" stroke="none" stroke-width="1"/>
+  <circle cx="113.2" cy="213.7" r="3" fill="#f59e0b" stroke="none" stroke-width="1"/>
+  <circle cx="143.4" cy="245.7" r="3" fill="#38bdf8" stroke="none" stroke-width="1"/>
+  <circle cx="143.4" cy="204.8" r="3" fill="#f59e0b" stroke="none" stroke-width="1"/>
+  <circle cx="171.3" cy="238.8" r="3" fill="#38bdf8" stroke="none" stroke-width="1"/>
+  <circle cx="171.3" cy="195.0" r="3" fill="#f59e0b" stroke="none" stroke-width="1"/>
+  <circle cx="197.1" cy="229.9" r="3" fill="#38bdf8" stroke="none" stroke-width="1"/>
+  <circle cx="197.1" cy="185.7" r="3" fill="#f59e0b" stroke="none" stroke-width="1"/>
+  <circle cx="221.1" cy="219.8" r="3" fill="#38bdf8" stroke="none" stroke-width="1"/>
+  <circle cx="221.1" cy="176.5" r="3" fill="#f59e0b" stroke="none" stroke-width="1"/>
+  <circle cx="243.5" cy="209.7" r="3" fill="#38bdf8" stroke="none" stroke-width="1"/>
+  <circle cx="243.5" cy="168.2" r="3" fill="#f59e0b" stroke="none" stroke-width="1"/>
+  <circle cx="264.6" cy="199.7" r="3" fill="#38bdf8" stroke="none" stroke-width="1"/>
+  <circle cx="264.6" cy="160.7" r="3" fill="#f59e0b" stroke="none" stroke-width="1"/>
+  <circle cx="284.5" cy="189.4" r="3" fill="#38bdf8" stroke="none" stroke-width="1"/>
+  <circle cx="284.5" cy="153.9" r="3" fill="#f59e0b" stroke="none" stroke-width="1"/>
+  <circle cx="303.3" cy="180.1" r="3" fill="#38bdf8" stroke="none" stroke-width="1"/>
+  <circle cx="303.3" cy="147.3" r="3" fill="#f59e0b" stroke="none" stroke-width="1"/>
+  <circle cx="321.2" cy="171.8" r="3" fill="#38bdf8" stroke="none" stroke-width="1"/>
+  <circle cx="321.2" cy="140.9" r="3" fill="#f59e0b" stroke="none" stroke-width="1"/>
+  <circle cx="462.3" cy="112.8" r="3" fill="#38bdf8" stroke="none" stroke-width="1"/>
+  <circle cx="462.3" cy="102.2" r="3" fill="#f59e0b" stroke="none" stroke-width="1"/>
+  <circle cx="562.4" cy="86.2" r="3" fill="#38bdf8" stroke="none" stroke-width="1"/>
+  <circle cx="562.4" cy="84.7" r="3" fill="#f59e0b" stroke="none" stroke-width="1"/>
+  <circle cx="640.0" cy="76.5" r="3" fill="#38bdf8" stroke="none" stroke-width="1"/>
+  <circle cx="640.0" cy="77.9" r="3" fill="#f59e0b" stroke="none" stroke-width="1"/>
+  <line x1="113.2" y1="253.2" x2="153.2" y2="256.0" stroke="#38bdf8" stroke-width="1"/>
+  <text x="157.2" y="256.0" fill="#38bdf8" font-size="11" text-anchor="start">FID 최저 1.55 (w = 0.1)</text>
+  <text x="634.0" y="94.5" fill="#38bdf8" font-size="11" text-anchor="end">26.22</text>
+  <text x="634.0" y="69.9" fill="#f59e0b" font-size="11" text-anchor="end">260.2</text>
+  <text x="76.0" y="210.4" fill="#f59e0b" font-size="11" text-anchor="start">53.71</text>
+</svg>

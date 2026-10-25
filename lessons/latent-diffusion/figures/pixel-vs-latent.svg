@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 316" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>512×512×3 그림은 숫자 786,432 개이고 64×64×4 latent 는 16,384 개라서 48 분의 1 이다. latent 의 1 pixel 은 그림의 8×8 pixel, 숫자 192 개를 숫자 4 개로 대신한다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="718" height="314" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="24.0" y="34.0" fill="#94a3b8" font-size="13" text-anchor="start">숫자의 개수</text>
+  <text x="150.0" y="72.0" fill="#e2e8f0" font-size="13" text-anchor="end">그림 512×512×3</text>
+  <rect x="160.0" y="54.0" width="470.0" height="28.0" rx="0" fill="#38bdf8" stroke="none" stroke-width="1" fill-opacity="0.35"/>
+  <rect x="160.0" y="54.0" width="470.0" height="28.0" rx="0" fill="none" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="622.0" y="73.0" fill="#e2e8f0" font-size="13" text-anchor="end">786,432</text>
+  <text x="150.0" y="116.0" fill="#e2e8f0" font-size="13" text-anchor="end">latent 64×64×4</text>
+  <rect x="160.0" y="98.0" width="9.8" height="28.0" rx="0" fill="#34d399" stroke="none" stroke-width="1" fill-opacity="0.6"/>
+  <rect x="160.0" y="98.0" width="9.8" height="28.0" rx="0" fill="none" stroke="#34d399" stroke-width="1.5"/>
+  <text x="177.8" y="117.0" fill="#34d399" font-size="13" text-anchor="start">16,384 (48 분의 1)</text>
+  <text x="24.0" y="170.0" fill="#94a3b8" font-size="13" text-anchor="start">latent 1 pixel 이 대신하는 영역</text>
+  <rect x="40.0" y="184.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="52.0" y="184.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="64.0" y="184.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="76.0" y="184.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="88.0" y="184.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="100.0" y="184.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="112.0" y="184.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="124.0" y="184.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="40.0" y="196.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="52.0" y="196.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="64.0" y="196.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="76.0" y="196.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="88.0" y="196.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="100.0" y="196.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="112.0" y="196.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="124.0" y="196.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="40.0" y="208.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="52.0" y="208.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="64.0" y="208.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="76.0" y="208.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="88.0" y="208.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="100.0" y="208.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="112.0" y="208.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="124.0" y="208.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="40.0" y="220.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="52.0" y="220.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="64.0" y="220.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="76.0" y="220.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="88.0" y="220.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="100.0" y="220.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="112.0" y="220.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="124.0" y="220.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="40.0" y="232.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="52.0" y="232.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="64.0" y="232.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="76.0" y="232.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="88.0" y="232.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="100.0" y="232.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="112.0" y="232.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="124.0" y="232.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="40.0" y="244.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="52.0" y="244.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="64.0" y="244.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="76.0" y="244.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="88.0" y="244.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="100.0" y="244.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="112.0" y="244.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="124.0" y="244.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="40.0" y="256.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="52.0" y="256.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="64.0" y="256.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="76.0" y="256.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="88.0" y="256.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="100.0" y="256.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="112.0" y="256.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="124.0" y="256.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="40.0" y="268.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="52.0" y="268.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="64.0" y="268.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="76.0" y="268.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="88.0" y="268.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="100.0" y="268.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="112.0" y="268.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="124.0" y="268.0" width="12.0" height="12.0" rx="0" fill="#111a2e" stroke="#334155" stroke-width="0.8"/>
+  <rect x="40.0" y="184.0" width="96.0" height="96.0" rx="0" fill="none" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="88.0" y="300.0" fill="#94a3b8" font-size="11" text-anchor="middle">8×8 pixel × 3 색</text>
+  <text x="200.0" y="238.0" fill="#38bdf8" font-size="14" text-anchor="start">= 숫자 192 개</text>
+  <line x1="320.0" y1="232.0" x2="400.0" y2="232.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="360.0" y="222.0" fill="#94a3b8" font-size="11" text-anchor="middle">encoder</text>
+  <rect x="410.0" y="217.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#34d399" stroke-width="1"/>
+  <text x="432.0" y="237.0" fill="#e2e8f0" font-size="13" text-anchor="middle">z₁</text>
+  <rect x="454.0" y="217.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#34d399" stroke-width="1"/>
+  <text x="476.0" y="237.0" fill="#e2e8f0" font-size="13" text-anchor="middle">z₂</text>
+  <rect x="498.0" y="217.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#34d399" stroke-width="1"/>
+  <text x="520.0" y="237.0" fill="#e2e8f0" font-size="13" text-anchor="middle">z₃</text>
+  <rect x="542.0" y="217.0" width="44.0" height="30.0" rx="0" fill="#111a2e" stroke="#34d399" stroke-width="1"/>
+  <text x="564.0" y="237.0" fill="#e2e8f0" font-size="13" text-anchor="middle">z₄</text>
+  <text x="600.0" y="238.0" fill="#34d399" font-size="14" text-anchor="start">숫자 4 개</text>
+</svg>
