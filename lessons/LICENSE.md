@@ -16,8 +16,8 @@ CC BY-NC-SA 4.0. The changes made to it:
   lessons were turned into plain text.
 - The lessons of the `stable-diffusion` branch are new, © 2026 jaesung-cs, and released under the same
   license.
-- `lessons/branches.yaml` was rewritten for the new curriculum map, and the images of the robotics map in `docs/` were
-  removed.
+- `lessons/branches.yaml` was rewritten for the new curriculum map, a single tree that grows down from the first lesson
+  instead of trees around a central hub, and the images of the robotics map in `docs/` were removed.
 
 You may share and adapt this material for non-commercial purposes, as long as you credit both Robotics Roadmap (link
 above) and Graphics Roadmap (https://github.com/jaesung-cs/graphics-roadmap), indicate the changes you made, and share your

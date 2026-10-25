@@ -13,7 +13,7 @@ export const CONFIG = {
     image: 'og.png', // site/public/og.png
     imageWidth: 1200,
     imageHeight: 630,
-    imageAlt: 'Graphics Roadmap 커리큘럼 지도. 가운데 수학 기초에서 Deep Learning 과 Image Generation 트리가 뻗는다',
+    imageAlt: 'Graphics Roadmap 커리큘럼 지도. 맨 위의 수학 기초에서 Stable Diffusion 까지 강의가 위에서 아래로 이어진다',
     locale: 'ko_KR',
   },
 

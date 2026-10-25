@@ -547,7 +547,9 @@ export async function computeLayout(c: Curriculum): Promise<Layout> {
   }
 
   // the lines between the trees' areas leave the rim through the middle of the gap between two neighbouring trees, as
-  // seen from the centre, and run out to the edge of the map
+  // seen from the centre, and run out to the edge of the map. A map with a single tree has nothing to mark off, so it
+  // gets neither lines nor areas
+  const separate = c.trees.length > 1
   const deg = (p: Point) => (Math.atan2(p.x, -p.y) * 180) / Math.PI
   const spread = (t: Tree) => {
     const offs = [...nodes.values()]
@@ -572,7 +574,9 @@ export async function computeLayout(c: Curriculum): Promise<Layout> {
       return [t.id, from + ((((to - from) % 360) + 360) % 360) / 2] as const
     }),
   )
-  const dividers = [...after.values()].map((a) => ({ from: turn({ x: 0, y: -outer }, a), to: turn({ x: 0, y: -reach }, a) }))
+  const dividers = separate
+    ? [...after.values()].map((a) => ({ from: turn({ x: 0, y: -outer }, a), to: turn({ x: 0, y: -reach }, a) }))
+    : []
 
   // each tree's area is the wedge between the line before it and the line after it; its name is written large and faint
   // like a background, as near as it can to the middle of the tree's lessons (the middle of their distances from the
@@ -580,7 +584,7 @@ export async function computeLayout(c: Curriculum): Promise<Layout> {
   // behind them at the nearest spot in the wedge
   const sectors: Sector[] = []
   const S = CONFIG.sector
-  for (const [i, t] of around.entries()) {
+  for (const [i, t] of separate ? around.entries() : []) {
     const start = after.get(around[(i + around.length - 1) % around.length].id)!
     const end = after.get(t.id)!
     const lo = ((start - t.angle + 540) % 360) - 180

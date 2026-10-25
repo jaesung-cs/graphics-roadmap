@@ -4,8 +4,8 @@
 
 **Stable Diffusion 을 이해하기 위한 오픈소스 독학 커리큘럼**
 
-[![Lessons](https://img.shields.io/badge/lessons-17-2dd4bf)](#커리큘럼)
-[![Hours](https://img.shields.io/badge/hours-35-818cf8)](#커리큘럼)
+[![Lessons](https://img.shields.io/badge/lessons-22-2dd4bf)](#커리큘럼)
+[![Hours](https://img.shields.io/badge/hours-45-818cf8)](#커리큘럼)
 [![Lessons license](https://img.shields.io/badge/lessons-CC%20BY--NC--SA%204.0-lightgrey)](lessons/LICENSE.md)
 [![Site license](https://img.shields.io/badge/site-MIT-blue)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%E2%89%A520.19-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
@@ -77,22 +77,24 @@ git merge upstream/main
 
 ## 커리큘럼
 
-| 영역 | 다루는 것 |
+| branch | 다루는 것 |
 | --- | --- |
-| 수학 기초 | vector·행렬, 미분·gradient, 확률·Gaussian |
-| Deep Learning | linear regression 에서 PyTorch 까지의 신경망 기초, CNN·ResNet·ViT·CLIP, tokenizer·Transformer·GPT-2 |
-| Image Generation | VAE·DDPM·flow matching, 그리고 Stable Diffusion 의 U-Net, latent diffusion, text conditioning(cross-attention), classifier-free guidance, sampler |
+| Math | vector·행렬, 미분·gradient, 확률·Gaussian |
+| Foundations | linear regression 에서 perceptron, autograd, PyTorch MLP 까지의 신경망 기초 |
+| Vision · Language | CNN·ResNet·ViT·CLIP, tokenizer·Transformer·GPT-2 |
+| Generative Models | VAE·DDPM·flow matching |
+| Stable Diffusion | U-Net, latent diffusion, text conditioning(cross-attention), classifier-free guidance, sampler |
 
-원 하나가 강의 하나이고, 선은 먼저 읽어 두면 좋은 강의를 잇습니다. 가운데의 Vectors & Matrices 에서 시작해 수학 기초를 읽고, 아래의
-Deep Learning 트리에서 신경망을 익힌 뒤 위의 Image Generation 트리를 따라 Stable Diffusion 까지 나아가면 됩니다. 선수 관계는 권장
-순서일 뿐이라 어떤 강의든 바로 열 수 있습니다.
+원 하나가 강의 하나이고, 선은 먼저 읽어 두면 좋은 강의를 잇습니다. 지도는 맨 위의 Vectors & Matrices 에서 시작해 아래로 자라고, 선수
+강의가 언제나 위에 놓입니다. 위에서부터 수학 기초와 신경망 기초를 읽고, 이미지와 글을 읽는 encoder 와 생성 모델을 거쳐 맨 아래의
+Stable Diffusion 까지 내려가면 됩니다. 선수 관계는 권장 순서일 뿐이라 어떤 강의든 바로 열 수 있습니다.
 
 ## 강의와 퀴즈
 
 강의는 학습 목표, 본문, 정리 순서로 이루어집니다. 본문은 직접 따라 계산하는 표, 그림, 수식, 절마다 답을 접어 둔 확인 문제로 짜여
 있고, 긴 유도는 "심화" 블록에 접어 두어 처음 읽을 때는 건너뛸 수 있습니다.
 
-Deep Learning 트리와 생성 모델 기초 강의는 끝에 퀴즈가 있습니다. 강의의 원리 하나마다 한 문항을 묻고, 제출하면 틀린 문항의 해설이
+Stable Diffusion branch 를 뺀 강의는 끝에 퀴즈가 있습니다. 강의의 원리 하나마다 한 문항을 묻고, 제출하면 틀린 문항의 해설이
 보이고, 다시 풀 때는 틀린 원리만 같은 원리의 다른 문항으로 묻습니다. 틀린 문항이 남지 않으면 그 강의는 완료로 칠해지고 이어지는 강의가
 밝아집니다. Stable Diffusion 강의에는 퀴즈가 없고, 끝까지 읽은 뒤 "다 읽음" 으로 표시하면 완료로 칠해집니다.
 
@@ -101,7 +103,7 @@ Deep Learning 트리와 생성 모델 기초 강의는 끝에 퀴즈가 있습�
 ```text
 graphics-roadmap/
 ├── lessons/              # 강의
-│   ├── branches.yaml     # 지도의 동심원·영역·branch 설정
+│   ├── branches.yaml     # 지도의 branch 와 배치 설정
 │   └── <강의>/
 │       ├── README.md     # 강의 본문 (frontmatter 에 선수 강의·시간·논문)
 │       ├── quiz.yaml     # 퀴즈 (Stable Diffusion 강의에는 없음)
@@ -138,6 +140,6 @@ graphics-roadmap/
 - 남긴 강의(수학 기초, 신경망 기초, Vision, Language, VAE·DDPM·flow matching)는 원본 그대로 두고, 지운 강의로 가는 링크만 풀었습니다.
   그래서 본문의 예시와 다음 강의 예고에 로봇 이야기가 남아 있습니다
 - Stable Diffusion branch 의 강의를 새로 썼습니다
-- 지도를 수학 기초와 두 트리(Deep Learning, Image Generation)로 다시 짰고, 퀴즈가 없는 강의를 "다 읽음" 으로 완료하는 기능을 사이트에
+- 지도를 가운데에서 여러 트리가 뻗는 원형에서 맨 위의 첫 강의부터 아래로 자라는 트리 하나로 바꿨고, 퀴즈가 없는 강의를 "다 읽음" 으로 완료하는 기능을 사이트에
   더했습니다
 - README·CONTRIBUTING·CLAUDE.md 를 이 커리큘럼에 맞게 고쳤고, 로보틱스 지도를 찍은 `docs/` 의 이미지를 지웠습니다

@@ -162,10 +162,11 @@ describe('curriculum', () => {
     expect(Math.max(...xs) - Math.min(...xs)).toBeLessThan(1)
   })
 
-  it('names every tree inside its own area, off the hub', async () => {
+  it('names every tree inside its own area, off the hub, when there are trees to tell apart', async () => {
     const layout = await computeLayout(c)
-    expect(layout.sectors.map((r) => r.tree).sort()).toEqual(c.trees.map((t) => t.id).sort())
-    expect(layout.dividers).toHaveLength(c.trees.length)
+    const separate = c.trees.length > 1
+    expect(layout.sectors.map((r) => r.tree).sort()).toEqual(separate ? c.trees.map((t) => t.id).sort() : [])
+    expect(layout.dividers).toHaveLength(separate ? c.trees.length : 0)
     for (const r of layout.sectors) {
       for (const [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
         const [x, y] = [r.x + (dx * r.width) / 2, r.y + (dy * r.height) / 2]
@@ -182,7 +183,9 @@ describe('curriculum', () => {
     for (const n of layout.nodes.values()) {
       const r = Math.hypot(n.x, n.y)
       const ring = c.hub.get(n.id)
-      if (ring === undefined) expect(r, n.id).toBeGreaterThan(outer)
+      // the start sits at the centre, inside the hub or, with no hub, at the top of the single tree
+      if (c.byId.get(n.id)!.requires.length === 0) expect(r, n.id).toBe(0)
+      else if (ring === undefined) expect(r, n.id).toBeGreaterThan(outer)
       else if (ring > 0) expect(r, n.id).toBeCloseTo(layout.rings[ring - 1], 0)
     }
   })

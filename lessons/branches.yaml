@@ -1,28 +1,22 @@
-# The curriculum map: the math at the centre, and two trees growing out of it: the deep learning foundations, and the
-# image generation that builds on them up to Stable Diffusion.
+# The curriculum map: one tree that grows from the starting lesson at the top down to Stable Diffusion. The deep
+# learning foundations and the image generation lessons build on each other closely, so they share one tree.
 
-# hub: the basics every tree starts from, on rings around the start at the centre, innermost first. A ring holds
-# lessons of one kind: whole branches, and single lessons of tree branches that two or more trees build on. A hub
-# lesson's prerequisites sit on its own ring or inside it; the trees start from the outermost ring.
+# hub: the basics every tree starts from, on rings around the start, innermost first. A ring holds lessons of one kind:
+# whole branches, and single lessons of tree branches that two or more trees build on. With a single tree there is no
+# hub: every lesson, the math included, grows down from the start.
 hub:
-  rings:
-    - branches: [math]
+  rings: []
 
-# title: the name written in the tree's area of the map, which lines from the hub mark off from the other trees.
+# title: the tree's name; with more than one tree it is written in the tree's area of the map.
 # color: the faint tint of that area.
-# angle: the direction a tree grows from the centre, degrees clockwise from up (0 up, 90 right, 180 down).
-# branches: the tree's branches, laid side by side in this order, clockwise around the centre.
+# angle: the direction a tree grows from the start, degrees clockwise from up (0 up, 90 right, 180 down).
+# branches: the tree's branches, laid side by side in this order, left to right for a tree growing down.
 trees:
-  - id: foundations
-    title: Deep Learning
+  - id: roadmap
+    title: Graphics Roadmap
     color: "#a78bfa"
     angle: 180
-    branches: [language, core, vision]
-  - id: generation
-    title: Image Generation
-    color: "#e879f9"
-    angle: 0
-    branches: [generative, stable-diffusion]
+    branches: [math, language, core, vision, generative, stable-diffusion]
 
 # Listed in legend order. core: true marks the foundations every other branch builds on (exactly one); the map draws
 # its chain as the trunk.

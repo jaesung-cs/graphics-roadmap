@@ -36,8 +36,8 @@ export function Intro({ firstLessonId, lessonCount, onClose, onStart }: Props) {
       </p>
       <ol className="intro-steps">
         <li>
-          <strong>가운데 동심원에서 출발</strong>
-          <span>두 트리가 함께 쓰는 수학 기초가 가운데 동심원에 있습니다. 그 바깥으로 아래는 신경망의 기초인 deep learning, 위는 VAE·diffusion 에서 Stable Diffusion 으로 이어지는 image generation 트리가 뻗습니다.</span>
+          <strong>맨 위에서 출발</strong>
+          <span>맨 위의 Vectors &amp; Matrices 에서 시작해 아래로 내려갑니다. 수학 기초, 신경망의 기초, 이미지와 글을 읽는 encoder, VAE·diffusion 을 거쳐 맨 아래의 Stable Diffusion 강의에 닿습니다.</span>
         </li>
         <li>
           <strong>원을 눌러 강의 읽기</strong>

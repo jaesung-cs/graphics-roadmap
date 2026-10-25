@@ -87,7 +87,8 @@ export function Holygraph({
     return { w: el.clientWidth, h: el.clientHeight }
   }
 
-  // whole map when it fits at minScale or larger; otherwise centred on the start, which sits at the origin
+  // whole map when it fits at minScale or larger; otherwise centred on the start, which sits at the origin, but never
+  // leaving empty space above the map's top, so a map that grows down from the start opens with the start near the top
   const fitTransform = (minScale: number = CONFIG.zoom.min) => {
     const { w, h } = sizeOf()
     const i = insetsRef.current
@@ -100,7 +101,7 @@ export function Holygraph({
     const k = Math.min(CONFIG.zoom.max, Math.max(minScale, Math.min(aw / bw, ah / bh)))
     const fits = bw * k <= aw && bh * k <= ah
     const tx = i.left + pad + aw / 2 - (fits ? (b.left + b.right) / 2 : 0) * k
-    const ty = i.top + pad + ah / 2 - (fits ? (b.top + b.bottom) / 2 : 0) * k
+    const ty = fits ? i.top + pad + ah / 2 - ((b.top + b.bottom) / 2) * k : Math.min(i.top + pad + ah / 2, i.top + pad - b.top * k)
     return zoomIdentity.translate(tx, ty).scale(k)
   }
 

@@ -9,7 +9,7 @@
 강의 하나는 `lessons/<id>/` 폴더 하나이고, 그 안에는 강의 본문 `README.md`, 그림 `figures/`, 퀴즈 `quiz.yaml` 만 둔다.
 Stable Diffusion branch 의 강의에는 퀴즈가 없고, 학습자가 "다 읽음" 으로 표시해 완료한다. 응시·읽음 기록은 강의 폴더가 아니라
 `progress/<id>.json` 에 쌓인다. 강의 `README.md` 앞의 YAML frontmatter 가 지도에 쓰이는 정보(branch, 선수 강의, 예상 시간, 논문)다.
-branch 의 이름·색·순서와 각 branch 가 가운데 hub 와 두 트리 중 어디에 놓이는지는 [`lessons/branches.yaml`](lessons/branches.yaml) 에서 정한다.
+branch 의 이름·색·순서와 지도에서 branch 를 놓는 순서는 [`lessons/branches.yaml`](lessons/branches.yaml) 에서 정한다.
 
 | frontmatter | 내용 |
 | --- | --- |
@@ -108,17 +108,15 @@ dev server 는 시작할 때 `site/update-server.ts` 로 원본 리포를 `upstr
 dev server 는 기본으로 localhost 에서만 받는다. 다른 기기(같은 네트워크나 Tailscale)에서 지도를 열려면 git 이 무시하는
 `site/dev-server.local.json` 에 `{ "host": true, "allowedHosts": ["내-컴퓨터-이름", ".ts.net"] }` 처럼 적는다.
 
-지도는 시작 강의를 가운데 두고, [`lessons/branches.yaml`](lessons/branches.yaml) 의 `hub`(공통 기초) 강의를 그 둘레의 동심원에
-놓는다. `hub.rings` 가 안쪽부터 동심원 하나에 놓을 강의를 정하는데, 비슷한 부류끼리 한 원에 모은다(지금은 수학 한 원). branch 전체는 `branches` 로, 트리 두 개 이상이 쓰는 강의는 `lessons` 로 하나씩 넣고, hub 강의의 선수 강의는 같은
-원이나 그 안쪽에 있어야 한다. 강의는 원 위에서 자기가 이어지는 트리 쪽을 향하고, 같은 원 위의 선수 관계는 원을 따라 잇는다. hub
-강의에서 트리로 가는 선은 그리지 않고, 가장 바깥의 테두리 원에서 트리의 강의로 선을 잇는다. 그 테두리 밖으로 `trees`(Deep Learning, Image Generation)마다
-트리 하나를 그 트리의 `angle` 방향으로 뻗는다([`site/src/curriculum/layout.ts`](site/src/curriculum/layout.ts)). 이웃한 두 트리 사이에는
-테두리에서 바깥으로 점선을 그어 구역을 나누고, 구역마다 그 트리의 `title` 을 크게 쓴다. 트리 하나는 시작 강의와 그
-트리의 강의만으로 만든 layered 배치다. [`site/src/curriculum/order.ts`](site/src/curriculum/order.ts) 가 선 교차가 가장 적은 층과 층 안의
-순서를 찾고, [ELK](https://eclipse.dev/elk/) 가 그 순서를 지키며 위치를 잡는다. 트리를 아래로 자라게 배치한 뒤 제 방향으로 돌리고,
-이름표는 수평을 유지한 채 위로 자라는 트리에서는 원 위에 놓는다. 다른 트리의 강의가 선수 강의인 선과, 트리 안에도 선수 강의가 있는 강의로
-테두리에서 가는 선은 흐리게 그리고, 이름표가 다른
-트리와 닿으면 작은 트리부터 바깥으로 밀려난다. Foundations 강의는 아래 트리의 세로 줄기가 된다.
+지도는 시작 강의(Vectors & Matrices)를 맨 위에 두고, 모든 강의를 아래로 자라는 트리 하나로 그린다. [`lessons/branches.yaml`](lessons/branches.yaml)
+의 `trees` 에는 `angle: 180`(아래)인 트리 하나만 있고, `branches` 가 그 트리 안에서 branch 를 왼쪽부터 놓는 순서다. `hub.rings` 는 비어 있다.
+트리는 시작 강의와 모든 강의로 만든 layered 배치다([`site/src/curriculum/layout.ts`](site/src/curriculum/layout.ts)).
+[`site/src/curriculum/order.ts`](site/src/curriculum/order.ts) 가 선 교차가 가장 적은 층과 층 안의 순서를 찾고, [ELK](https://eclipse.dev/elk/)
+가 그 순서를 지키며 위치를 잡아, 선수 강의는 언제나 위에 놓인다. Foundations 강의는 트리의 세로 줄기가 된다.
+
+layout 코드는 원본의 원형 지도도 그대로 그릴 수 있다. `hub.rings` 에 강의를 넣으면 시작 강의 둘레의 동심원에 놓이고, `trees` 를 둘 이상 두면
+트리마다 그 `angle` 방향으로 뻗으며 이웃한 트리 사이에 구역을 나누는 점선과 트리의 `title` 이 그려진다. 트리가 하나면 나눌 구역이 없어
+점선과 `title` 을 그리지 않는다.
 
 ```bash
 cd site
