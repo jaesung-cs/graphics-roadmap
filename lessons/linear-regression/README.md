@@ -4,7 +4,7 @@ title: Linear Regression
 branch: core
 requires: [derivatives]
 hours: 2
-summary: 측정 데이터에 직선을 맞추는 법. MSE loss, gradient descent, learning rate 와 발산, train·test, normal equation, sensor calibration 과 policy 의 action head
+summary: 측정 데이터에 직선을 맞추는 법. MSE loss, gradient descent, learning rate 와 발산, pixel 값의 standardization, train·test, normal equation, 카메라 밝기와 사진 속 눈금의 calibration
 papers:
   - title: "Nouvelles méthodes pour la détermination des orbites des comètes"
     authors: Adrien-Marie Legendre
@@ -13,37 +13,42 @@ papers:
   - title: "Méthode générale pour la résolution des systèmes d'équations simultanées"
     authors: Augustin-Louis Cauchy
     year: 1847
+  - title: "Image-to-Image Translation with Conditional Adversarial Networks"
+    authors: Isola, Zhu, Zhou, Efros
+    year: 2017
+    url: https://arxiv.org/abs/1611.07004
 ---
 
 # Linear Regression
 
-로봇 청소기 바퀴 motor 에 전압을 넣고 1초 동안 굴러간 거리를 재면 1 V 에서 5.5 cm, 2 V 에서 7.5 cm, 3 V 에서 10.5 cm, 4 V 에서
-14.5 cm 처럼 바닥 상태에 따라 조금씩 흔들린 값이 나와서, 네 점을 모두 지나는 직선은 그을 수 없다. 10 cm 를 가는 데 몇 V 가 필요한지
-알려면 그래도 점들을 대표하는 직선 하나를 정해야 하는데, 컴퓨터는 수많은 직선 가운데 가장 잘 맞는 하나를 어떻게 고를까?
+어두운 방에서 카메라의 노출 시간을 바꿔 가며 같은 회색 판을 찍고 한 pixel 의 밝기 값을 읽으면 1 ms 에서 5.5, 2 ms 에서 7.5, 3 ms 에서
+10.5, 4 ms 에서 14.5 처럼 noise 때문에 조금씩 흔들린 값이 나와서, 네 점을 모두 지나는 직선은 그을 수 없다. 그래도 밝기 10 에 필요한 노출
+시간을 구하려면 점들을 대표하는 직선 하나를 정해야 한다. 컴퓨터는 수많은 직선 가운데 가장 잘 맞는 하나를 어떻게 고를까?
 
 linear regression 은 직선이 점들에서 벗어난 정도를 loss 라는 숫자 하나로 재고, loss 가 줄어드는 쪽으로 직선의 기울기와 절편을 조금씩
-고쳐 가며 그 직선을 찾는다. Hugging Face 의 로봇 학습 라이브러리 LeRobot 에 구현된 ACT policy 도 마지막 층에서는 숫자 512 개에
-weight 를 곱해 더하는 같은 계산으로 관절 목표를 내고, 그 weight 를 loss 의 gradient 로 고친다.
+고쳐 가며 그 직선을 찾는다. 이 강의의 loss 인 MSE 는 그림 생성에서도 그대로 쓰인다. [DDPM](../ddpm/README.md) 과 Stable Diffusion 은 사진에
+섞은 noise 를 network 가 맞히게 하는데, 맞힌 noise 와 실제 noise 의 차이를 이 강의의 MSE 로 재고 그 gradient 로 weight 를 고친다.
 
 ## 학습 목표
 
 - MSE loss 가 무엇을 재는지, 오차를 왜 제곱하는지, 크게 빗나간 점 하나가 직선을 어떻게 끌어당기는지 설명할 수 있다
 - MSE 의 gradient 를 부호로 읽고, gradient descent 로 직선의 parameter 를 고치는 과정을 표로 따라갈 수 있다
 - learning rate 와 입력의 크기에 따라 학습이 수렴하거나 발산하는 이유를 update 마다 곱해지는 수로 설명할 수 있다
-- train loss 와 test loss 를 구분하고, sensor calibration·motor 의 torque constant·policy 의 action head 에서 linear regression 이 쓰이는
-  방식을 설명할 수 있다
+- train loss 와 test loss 를 구분하고, 카메라 밝기와 사진 속 눈금의 calibration 에서 linear regression 이 쓰이는 방식을 설명할 수 있다
 
 ## 데이터와 모델
 
 계산을 손으로 따라가기 쉽도록 noise 가 없는 세 점부터 시작하고, 서론의 흔들린 네 점은 [normal equation](#normal-equation) 절에서 다시
-쓴다. 전압 $x$ 를 넣었을 때 1초에 움직인 거리 $y$ 를 잰 결과가 아래와 같다고 하자.
+쓴다. 노출 시간 $x$ 로 찍었을 때 pixel 의 밝기 $y$ 를 읽은 결과가 아래와 같다고 하자.
 
-| 전압 $x$ (V) | 1 | 2 | 3 |
+| 노출 시간 $x$ (ms) | 1 | 2 | 3 |
 | --- | --- | --- | --- |
-| 거리 $y$ (cm) | 5 | 8 | 11 |
+| 밝기 $y$ | 5 | 8 | 11 |
 
-전압이 1 V 늘 때마다 거리가 3 cm 씩 늘고 0 V 로 이어 보면 2 cm 라서, 세 점은 직선 $y = 3x + 2$ 위에 있다. 컴퓨터는 이 규칙을 모르는
-채로 숫자 두 개를 비워 둔 직선을 준비하고, 데이터를 보며 그 두 숫자를 채운다.
+노출 시간이 1 ms 늘 때마다 밝기가 3 씩 늘고 0 ms 로 이어 보면 2 라서, 세 점은 직선 $y = 3x + 2$ 위에 있다. 센서는 셔터가 열린 동안 빛을
+모으므로 밝기가 노출 시간에 비례해 늘고, [Probability & Gaussians](../probability/README.md) 에서 본 것처럼 빛이 없어도 0 이 아닌 값(bias)이
+더해진다. 이 예에서 기울기 3 은 1 ms 동안 모인 빛이 더하는 밝기이고, 절편 2 는 빛이 없을 때의 밝기다. 컴퓨터는 이 규칙을 모르는 채로 숫자 두 개를
+비워 둔 직선을 준비하고, 데이터를 보며 그 두 숫자를 채운다.
 
 $$
 \hat y = w x + b
@@ -56,8 +61,8 @@ $\hat y$("y hat")는 직선이 내놓는 예측으로, 실제로 잰 $y$ 와 구
 
 ![왼쪽은 직선 y = 3x + 2 위에서 x 가 1 늘 때 y 가 3 느는 모습과 x = 0 일 때의 높이 2. 오른쪽은 w 와 b 를 바꾸면 직선이 달라지는 모습](figures/line-parameters.svg)
 
-이 직선의 parameter 는 두 개뿐이고 사진을 보고 로봇 팔을 움직이는 policy 의 parameter 는 수천만 ~ 수십억 개지만, 데이터를 보고
-parameter 를 고치는 방식은 같다.
+이 직선의 parameter 는 두 개뿐이고 Stable Diffusion v1 의 U-Net 은 parameter 가 859,520,964 개지만, 데이터를 보고 parameter 를 고치는 방식은
+같다.
 
 ## MSE loss
 
@@ -89,15 +94,15 @@ $N$ 은 점의 개수이고 $\hat y_i - y_i$ 는 $i$ 번째 점의 오차이며,
 위 그림에서 정답 점(주황)과 같은 $x$ 의 예측(파랑)을 잇는 빨간 점선의 길이가 오차다. 직선을 바닥에 눕혀 $w = 0$, $b = 0$ 으로 하면
 오차가 $-5, -8, -11$ 이고 제곱의 합이 $25 + 64 + 121 = 210$ 이라, loss 는 $210 \div 3 = 70$ 으로 커진다.
 
-제곱하면 오차 1 은 그대로 1 이지만 오차 10 은 100 이 되어서, 크게 빗나간 점 하나가 직선을 자기 쪽으로 끌어당긴다. 1 ~ 4 V 에서 5, 8,
-11, 14 cm 를 잰 깨끗한 데이터라면 loss 가 가장 작은 직선은 $y = 3x + 2$ 인데, 4 V 의 값이 센서 오류로 24 cm 로 찍히면 그 직선이
+제곱하면 오차 1 은 그대로 1 이지만 오차 10 은 100 이 되어서, 크게 빗나간 점 하나가 직선을 자기 쪽으로 끌어당긴다. 1 ~ 4 ms 에서 5, 8,
+11, 14 를 읽은 깨끗한 데이터라면 loss 가 가장 작은 직선은 $y = 3x + 2$ 인데, 4 ms 의 값이 반사광 때문에 24 로 찍히면 그 직선이
 $y = 6x - 3$ 으로 바뀐다.
 
-![4 V 에서 14 cm 이어야 할 측정이 24 cm 로 잘못 찍히면 MSE 가 가장 작은 직선이 y = 3x + 2 에서 y = 6x − 3 으로 바뀐다](figures/outlier-pull.svg)
+![4 ms 에서 14 이어야 할 밝기가 24 로 잘못 찍히면 MSE 가 가장 작은 직선이 y = 3x + 2 에서 y = 6x − 3 으로 바뀐다](figures/outlier-pull.svg)
 
-로봇 데이터에는 encoder 가 한 번 튄 값이나 사람이 조종하다 손이 미끄러진 순간처럼 크게 빗나간 점이 섞이기 쉽다. 오차의 크기를 제곱하지
-않고 그대로 평균하는 L1 loss 는 이런 점에 덜 끌려간다. ACT 논문의 저자들은 관절 목표를 학습할 때 흔히 쓰는 L2 loss(MSE) 대신 L1 loss
-를 썼는데, 그쪽이 action 을 더 정밀하게 학습했다고 보고했다.
+사진 데이터에는 hot pixel 이나 잠깐 비친 반사광처럼 크게 빗나간 값이 섞이기 쉽다. 오차의 크기를 제곱하지 않고 그대로 평균하는 L1 loss 는
+이런 점에 덜 끌려간다. 그림을 다른 그림으로 바꾸는 모델인 pix2pix 의 저자들도 만든 그림과 정답 그림의 차이를 잴 때 L2 loss(MSE) 대신 L1
+loss 를 골랐는데, L1 이 그림을 덜 흐리게 만들기 때문이라고 밝혔다.
 
 **흔한 오해.** loss 를 "데이터가 얼마나 나쁜가" 로 읽기 쉽다. 같은 세 점이라도 $(w, b)$ 를 $(0, 0)$, $(2, 1)$, $(3, 2)$ 로 바꾸면 loss 가
 70, 9.67, 0 으로 바뀐다. loss 는 지금 고른 parameter 가 이 데이터에 얼마나 안 맞는지를 잰다.
@@ -378,11 +383,11 @@ $$
 
 </details>
 
-로봇 데이터에서는 이 차이가 훨씬 커진다. Dynamixel XM430-W350 의 encoder 는 한 바퀴를 4096 눈금으로 재므로, 관절 각도를 radian 대신 encoder
-눈금 수로 넣으면 입력이 $4096 / (2\pi) \approx 652$ 배가 되고 $x_i^2$ 의 평균은 약 42 만 배가 된다. 같은 모델이라도 단위 하나 때문에 learning
-rate 를 42 만 분의 1 로 줄여야 한다. 그래서 학습 전에 입력에서 평균을 빼고 흩어진 정도(표준편차)로 나눠 평균 0, 표준편차 1 로 맞추는데,
-이것을 **standardization** 이라고 한다. LeRobot 의 ACT 도 기본 설정에서 카메라 영상, 관절 상태, action 을 모두 dataset 의 평균과 표준편차로 이렇게
-바꾼 뒤 학습한다.
+사진 데이터에서는 이 차이가 훨씬 커진다. pixel 값을 0 ~ 1 대신 0 ~ 255 로 넣으면 입력이 255 배가 되고 $x_i^2$ 의 평균은 $255^2 = 65{,}025$ 배가
+된다. 같은 모델이라도 단위 하나 때문에 learning rate 를 6 만 5 천 분의 1 로 줄여야 한다. 그래서 학습 전에 입력에서 평균을 빼고 흩어진
+정도(표준편차)로 나눠 평균 0, 표준편차 1 로 맞추는데, 이것을 **standardization** 이라고 한다. torchvision 의 ImageNet 분류 모델들은 0 ~ 1 로
+바꾼 pixel 값에서 빨강·초록·파랑마다 평균 $(0.485, 0.456, 0.406)$ 을 빼고 표준편차 $(0.229, 0.224, 0.225)$ 로 나눈 값을 입력으로 받는다.
+Stable Diffusion 의 VAE 는 pixel 값을 $-1$ ~ $1$ 로 맞춰 넣는데, diffusers 의 `VaeImageProcessor` 가 0 ~ 1 의 값 $p$ 를 $2p - 1$ 로 바꾼다.
 
 loss 를 평균이 아니라 합으로 정의해도 같은 문제가 생긴다. 오차 제곱의 합(sum)은 평균에 점의 개수 $N$ 을 곱한 값이라 바닥의 위치는 그대로지만
 gradient 도 $N$ 배가 되어서, sum 에 learning rate $\eta$ 를 쓰는 것은 mean 에 $N\eta$ 를 쓰는 것과 같다. mean 을 쓰면 데이터 수나 mini-batch
@@ -428,6 +433,11 @@ $$
 한다. 서론의 흔들린 네 점 $(1, 5.5)$, $(2, 7.5)$, $(3, 10.5)$, $(4, 14.5)$ 는 직선 $3x + 2$ 의 값 5, 8, 11, 14 에 noise $\pm 0.5$ 를 섞어
 만든 예로, 풀면 $w = 3$, $b = 2$ 가 나온다. 이 직선에서도 오차가 $-0.5, +0.5, +0.5, -0.5$ 로 남아 가장 작은 loss 는 0.25 다. 이 예에서는 noise 가
 위아래로 고르게 섞여 답이 원래 직선과 같았지만, 보통은 답이 원래 직선에서 조금 벗어나고 점이 많을수록 가까워진다.
+
+사진 속 길이 재기도 같은 식으로 푼다. [Vectors & Matrices](../vectors-matrices/README.md) 에서는 자의 눈금 두 개로 식 두 개를 세워 pixel
+좌표 $= sX + c$ 의 $s$ 와 $c$ 를 정확히 풀었다. 예를 들어 눈금을 $X = 10, 20, 30$ cm 세 곳에서 골라 pixel 좌표를 151, 198, 251 로
+읽었다면, 모르는 값은 둘인데 식이 셋이라 세 식을 모두 맞추는 답이 없다. normal equation 으로 풀면 $s = 5$ pixel/cm, $c = 100$ pixel 이고 세
+눈금의 오차는 $-1, +2, -1$ pixel 이다. 눈금을 많이 쓸수록 하나를 잘못 읽어도 답이 덜 흔들린다.
 
 식을 바로 풀 수 있는데도 학습에 gradient descent 를 쓰는 이유는 두 가지다.
 
@@ -494,28 +504,28 @@ $1.5w + b = 4$ 다.
 ## train loss 와 test loss
 
 loss 가 작다고 좋은 모델인 것은 아니다. 흔들린 네 점에 직선 $3x + 2$ 를 맞추면 loss 가 0.25 인데, 곡선 $\hat y = 0.5x^2 + 0.5x + 4.5$ 는 네 점을
-모두 정확히 지나서 loss 가 0 이다($x = 2$ 이면 $2 + 1 + 4.5 = 7.5$). 그런데 5 V 에서 새로 잰 거리가 17.5 cm 였다고 하자(이 예에서 정한 값이다).
+모두 정확히 지나서 loss 가 0 이다($x = 2$ 이면 $2 + 1 + 4.5 = 7.5$). 그런데 예를 들어 5 ms 로 새로 찍은 밝기가 17.5 였다고 하자.
 
-| 모델 | 네 점의 loss | 5 V 의 예측 | 5 V 의 오차 | 5 V 의 오차 제곱 |
+| 모델 | 네 점의 loss | 5 ms 의 예측 | 5 ms 의 오차 | 5 ms 의 오차 제곱 |
 | --- | --- | --- | --- | --- |
 | 직선 $3x + 2$ | 0.25 | $15 + 2 = 17$ | $-0.5$ | 0.25 |
 | 곡선 $0.5x^2 + 0.5x + 4.5$ | 0 | $12.5 + 2.5 + 4.5 = 19.5$ | $+2.0$ | 4 |
 
-![train 점 네 개에서 직선 3x + 2 의 loss 는 0.25 이고, 네 점을 모두 지나는 곡선의 loss 는 0 이다. 처음 보는 5 V 에서 잰 값을 17.5 cm 로 정한 예에서 직선은 17 로 예측해 오차 제곱이 0.25 이고, 곡선은 19.5 로 예측해 오차 제곱이 4 다](figures/overfit-extrapolate.svg)
+![train 점 네 개에서 직선 3x + 2 의 loss 는 0.25 이고, 네 점을 모두 지나는 곡선의 loss 는 0 이다. 처음 보는 5 ms 에서 찍은 밝기를 17.5 로 정한 예에서 직선은 17 로 예측해 오차 제곱이 0.25 이고, 곡선은 19.5 로 예측해 오차 제곱이 4 다](figures/overfit-extrapolate.svg)
 
 곡선은 데이터에 섞인 noise 까지 따라가도록 휘었는데, 같은 noise 가 새 측정에서 다시 나오지는 않으므로 그 휨이 오히려 오차가 된다. 학습에 쓴 데이터를
 **train set** 이라고 하고, 학습에 쓰지 않고 성능을 재는 데만 쓰는 데이터를 **test set** 이라고 한다. train set 에는 아주 잘 맞지만 처음 보는
 데이터에서 성능이 떨어지는 현상은 **overfitting** 이라고 하는데, 모델이 규칙을 배우지 못하고 학습 데이터를 외웠을 때 생긴다.
 
-로봇에서는 이 차이가 데이터를 잰 범위 밖에서 드러나는데, 1 ~ 4 V 에서 맞춘 곡선은 그 안에서는 직선과 비슷해도 5 V 에서는 2 cm 어긋난다.
-그래서 모델의 성능은 학습에 쓰지 않은 데이터, 그중에서도 로봇이 실제로 쓸 범위의 데이터로 잰다. 데이터를
+이 차이는 데이터를 잰 범위 밖에서 특히 잘 드러나는데, 1 ~ 4 ms 에서 맞춘 곡선은 그 안에서는 직선과 비슷해도 5 ms 에서는 정답에서 2 어긋난다.
+그래서 모델의 성능은 학습에 쓰지 않은 데이터, 그중에서도 모델을 실제로 쓸 범위의 데이터로 잰다. 데이터를
 train·validation·test 세 묶음으로 나누는 법과 학습이 길어지며 overfitting 이 생기는 모습은 [PyTorch Training Loop](../pytorch-mlp/README.md) 에서
 다룬다.
 
 **흔한 오해.** "train loss 가 0 이면 완벽한 모델이다." 휘어질 수 있는 모델은 noise 까지 따라가 train loss 를 0 으로 만들 수 있는데, 위 곡선도
-train loss 는 0 이지만 5 V 에서의 오차 제곱이 직선의 16 배다.
+train loss 는 0 이지만 5 ms 에서의 오차 제곱이 직선의 16 배다.
 
-**확인 문제.** 어떤 모델의 train loss 가 0.01, test loss 가 3.2 이고, 다른 모델은 train loss 0.3, test loss 0.35 다. 로봇에 올릴 모델은 어느 쪽이고,
+**확인 문제.** 어떤 모델의 train loss 가 0.01, test loss 가 3.2 이고, 다른 모델은 train loss 0.3, test loss 0.35 다. 실제로 쓸 모델은 어느 쪽이고,
 첫째 모델에서 일어난 일은 무엇일까?
 
 <details><summary>답 보기</summary>
@@ -525,63 +535,20 @@ overfitting 으로 보이고, 둘째 모델은 두 loss 가 비슷해서 학습�
 
 </details>
 
-## 로봇에서의 linear regression
-
-linear regression 은 센서와 motor 의 숫자를 실제 단위로 바꾸는 calibration 에 자주 쓰이고, 학습한 policy 의 마지막 층에도 들어 있다.
-
-![왼쪽은 XM430-W350 사양의 stall 점 세 개에 원점을 지나는 직선을 맞춰 얻은 torque constant 1.79 N·m/A 이고, 오른쪽은 예로 정한 표식 세 개의 pixel 좌표 151, 198, 251 에 맞춘 직선 500 pixel/m × X + 100 이다](figures/robot-fits.svg)
-
-[Vectors & Matrices](../vectors-matrices/README.md) 의 표식 예를 이어서 camera 의 pixel 축척을 구해 보자. 그 강의에서는 표식 두 개로 식 두 개를
-세워 pixel 좌표 $= sX + c$ 의 $s$ 와 $c$ 를 정확히 풀었다. 표식을 $X = 0.1, 0.2, 0.3$ m 세 곳에 두고 pixel 좌표를 151, 198, 251 로 읽었다면(이
-예에서 정한 값이다) 모르는 값은 둘인데 식이 셋이라 세 식을 모두 맞추는 답이 없다. normal equation 으로 풀면 $s = 500$ pixel/m, $c = 100$ pixel
-이고 세 표식의 오차는 $-1, +2, -1$ pixel 이다. 표식을 많이 둘수록 한 표식을 잘못 읽어도 답이 덜 흔들린다.
-
-motor 의 torque constant 는 torque 를 전류로 나눈 비율이다. ROBOTIS 의 XM430-W350 사양에 따르면 motor 가 멈춘 채 낼 수 있는 가장 큰 torque
-인 stall torque 는 11.1 V 에서 3.8 N·m(전류 2.1 A)이고, 12 V 에서 4.1 N·m(2.3 A)이며, 14.8 V 에서 4.8 N·m(2.7 A)이다. 전류 0 이면 torque 도 0 이라고 보고 parameter 하나짜리
-모델 $\tau = k\,I$ 를 맞추면, loss $\frac{1}{N}\sum (k I_i - \tau_i)^2$ 의 gradient 를 0 으로 놓은 식에서 $k = \sum I_i \tau_i \div \sum I_i^2$ 이 나온다.
-
-$$
-k = \frac{2.1 \times 3.8 + 2.3 \times 4.1 + 2.7 \times 4.8}{2.1^2 + 2.3^2 + 2.7^2} = \frac{30.37}{16.99} \approx 1.79 \text{ N·m/A}
-$$
-
-이 servo 에서는 지금 흐르는 전류를 단위가 약 2.69 mA 인 정수로 읽을 수 있어서, 읽은 값이 300 이면 전류는 $300 \times 2.69 \approx 807$ mA
-이고 torque 는 $1.79 \times 0.807 \approx 1.44$ N·m 로 어림할 수 있다. gripper 가 물체를 얼마나 세게 쥐었는지나 팔이 어딘가에 부딪혀 평소보다
-큰 torque 를 내는지도 이렇게 전류로 짐작한다. 다만 사양의 세 점은 멈춘 상태의 값이라, 정확히 쓰려면 알려진 무게를 매달아 직접 잰 점들로 다시 맞춘다.
-
-policy 의 마지막 층도 linear regression 과 같은 꼴이다. LeRobot 의 ACT 는 앞쪽 network 가 만든 숫자 512 개 $h_1, \ldots, h_{512}$ 를 받아 관절마다
-$\hat a = w_1 h_1 + w_2 h_2 + \cdots + w_{512} h_{512} + b$ 를 계산하는 linear 층(action head)으로 관절 목표를 낸다. motor 가 6 개인 SO-101 팔이면 이런
-식이 6 개다. 입력이 전압 하나에서 숫자 512 개로 늘었을 뿐 $wx + b$ 와 같은 계산이라, 학습도 시연 데이터의 관절 목표와의 오차로 loss 를 만들어
-gradient 로 weight 를 고치는 방식이다. 다만 ACT 는 입력 $h$ 를 만드는 앞쪽 network 도 함께 학습하고, 앞에서 본 대로 loss 도 MSE 가 아니라 L1
-loss 를 쓴다.
-
-**확인 문제.** 어떤 servo 에서 (전류 1 A, torque 2 N·m), (전류 2 A, torque 3.6 N·m) 를 쟀다. 원점을 지나는 직선 $\tau = kI$ 로 맞춘 $k$ 는?
-
-<details><summary>답 보기</summary>
-
-$k = \sum I_i \tau_i \div \sum I_i^2$ 에 넣는다.
-
-1. 분자: $1 \times 2 + 2 \times 3.6 = 2 + 7.2 = 9.2$
-2. 분모: $1^2 + 2^2 = 5$
-3. $k = 9.2 \div 5 = 1.84$ N·m/A
-
-$k$ 는 두 점 각각의 비율 2 와 1.8 사이에 있고, 전류가 커서 오차 제곱에 더 크게 들어가는 둘째 점의 비율에 더 가깝다.
-
-</details>
-
 ## 정리
 
 - linear regression 은 직선 $\hat y = wx + b$ 의 parameter 를 MSE loss 가 가장 작아지게 고른다. 오차를 제곱해서 반대쪽 오차끼리 지워지지는
-  않지만 큰 오차에 민감해, 4 V 의 값 하나가 24 cm 로 찍히면 직선이 $3x + 2$ 에서 $6x - 3$ 으로 끌려간다
+  않지만 큰 오차에 민감해, 4 ms 의 밝기 하나가 24 로 찍히면 직선이 $3x + 2$ 에서 $6x - 3$ 으로 끌려간다
 - gradient 가 양수(+)면 parameter 를 늘릴 때 loss 가 커지고, 음수(−)면 줄어들고, 0 이면 거의 변하지 않는다. gradient descent 는
   $w \leftarrow w - \eta\,\partial L / \partial w$ 처럼 parameter 를 gradient 의 반대쪽으로 옮기기를 되풀이하는데, update 마다 곱해지는 수
   $1 - 2a\eta$ 의 크기가 1 을 넘으면 발산한다. 그래서 loss 가 가파르거나 입력이 클수록 learning rate 를 줄이고, 입력은 standardization 으로
   크기를 맞춘다
-- 작은 문제는 gradient 를 0 으로 놓은 normal equation 으로 바로 푼다. 모델의 성능은 학습에 쓰지 않은 test 데이터로 잰다. sensor calibration,
-  motor 의 torque constant, policy 의 action head 가 모두 이 계산을 쓴다
+- 작은 문제는 gradient 를 0 으로 놓은 normal equation 으로 바로 푼다. 카메라의 밝기 응답이나 사진 속 눈금의 축척처럼 식이 모르는 값보다
+  많은 calibration 에도 이 계산을 쓴다. 모델의 성능은 학습에 쓰지 않은 test 데이터로 잰다
 
-linear regression 은 연속된 숫자 하나를 직선으로 예측하는데, 물체를 잡았는지 놓쳤는지처럼 답이 둘 중 하나인 문제에서 출력이 문턱을 넘는지로
-둘을 가르는 학습 규칙은 [Perceptron](../perceptron/README.md) 에서 다룬다. 사람이 조종한 시연을 정답으로 삼아 같은 loss 와 gradient 로 policy
-를 학습하는 방법은 Behavior Cloning 에서 다룬다.
+linear regression 은 연속된 숫자 하나를 직선으로 예측하는데, 사진에 고양이가 있는지 없는지처럼 답이 둘 중 하나인 문제에서 출력이 문턱을 넘는지로
+둘을 가르는 학습 규칙은 [Perceptron](../perceptron/README.md) 에서 다룬다. 같은 MSE 와 gradient 로 noise 를 맞히는 network 를 학습시켜 그림을
+그리는 방법은 [DDPM](../ddpm/README.md) 에서 다룬다.
 
 ## 참고 자료
 
@@ -596,8 +563,10 @@ linear regression 은 연속된 숫자 하나를 직선으로 예측하는데, �
   발표한 1805 년 부록. 첫 쪽에서 식이 모르는 값보다 많을 때 오차 제곱의 합을 가장 작게 하자는 제안을 볼 수 있다
 - Lemaréchal, [Cauchy and the Gradient Method (PDF)](https://www.maths.tcd.ie/EMIS/journals/DMJDMV/vol-ismp/40_lemarechal-claude.pdf) — Cauchy 가
   1847 년 노트에서 궤도 계산을 위해 제곱합을 gradient 의 반대 방향으로 줄여 간 방법을 원문과 함께 설명하는 4 쪽 글
-- ROBOTIS, [Dynamixel XM430-W350 e-Manual](https://emanual.robotis.com/docs/en/dxl/x/xm430-w350/) — 이 강의에서 쓴 stall torque 와 전류,
-  4096 pulse/rev 해상도, Present Current 의 단위(약 2.69 mA)가 적힌 사양과 control table
-- LeRobot, [modeling_act.py](https://github.com/huggingface/lerobot/blob/main/src/lerobot/policies/act/modeling_act.py) — ACT 의 `action_head`
-  (512 → action 차원의 linear 층)와 L1 loss 계산이 있는 구현. 같은 폴더의 `configuration_act.py` 에서 standardization 설정(`MEAN_STD`)을 볼 수 있다
+- Isola 외, [Image-to-Image Translation with Conditional Adversarial Networks](https://arxiv.org/abs/1611.07004) (CVPR 2017) — pix2pix 논문.
+  3.1 절에서 L1 이 L2 보다 덜 흐리게 만든다는 이유로 L1 loss 를 고른다
+- torchvision, [`transforms/_presets.py`](https://github.com/pytorch/vision/blob/main/torchvision/transforms/_presets.py) — ImageNet 분류
+  model 의 입력에 쓰는 평균 $(0.485, 0.456, 0.406)$ 과 표준편차 $(0.229, 0.224, 0.225)$
+- diffusers, [`image_processor.py`](https://github.com/huggingface/diffusers/blob/main/src/diffusers/image_processor.py) — `VaeImageProcessor.normalize`
+  가 pixel 값을 $[-1, 1]$ 로 바꾸는 소스 코드
 - PyTorch, [MSELoss](https://docs.pytorch.org/docs/stable/generated/torch.nn.MSELoss.html) — `reduction` 의 기본값 `'mean'` 과 `'sum'` 의 차이

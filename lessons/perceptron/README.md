@@ -4,7 +4,7 @@ title: Perceptron
 branch: core
 requires: [linear-regression]
 hours: 2
-summary: 입력에 weight 를 곱해 더한 값이 0 을 넘는지로 답하는 perceptron. weighted sum 과 step function, decision boundary, 학습 규칙, XOR 의 한계와 두 층 network, 로봇 policy 의 MLP
+summary: 입력에 weight 를 곱해 더한 값이 0 을 넘는지로 답하는 perceptron. weighted sum 과 step function, decision boundary, 학습 규칙, XOR 의 한계와 두 층 network, ViT 안의 MLP
 papers:
   - title: "The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain"
     authors: Frank Rosenblatt
@@ -14,40 +14,46 @@ papers:
     authors: Albert B. J. Novikoff
     year: 1962
     url: https://cs.uwaterloo.ca/~y328yu/classics/novikoff.pdf
-  - title: "Learning to Walk in Minutes Using Massively Parallel Deep Reinforcement Learning"
-    authors: Nikita Rudin, David Hoeller, Philipp Reist, Marco Hutter
-    year: 2021
-    url: https://arxiv.org/abs/2109.11978
+  - title: "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale"
+    authors: Alexey Dosovitskiy et al.
+    year: 2020
+    url: https://arxiv.org/abs/2010.11929
+  - title: "Gaussian Error Linear Units (GELUs)"
+    authors: Dan Hendrycks, Kevin Gimpel
+    year: 2016
+    url: https://arxiv.org/abs/1606.08415
 ---
 
 # Perceptron
 
-로봇 집게의 두 손가락 끝에 접촉 센서가 하나씩 있어서 닿으면 1, 안 닿으면 0 을 낸다. 두 값이 모두 1 이면 물체를 잡은 것이고 한쪽만 1 이면
-물체가 비스듬히 걸친 것이다. 이 판단 규칙을 사람이 적어 주지 않고 예시 네 줄만 보여 주어 기계가 찾게 하면, "둘 다 닿았나" 는 몇 번 만에
-배우는데 "한쪽만 닿았나" 는 아무리 오래 학습해도 배우지 못한다. 같은 센서 두 개짜리 문제에서 왜 이런 차이가 날까?
+흑백 사진의 pixel 이 흰색이면 1, 검은색이면 0 이라고 하고 나란한 두 pixel 을 본다. 두 값이 모두 1 이면 두 pixel 이 같은 흰 면 안에 있는 것이고
+한쪽만 1 이면 두 pixel 사이에 흰 면과 검은 면의 경계(edge)가 지나는 것이다. 사람이 판단 규칙을 적어 주는 대신 예시 네 줄만 보여 주고
+기계가 규칙을 찾게 하면, "둘 다 흰가" 는 몇 번 만에 배우는데 "한쪽만 흰가" 는 아무리 오래 학습해도 배우지 못한다. 같은 pixel 두 개짜리 문제에서
+왜 이런 차이가 날까?
 
 예시에서 규칙을 찾는 이 기계가 1958 년 Frank Rosenblatt 가 뇌의 신경세포를 본떠 발표한 perceptron 이다. perceptron 은 입력에 숫자를 곱해
-더한 값이 0 을 넘는지만 보기 때문에 평면에 직선 하나를 긋는 일밖에 하지 못하는데, "한쪽만 닿음" 은 직선 하나로 가를 수 없다. perceptron 을
-여러 층으로 쌓고 계산을 조금 바꾼 것이 지금 로봇 policy 에 쓰는 MLP 다. ETH Zurich 와 NVIDIA 가 공개한 legged_gym 에서 사족 보행 로봇 ANYmal C 의 평지 보행 policy 는 몸의 상태를
-나타내는 숫자 48 개를 받아 unit 128, 64, 32 개짜리 층을 거쳐 관절 12 개의 목표 각도를 낸다.
+더한 값이 0 을 넘는지만 보기 때문에 평면에 직선 하나를 긋는 일밖에 하지 못한다. 그런데 "한쪽만 흰가" 의 예시 네 줄은 직선 하나로 가를 수
+없다. perceptron 을 여러 층으로 쌓고 계산을 조금 바꾼 것이 지금 그림을 다루는 model 에도 들어 있는 MLP 다. 사진을 분류하는 Vision
+Transformer(ViT)의 기본 크기인 ViT-Base 에서는 사진 조각마다 숫자 768 개가 unit 3072 개짜리 층을 거쳐 다시 숫자 768 개가 되는 MLP 를 12 번
+거친다.
 
 ## 학습 목표
 
 - perceptron 이 weighted sum 과 step function 으로 0 또는 1 을 내는 계산과, 그 계산이 평면에 직선(decision boundary)을 긋는 일이라는 것을 설명할 수 있다
 - 틀린 sample 에서만 숫자를 고치는 학습 규칙을 손으로 따라가고, online update 와 learning rate 가 학습 경로에 주는 영향을 설명할 수 있다
 - XOR 를 perceptron 하나로 풀 수 없는 이유와, 두 층으로 쌓으면 표현은 되지만 step function 으로는 학습할 수 없는 이유를 설명할 수 있다
-- 로봇 policy 의 MLP 가 perceptron 과 무엇이 같고 무엇이 다른지 설명할 수 있다
+- ViT 같은 그림 model 안의 MLP 가 perceptron 과 무엇이 같고 무엇이 다른지 설명할 수 있다
 
 ## binary classification 과 truth table
 
-집게 센서 두 개의 값을 $x_1$, $x_2$ 로 적고, 둘을 묶어 $x = [x_1, x_2]$ 로 적는다. $x = [1, 0]$ 은 $x_1 = 1$, $x_2 = 0$ 이라는 뜻이다. 이
+나란한 두 pixel 의 값을 $x_1$, $x_2$ 로 적고, 둘을 묶어 $x = [x_1, x_2]$ 로 적는다. $x = [1, 0]$ 은 $x_1 = 1$, $x_2 = 0$ 이라는 뜻이다. 이
 입력을 보고 내야 하는 답은 3.7 같은 숫자가 아니라 "예(1)" 아니면 "아니오(0)" 다. 입력을 정해진 몇 개의 무리(class) 중 하나로 나누는
 문제를 **classification** 이라 하고, class 가 둘뿐이면 **binary classification** 이라고 한다. 정답은 $y$ 로 적는다. 이 강의는 정답을 정하는
 규칙으로 아래 세 가지를 쓴다.
 
-- AND 는 두 입력이 모두 1 일 때만 1 이다. "물체를 잡았나" 가 AND 다
-- OR 는 둘 중 하나라도 1 이면 1 이다. "무언가에 닿았나" 가 OR 다
-- XOR(exclusive OR)는 두 입력이 서로 다를 때만 1 이다. "한쪽 손가락만 닿았나" 가 XOR 다
+- AND 는 두 입력이 모두 1 일 때만 1 이다. "두 pixel 이 모두 흰가" 가 AND 다
+- OR 는 둘 중 하나라도 1 이면 1 이다. "흰 pixel 이 하나라도 있나" 가 OR 다
+- XOR(exclusive OR)는 두 입력이 서로 다를 때만 1 이다. "두 pixel 사이에 경계가 있나(한쪽만 흰가)" 가 XOR 다
 
 | $x_1$ | $x_2$ | AND | OR | XOR |
 | --- | --- | --- | --- | --- |
@@ -372,7 +378,7 @@ epoch 끝의 $b$ 는 $0.1$ 에서 $-0.2$ 까지 내려간다. AND 는 네 점 �
 
 손으로 정한 $x_1 + x_2 = 1.5$ 와 다른 직선이지만 네 점을 가르기만 하면 되므로 이것도 AND 의 답이다. 다만 $(1, 0)$ 이 직선 바로 위에 있어
 $z = 0.2 - 0.2 = 0$ 이고, $z = 0$ 을 0 으로 예측하는 약속 덕분에 맞힌다. perceptron 학습은 네 점을 다 맞히는 직선을 찾으면 멈출 뿐 점들에서
-멀리 떨어진 직선을 고르지는 않는다. 실제 센서 값은 0 과 1 에서 조금씩 흔들리는데, 직선이 점에 붙어 있으면 그 점에서 noise 로 조금만 벗어난
+멀리 떨어진 직선을 고르지는 않는다. 실제 pixel 값은 noise 때문에 0 과 1 에서 조금씩 흔들리는데, 직선이 점에 붙어 있으면 그 점에서 noise 로 조금만 벗어난
 입력도 반대쪽으로 예측할 수 있다. 같은 규칙을 OR 에 적용하면($\eta = 1$) 4 epoch 에 $w = [1, 1]$, $b = 0$ 을 찾는데, 이번에는 원점이 직선 위에 놓인다.
 
 <details><summary><b>심화: AND 와 OR 의 step 별 손계산</b></summary>
@@ -633,34 +639,30 @@ $1 \times 2 = 2$ 늘고, 그 2 때문에 최종 출력은 $2 \times 3 = 6$ 는�
 1969 년 Minsky 와 Papert 가 책 *Perceptrons* 에서 한 층 perceptron 의 이런 한계를 수학적으로 정리한 뒤, neural network 연구에 쏠리던 관심과
 연구비가 크게 줄었다. 여러 층을 학습시키는 backpropagation 은 1986 년 Rumelhart, Hinton, Williams 의 논문 이후 널리 쓰이게 되었다.
 
-## 로봇 policy 의 MLP
+## MLP
 
 perceptron 의 step function 을 매끄러운 activation function 으로 바꾼 unit 을 여러 층 쌓은 network 를 **MLP**(multi-layer perceptron)라고
 한다. unit 하나는 perceptron 처럼 입력마다 weight 를 곱해 더하고 bias 를 더한 $z$ 를 activation function 에 넣는다. 다만 출력이 0 과 1 이 아닌
 실수이고, 숫자를 perceptron 학습 규칙 대신 backpropagation 으로 고친다.
 
-![legged_gym 의 ANYmal C 평지 보행 policy MLP. 몸 상태와 속도 명령 숫자 48 개를 받아 ELU 를 쓰는 128, 64, 32 unit 의 hidden layer 를 거쳐 관절 12 개의 목표 각도를 0.02 초마다 낸다. 실제 로봇에서는 관절마다 PD controller 가 그 목표를 torque 로 바꾼다](figures/robot-mlp.svg)
+![ViT-Base 의 층마다 들어 있는 MLP. 숫자 768 개를 받아 GELU 를 쓰는 unit 3072 개의 hidden layer 를 거쳐 다시 숫자 768 개를 낸다. weight 와 bias 는 모두 4,722,432 개다](figures/vit-mlp.svg)
 
-위 그림은 legged_gym 의 [ANYmal C 평지 설정](https://github.com/leggedrobotics/legged_gym/blob/master/legged_gym/envs/anymal_c/flat/anymal_c_flat_config.py)
-에 적힌 보행 policy 다. 입력 48 개는 몸통의 선속도 3 개와 각속도 3 개, 몸통 기준 중력 방향 3 개, 따라갈 속도 명령 3 개, 관절 각도 12 개,
-관절 속도 12 개, 직전에 낸 action 12 개다. 이 숫자들이 unit 128, 64, 32 개짜리 hidden layer 를 차례로 거치고, 출력 unit 12 개가 다리 네 개의
-관절 12 개 목표 각도를 낸다. policy 는 0.02 초마다 한 번, 1초에 50 번 목표 각도를 내는데, 0.02 초는 simulation step 0.005 초를 네 번 묶은
-간격이다. 논문에 따르면 실제 로봇에서는 이 목표 각도를 motor 안의 PD controller 가 torque 로 바꾼다. 다만 legged_gym 의 ANYmal C
-simulation 에서는 PD 식 대신, 실제 motor 의 복잡한 반응을 흉내 내도록 학습한 neural network(actuator network)가 목표 각도에서 torque 를
-계산한다.
+위 그림은 [ViT](../vit/README.md) 논문의 표 1 에 적힌 ViT-Base 의 MLP 다. ViT 는 사진을 작은 조각으로 잘라 조각마다 숫자 768 개로 적는데,
+이 MLP 는 조각 하나의 숫자 768 개를 받아 unit 3072 개짜리 hidden layer 를 거친 뒤 출력 unit 768 개로 다시 숫자 768 개를 낸다. 논문에 따르면 이 MLP 는 두
+층이고 두 층 사이에 GELU 라는 activation function 을 쓴다. ViT-Base 에는 이런 MLP 가 층마다 하나씩, 모두 12 개 있다.
 
 | 층 | weight 수 + bias 수 | 합 |
 | --- | --- | --- |
-| 입력 48 → 128 | $48 \times 128 + 128$ | 6,272 |
-| 128 → 64 | $128 \times 64 + 64$ | 8,256 |
-| 64 → 32 | $64 \times 32 + 32$ | 2,080 |
-| 32 → 출력 12 | $32 \times 12 + 12$ | 396 |
-| 전체 | | 17,004 |
+| 입력 768 → hidden 3072 | $768 \times 3072 + 3072$ | 2,362,368 |
+| hidden 3072 → 출력 768 | $3072 \times 768 + 768$ | 2,360,064 |
+| 전체 | | 4,722,432 |
 
-층마다 입력 수 × unit 수 만큼의 weight 와 unit 수 만큼의 bias 가 있어서, 첫 층은 입력이 48 개인 perceptron 128 개와 같은 계산을 한다.
-Rudin et al. 은 legged_gym 논문에서 GPU 하나로 로봇 수천 대를 동시에 simulation 해 평지 policy 를 4 분 안에 학습했다.
+층마다 입력 수 × unit 수 만큼의 weight 와 unit 수 만큼의 bias 가 있어서, 첫 층은 입력이 768 개인 perceptron 3072 개와 같은 계산을 한다. 이런 MLP
+12 개의 숫자는 $4{,}722{,}432 \times 12 = 56{,}669{,}184$ 개로, 논문이 적은 ViT-Base 전체 parameter 86M(8,600 만 개)의 3 분의 2 쯤이다.
 
-이 policy 의 activation function 은 ELU 인데, $z$ 가 양수면 $z$ 를 그대로 내고 0 이하면 $e^z - 1$ 을 낸다.
+GELU 는 $z$ 에 "평균 0, 표준편차 1 인 Gaussian 에서 뽑은 값이 $z$ 보다 작을 확률" 을 곱한 값을 낸다. $z$ 가 크면 그 확률이 1 에 가까워
+$z$ 를 거의 그대로 내고, $z$ 가 아주 작으면 확률이 0 에 가까워 0 에 가까운 값을 낸다. Gaussian 은 [Probability & Gaussians](../probability/README.md)
+에서 다룬다.
 
 <details><summary><b>심화: 많이 쓰는 activation function 비교</b></summary>
 
@@ -671,10 +673,10 @@ Rudin et al. 은 legged_gym 논문에서 GPU 하나로 로봇 수천 대를 동�
 | step function | 0 | 0 | 0 | 1 | 1 |
 | sigmoid | 0.119 | 0.378 | 0.5 | 0.622 | 0.881 |
 | ReLU (음수를 0 으로) | 0 | 0 | 0 | 0.5 | 2 |
-| ELU | $-0.865$ | $-0.393$ | 0 | 0.5 | 2 |
+| GELU | $-0.045$ | $-0.154$ | 0 | 0.346 | 1.955 |
 
 step function 만 $z = 0$ 에서 끊기고 나머지 셋은 이어져 있어서 숫자를 조금 바꾸면 출력도 조금 바뀐다. sigmoid 는 $z$ 가 크면 1 에 가까워져 거의
-변하지 않지만, ReLU 와 ELU 는 양수 쪽에서 $z$ 를 그대로 내보내 변화가 줄지 않는다.
+변하지 않지만, ReLU 와 GELU 는 양수 쪽에서 $z$ 를 그대로(GELU 는 거의 그대로) 내보내 변화가 줄지 않는다.
 
 </details>
 
@@ -705,8 +707,8 @@ unit 하나는 입력 6 개에 weight 를 하나씩 곱하고 bias 하나를 더
 - 학습 규칙 $w_i \leftarrow w_i + \eta(y - \hat y)x_i$ 는 틀린 sample 에서만 숫자를 고친다. sample 마다 바로 고치는 online update 로 AND 를
   학습하면 6 epoch 만에 $2x_1 + x_2 = 2$ 를 찾는다. 0 에서 시작하면 learning rate 는 모든 숫자의 배율만 바꿀 뿐 경로를 바꾸지 않는다
 - linearly separable 한 데이터에서는 학습이 반드시 수렴하지만 XOR 는 직선 하나로 가를 수 없어 순환에 빠진다. 두 층으로 쌓으면 XOR 를
-  표현할 수 있다. step function 을 sigmoid·ELU 같은 매끄러운 activation function 으로 바꾸고 backpropagation 으로 학습한 여러 층 network 가 로봇
-  policy 에 쓰는 MLP 다
+  표현할 수 있다. step function 을 sigmoid·GELU 같은 매끄러운 activation function 으로 바꾸고 backpropagation 으로 학습한 여러 층 network 가 MLP 이고,
+  ViT-Base 는 층마다 768 → 3072 → 768 의 MLP 를 쓴다
 
 다음 강의 [Backpropagation](../autograd/README.md) 에서는 chain rule 로 hidden layer 의 숫자까지 derivative 를 구하는 계산을 한 단계씩
 따라가며, XOR 를 푸는 두 층 network 의 hidden unit 이 gradient 를 받는 과정을 숫자로 확인한다.
@@ -721,9 +723,9 @@ unit 하나는 입력 6 개에 weight 를 하나씩 곱하고 bias 하나를 더
   그림과 margin 으로 적은 수렴 증명을 정리한 강의 노트
 - Michael Nielsen, [Neural Networks and Deep Learning — Chapter 1](http://neuralnetworksanddeeplearning.com/chap1.html) — perceptron 으로
   NAND 를 만드는 예부터 sigmoid neuron 으로 넘어가는 이유까지
-- Rudin et al., [Learning to Walk in Minutes Using Massively Parallel Deep Reinforcement Learning](https://arxiv.org/abs/2109.11978) (2021) —
-  ANYmal 보행 policy 를 GPU 하나에서 학습한 논문. 3.2 절은 policy 의 입력과 action, 실제 로봇의 PD controller 를 설명하고, 3.3 절은 simulation 의 actuator network 를 설명한다
-- [legged_gym](https://github.com/leggedrobotics/legged_gym) — 위 논문의 코드. 설정 파일의 `actor_hidden_dims` 와 `activation` 이 policy
-  MLP 의 층 크기와 activation function 이다
+- Dosovitskiy et al., [An Image is Worth 16x16 Words](https://arxiv.org/abs/2010.11929) (2020) — ViT 논문. 3.1 절이 MLP 가 GELU 를 쓰는 두 층이라고
+  적고, 표 1 이 ViT-Base 의 hidden size 768, MLP size 3072, 층 12 개, parameter 86M 을 적는다
+- Hendrycks & Gimpel, [Gaussian Error Linear Units (GELUs)](https://arxiv.org/abs/1606.08415) (2016) — GELU 를 $z\Phi(z)$, 곧 $z$ 에 표준
+  Gaussian 의 누적 확률을 곱한 값으로 정의한 논문
 - [Wikipedia — Perceptron](https://en.wikipedia.org/wiki/Perceptron) — Mark I perceptron 하드웨어, Minsky 와 Papert 의 책이 남긴 영향, 수렴
   정리를 요약한 글

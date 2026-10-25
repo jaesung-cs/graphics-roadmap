@@ -326,15 +326,15 @@
         gradient descent 는 출력이 여럿인 모델에도 쓸 수 있고, 입력이 0 과 1 인지는 학습할 수 있는지와 관계가 없다. hidden layer 의
         숫자도 학습해야 하고, step function 의 출력은 0 또는 1 이라 음수가 나오지 않는다.
     - question: |
-        보행 로봇의 policy 로 쓰는 MLP 의 hidden unit 하나는 perceptron 과 무엇이 같고 무엇이 다른가?
+        ViT 의 MLP 같은 여러 층 network 의 hidden unit 하나는 perceptron 과 무엇이 같고 무엇이 다른가?
       choices:
         - '같은 점은 없다. MLP 의 unit 은 입력에 weight 를 곱하지 않고 그대로 이어 붙여 다음 층에 넘긴다'
-        - 'weighted sum 계산은 같고, 그 값을 ELU 같은 매끄러운 activation function 에 넣어 backpropagation 으로 학습하는 점이 다르다'
+        - 'weighted sum 계산은 같고, 그 값을 GELU 같은 매끄러운 activation function 에 넣어 backpropagation 으로 학습하는 점이 다르다'
         - '계산과 학습 방법이 모두 같다. perceptron 학습 규칙으로 층마다 숫자를 고치고, 층의 개수만 다르다'
         - 'activation function 을 쓰지 않는다는 점만 다르다. 층이 많으면 activation function 없이도 직선 아닌 경계가 생긴다'
       answer: 1
       explanation: |
         MLP 의 unit 도 perceptron 처럼 입력마다 weight 를 곱해 더하고 bias 를 더한 weighted sum $z$ 를 계산하므로, 같은 점이 없다는 보기는
-        틀렸다. 다만 $z$ 를 step function 대신 sigmoid·ReLU·ELU 같은 매끄러운 activation function 에 넣어 0 과 1 이 아닌 실수를 낸다. 그
+        틀렸다. 다만 $z$ 를 step function 대신 sigmoid·ReLU·GELU 같은 매끄러운 activation function 에 넣어 0 과 1 이 아닌 실수를 낸다. 그
         덕분에 derivative 를 구할 수 있어서 backpropagation 으로 hidden layer 까지 학습한다. perceptron 학습 규칙으로는 hidden unit 을 고칠 수 없으니 학습 방법이 같다는 보기는 틀렸다. activation function 이
         없으면 weighted sum 을 여러 번 거듭해도 weighted sum 하나라서 경계가 여전히 직선이다.

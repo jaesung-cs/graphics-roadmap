@@ -18,14 +18,15 @@ papers:
 
 # Backpropagation
 
-LeRobot 으로 로봇 팔 policy 인 ACT 를 학습시킬 때, 사람이 조종해서 모은 시연이 주는 정답은 매 순간 관절이 가야 할 목표 각도뿐이다. 그런데
-ACT 안에는 학습으로 정하는 숫자가 약 8천만 개 있고, 그 숫자 하나하나에는 정답이 따로 없다. 출력 각도가 틀렸을 때 8천만 개를 각각 어느
-쪽으로 얼마나 고쳐야 하는지 어떻게 알 수 있을까?
+Stable Diffusion v1 의 U-Net 을 학습시킬 때, 학습 데이터가 주는 정답은 사진에 섞은 noise 가 무엇이었는지뿐이다. 그런데 이 U-Net 안에는
+학습으로 정하는 숫자가 859,520,964 개(약 8억 6천만 개) 있고, 그 숫자 하나하나에는 정답이 따로 없다. U-Net 이 맞힌 noise 가 실제 noise 와
+다를 때 8억 6천만 개를 각각 어느 쪽으로 얼마나 고쳐야 하는지 어떻게 알 수 있을까?
 
-숫자마다 조금 늘리고 줄여 보며 출력이 얼마나 변하는지 재려면 network 를 8천만 × 2 = 1억 6천만 번 다시 계산해야 한다. backpropagation 은
+숫자마다 조금 늘리고 줄여 보며 출력이 얼마나 변하는지 재려면 network 를 8억 6천만 × 2, 약 17억 번 다시 계산해야 한다. backpropagation 은
 계산 과정을 작은 연산의 graph 로 기록해 두고 출력에서 입력 쪽으로 한 번 거꾸로 훑어서, network 를 몇 번 계산하는 정도의 시간에 모든 숫자의
-gradient 를 한꺼번에 구한다. ACT 논문에 따르면 이 숫자(parameter) 약 8천만 개를 GPU 한 장(11 GB RTX 2080 Ti)에서 학습하는 데 약 5 시간이
-걸렸다. PyTorch 에서는 `loss.backward()` 한 줄이 이 계산을 맡는다.
+gradient 를 한꺼번에 구한다. [DDPM](../ddpm/README.md) 논문에 따르면 CIFAR10 dataset 으로 학습한 parameter 3,570 만 개짜리 model 은 TPU v3-8
+에서 1초에 21 step 씩 학습해 800k step 을 마치는 데 10.6 시간이 걸렸고, step 마다 이렇게 거꾸로 훑는 계산을 한 번씩 했다. PyTorch 에서는
+`loss.backward()` 한 줄이 이 계산을 맡는다.
 
 ## 학습 목표
 
@@ -272,13 +273,13 @@ graph 로 기록하고, backward 에서 연산마다 정해진 local derivative 
 거꾸로 가는 이 방식을 **reverse-mode** automatic differentiation 이라고 하고, neural network 에 쓰는 reverse-mode 를 backpropagation 이라고
 부른다. gradient 를 구하는 세 방법이 graph 를 훑는 횟수는 아래 표와 같다.
 
-| 방법 | 하는 일 | parameter 9 개 | parameter 약 8천만 개(ACT) |
+| 방법 | 하는 일 | parameter 9 개 | parameter 약 8억 6천만 개(SD U-Net) |
 | --- | --- | --- | --- |
-| 하나씩 조금 바꿔 재기 | central difference. parameter 하나를 $+h$, $-h$ 로 바꿔 forward 두 번 | 9 × 2 = 18 번 | 8천만 × 2 = 1억 6천만 번 |
-| forward-mode | parameter 하나를 골라, forward 를 하면서 각 값이 그 parameter 를 따라 변하는 비율도 함께 계산 | 9 번 | 8천만 번 |
+| 하나씩 조금 바꿔 재기 | central difference. parameter 하나를 $+h$, $-h$ 로 바꿔 forward 두 번 | 9 × 2 = 18 번 | 8억 6천만 × 2, 약 17억 번 |
+| forward-mode | parameter 하나를 골라, forward 를 하면서 각 값이 그 parameter 를 따라 변하는 비율도 함께 계산 | 9 번 | 8억 6천만 번 |
 | reverse-mode | forward 한 번 뒤 $L$ 에서 backward 한 번 | 1 + 1 = 2 번 | 1 + 1 = 2 번 |
 
-![모든 parameter 의 gradient 를 구하는 데 graph 를 훑는 횟수. parameter 9 개일 때: 조금 바꿔 재기 18 번 · forward-mode 9 번 · reverse-mode 2 번. 약 8천만 개(ACT)일 때: 1억 6천만 번 · 8천만 번 · 2 번](figures/forward-vs-reverse.svg)
+![모든 parameter 의 gradient 를 구하는 데 graph 를 훑는 횟수. parameter 9 개일 때: 조금 바꿔 재기 18 번 · forward-mode 9 번 · reverse-mode 2 번. 약 8억 6천만 개(SD U-Net)일 때: 약 17억 번 · 8억 6천만 번 · 2 번](figures/forward-vs-reverse.svg)
 
 forward-mode 는 입력 쪽 숫자 하나에서 출발하므로 숫자가 늘 때마다 graph 를 한 번 더 훑어야 한다. 한편 reverse-mode 는 출력 하나에서 출발하므로
 숫자가 몇 개든 backward 한 번에 모든 gradient 가 나온다. Baydin 등의 survey 에 따르면 출력이 하나일 때 reverse-mode 로 gradient 전체를 구하는
@@ -560,7 +561,7 @@ $(0 + 0 - 0.0429 + 0.0281) \div 4 = -0.0037$ 로 크기가 7 분의 1 에 그쳐
 층이 다섯 개면 $0.25^5 = 0.00098$ 이라 입력에 가까운 층의 gradient 가 출력 쪽의 1000 분의 1 이하가 되고, 그 층은 거의 배우지 못한다. 이렇게
 입력 쪽으로 갈수록 gradient 가 사라지는 현상을 **vanishing gradient** 라고 한다. 요즘 network 는 입력이 음수면 0 을 내고 양수면 입력을 그대로
 내는 ReLU 를 activation function 으로 쓰는데, ReLU 는 입력이 양수일 때 기울기가 1 이다. 또 입력을 출력에 그대로 더하는 연결로 gradient 가
-지나갈 길을 따로 만든다. ACT 가 카메라 이미지를 처리하는 데 쓰는 ResNet18 이 이 연결을 쓴 network 이고, 이 연결은 [ResNet](../resnet/README.md)
+지나갈 길을 따로 만든다. Stable Diffusion 의 U-Net 도 이 연결을 쓴 ResNet block 을 쌓아 만든다. 이 연결은 [ResNet](../resnet/README.md)
 에서 다룬다.
 
 **확인 문제.** sigmoid 층 세 개를 거친 gradient 는 sigmoid 기울기의 곱만 따졌을 때 가장 커도 처음의 몇 배인가? 세 층의 출력이 모두 0.9 라면?
@@ -637,11 +638,11 @@ PyTorch 에서 이 강의의 계산을 맡는 부분이 autograd 다. `requires_
 | forward 마다 새로 그리는 graph | 공식 문서에 따르면 graph 는 iteration 마다 처음부터 다시 만든다 |
 | backward 뒤의 중간 값 | `backward()` 가 끝나면 저장한 값을 지워서, 같은 graph 로 다시 부르면 오류가 난다 |
 
-로봇을 움직일 때는 backward 를 하지 않으니 graph 도 중간 값도 필요 없다. 그래서 LeRobot 의 ACT 구현은 행동을 고르는 `select_action` 함수를
-`@torch.no_grad()` 로 감싸, 그 안의 계산을 graph 에 기록하지 않는다. 학습할 때 일부 parameter 를 고정하려면 그 parameter 에
-`requires_grad_(False)` 를 적용하는데, 그러면 autograd 가 그 parameter 의 gradient 를 계산하지 않는다. LeRobot 의 SmolVLA 는 parameter 약
-4억 5천만 개 가운데 action 을 내는 부분(약 1억 개)만 학습하는데, 기본으로 켜져 있는 설정 `freeze_vision_encoder` 와 `train_expert_only`
-가 이미지와 글을 처리하는 VLM(vision-language model)의 parameter 에 `requires_grad = False` 를 적용한다.
+학습을 마친 model 로 그림을 그릴 때는 backward 를 하지 않으니 graph 도 중간 값도 필요 없다. 그래서 diffusers 의 Stable Diffusion pipeline 은
+그림을 그리는 `__call__` 함수를 `@torch.no_grad()` 로 감싸, 그 안의 계산을 graph 에 기록하지 않는다. 학습할 때 일부 parameter 를 고정하려면 그
+parameter 에 `requires_grad_(False)` 를 적용한다. 그러면 autograd 가 그 parameter 의 gradient 를 계산하지 않는다. diffusers 의 LoRA 학습
+예제는 U-Net, VAE, text encoder 에 모두 `requires_grad_(False)` 를 적용해 고정하고, 거기에 덧붙인 작은 행렬만 학습한다. 이 방법은
+[LoRA](../lora/README.md) 에서 다룬다.
 
 **흔한 오해.** "`backward()` 를 부르면 `.grad` 가 새 gradient 로 바뀐다." `.grad` 는 backward 한 번 안에서 길별 gradient 를 더하려고 늘
 더해 쌓는데, 이 규칙은 학습 step 사이에도 적용된다. `L = q + a` 를 forward 부터 다시 계산해 backward 를 한 번 더 부르면 `a.grad` 가 2 + 1 = 3
@@ -653,7 +654,7 @@ PyTorch 에서 이 강의의 계산을 맡는 부분이 autograd 다. `requires_
   $\sigma(1 - \sigma)$)를 곱하며 topological order 의 반대로 간다. $L = (a \times b + c) \times f$ 에서는
   $\frac{\partial L}{\partial a} = (-2) \times 1 \times (-3) = 6$ 이다. 여러 곳에 쓰인 값은 길별 gradient 를 더해서, $L = q + a$ 의 $a$ 는
   2 + 1 = 3 을 받는다
-- reverse-mode 는 parameter 가 9 개든 8천만 개든 backward 한 번에 모든 gradient 를 내고, 그 대가로 forward 의 중간 값을 저장한다. XOR
+- reverse-mode 는 parameter 가 9 개든 8억 6천만 개든 backward 한 번에 모든 gradient 를 내고, 그 대가로 forward 의 중간 값을 저장한다. XOR
   network 에서는 정답이 없는 hidden neuron 도 gradient 를 받아 2,000 step 뒤 OR 와 AND 역할을 맡았다
 - sigmoid 를 지날 때마다 0.25 이하가 곱해져 gradient 가 사라진다. 같은 값에서 출발한 hidden neuron 은 끝까지 같은 neuron 으로 남는다.
   PyTorch autograd 는 forward 중에 `grad_fn` graph 와 값을 기록하고, `backward()` 로 leaf 의 `.grad` 에 더해 쌓는다
@@ -677,5 +678,10 @@ gradient 를 지운 뒤 update 하는 학습 loop 는 다음 강의 [PyTorch Tra
   를 더하는 규칙과 forward-mode·reverse-mode 의 차이를 graph 그림으로 설명한다
 - PyTorch, [Autograd mechanics](https://docs.pytorch.org/docs/stable/notes/autograd.html) — forward 중에 graph 를 기록하는 방식, 저장하는
   중간 값, no-grad mode, `requires_grad` 로 parameter 를 고정하는 방법
+- Ho, Jain, Abbeel, [Denoising Diffusion Probabilistic Models](https://arxiv.org/abs/2006.11239) (2020) — 부록 B 에 CIFAR10 model 의 parameter
+  3,570 만 개와 TPU v3-8 에서 800k step 에 10.6 시간이 걸린 학습 속도가 있다
+- diffusers, [`pipeline_stable_diffusion.py`](https://github.com/huggingface/diffusers/blob/main/src/diffusers/pipelines/stable_diffusion/pipeline_stable_diffusion.py)
+  와 [`train_text_to_image_lora.py`](https://github.com/huggingface/diffusers/blob/main/examples/text_to_image/train_text_to_image_lora.py) —
+  `__call__` 을 감싼 `@torch.no_grad()` 와, U-Net·VAE·text encoder 에 `requires_grad_(False)` 를 적용하는 LoRA 학습 예제
 - PyTorch, [A Gentle Introduction to torch.autograd](https://docs.pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html) — `grad_fn` 으로
   이어진 graph 와 `backward()` 를 짧은 코드로 보여 주는 tutorial

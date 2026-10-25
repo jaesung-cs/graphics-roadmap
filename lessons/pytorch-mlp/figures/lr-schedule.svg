@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
-  <title>Diffusion Policy 의 learning rate schedule. 500 step warmup 뒤 cosine 감소</title>
+  <title>warmup 500 step 과 cosine schedule 의 learning rate. 500 step warmup 뒤 cosine 감소</title>
   <defs><marker id="ar-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="ar-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="ar-sky" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="ar-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="ar-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="ar-violet" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker><marker id="ar-fg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker></defs>
   <rect x="1" y="1" width="718" height="328" rx="12" fill="#0b1220" stroke="#1e293b"/>
   <line x1="70.0" y1="250.0" x2="320.0" y2="250.0" stroke="#1e293b" stroke-width="1.0"/>
@@ -53,5 +53,5 @@
   <text x="565.7" y="158.7" fill="#f59e0b" font-size="12" text-anchor="start" stroke="#0b1220" stroke-width="5" stroke-linejoin="round" paint-order="stroke">50,250 step: 0.00005</text>
   <circle cx="690.0" cy="250.0" r="4" fill="#f59e0b"/>
   <text x="686.0" y="238.0" fill="#f59e0b" font-size="12" text-anchor="end" stroke="#0b1220" stroke-width="5" stroke-linejoin="round" paint-order="stroke">100,000 step: 0</text>
-  <text x="360.0" y="312.0" fill="#64748b" font-size="12" text-anchor="middle">LeRobot Diffusion Policy 기본값: 최대 0.0001, warmup 500 step, cosine 으로 0 까지</text>
+  <text x="360.0" y="312.0" fill="#64748b" font-size="12" text-anchor="middle">diffusers 예제 기본값 learning rate 0.0001 과 warmup 500 step 에 cosine 을 고른 경우</text>
 </svg>

@@ -14,9 +14,9 @@ CC BY-NC-SA 4.0. The changes made to it:
 - In the kept lessons (vectors-matrices, derivatives, probability, linear-regression, perceptron, autograd, pytorch-mlp,
   cnn, resnet, vit, clip, tokenizer, transformer, gpt, vae, ddpm, flow-matching), links to removed lessons were turned into
   plain text.
-- In vectors-matrices, derivatives and probability, the robotics examples were replaced with image and graphics examples
-  and the robotics-only sections were removed; their text, figures and quizzes were rewritten accordingly, © 2026
-  jaesung-cs for the new material. The other kept lessons still carry the original robotics examples.
+- In vectors-matrices, derivatives, probability, linear-regression, perceptron, autograd and pytorch-mlp, the
+  robotics examples were replaced with image and graphics examples and the robotics-only sections were removed; their
+  text, figures and quizzes were rewritten accordingly, © 2026 jaesung-cs for the new material. The other kept lessons still carry the original robotics examples.
 - The lessons of the `stable-diffusion` branch are new, © 2026 jaesung-cs, and released under the same
   license.
 - `lessons/branches.yaml` was rewritten for the new curriculum map, a single tree that grows down from the first lesson

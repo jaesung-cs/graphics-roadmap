@@ -47,7 +47,7 @@
   title: mini-batch, step, epoch
   variants:
     - question: |
-        시연 frame 40,000 개로 policy 를 batch 크기 8 로 학습한다. 50,000 step 을 학습하면 데이터 전체를 대략 몇 번 쓰는가?
+        사진 40,000 장으로 network 를 batch 크기 8 로 학습한다. 50,000 step 을 학습하면 데이터 전체를 대략 몇 번 쓰는가?
       choices:
         - '1 번'
         - '5 번'
@@ -79,7 +79,7 @@
         - 'validation set 과 train set 을 섞어 학습에 쓸 데이터를 늘리기 위해서'
       answer: 1
       explanation: |
-        녹화 순서 그대로 묶으면 한 시연의 비슷한 frame 이나 같은 class 의 사진만 모인 mini-batch 가 연달아 와서 parameter 가 그쪽으로
+        모은 순서 그대로 묶으면 한 동영상에서 뽑은 비슷한 사진이나 같은 class 의 사진만 모인 mini-batch 가 연달아 와서 parameter 가 그쪽으로
         끌려갔다 돌아온다. 섞어도 데이터 전체의 평균 gradient 는 그대로다. epoch 하나의 step 수도 데이터 수를 batch 크기로 나눈 값이라
         섞는다고 줄지 않고, 섞을 때 걸러지는 sample 도 없다. validation set 을 학습에 섞으면 성능을 잴 데이터가 사라지므로 섞지 않는다.
 
@@ -167,7 +167,7 @@
         `torch.optim.Adam` 의 기본값도 같다. gradient 제곱의 평균 $v$ 는 $m$ 보다 오래된 값을 더 많이 남기도록 $\beta_2$ 가 $\beta_1$ 보다 1
         에 가깝다. 0.1, 0.5, 0.5, 0.1 은 $\beta$ 가 너무 작아 moving average 가 지난 값을 거의 남기지 않고, $\epsilon$ 도 지나치게 크다.
         0.001, 0.999, 0.9, 10⁻⁸ 은 $\beta_1$ 과 $\beta_2$ 가 뒤바뀌었다. 0.0001, 0.9, 0.9, 0 은 $\epsilon$ 이 0 이라 분모가 0 이 될 수
-        있다. 로봇 policy 에서는 ACT 처럼 learning rate 를 이 기본값보다 훨씬 작게 바꿔 쓰기도 한다.
+        있다. 이미 학습된 Stable Diffusion 을 더 학습시킬 때는 learning rate 를 $10^{-5}$ 처럼 이 기본값보다 훨씬 작게 바꿔 쓰기도 한다.
 
 - topic: training-loop
   title: training loop 와 autograd 의 자리
@@ -214,44 +214,43 @@
   title: 입력 normalization
   variants:
     - question: |
-        관절 각도(radian, −3 ~ 3)와 집게 벌림(mm, 0 ~ 80)을 policy 입력으로 그대로 넣으면 어떤 문제가 생기는가?
+        pixel 밝기(0 ~ 255)와 사진 속 가로 위치(0 ~ 1)를 network 입력으로 그대로 넣으면 어떤 문제가 생기는가?
       choices:
         - '단위가 달라도 첫 층의 weight 가 알아서 크기를 맞추므로 학습에는 문제가 없다'
         - '입력의 범위가 넓으면 그만큼 neuron 이 더 필요해서 parameter 가 두 배가 된다'
-        - '집게 입력이 첫 층 값과 gradient 를 키워서 learning rate 하나로 고르게 학습하기 어렵다'
-        - 'radian 값은 음수가 될 수 있어서 ReLU 를 지나면 관절 입력이 모두 0 이 된다'
+        - '밝기 입력이 첫 층 값과 gradient 를 키워서 learning rate 하나로 고르게 학습하기 어렵다'
+        - '위치 값은 0 에 가까울 수 있어서 ReLU 를 지나면 위치 입력이 모두 0 이 된다'
       answer: 2
       explanation: |
         weight 의 처음 크기는 입력이 1 안팎이라고 보고 정하므로 수십 단위의 입력은 첫 층의 값을 수십 배로 키운다. 또 weight 의 gradient 는
-        그 입력값에 비례해서 집게 쪽 gradient 가 관절 쪽보다 훨씬 크고, learning rate 하나로는 두 weight 를 고르게 고칠 수 없어서 weight 가
+        그 입력값에 비례해서 밝기 쪽 gradient 가 위치 쪽보다 훨씬 크고, learning rate 하나로는 두 weight 를 고르게 고칠 수 없어서 weight 가
         알아서 맞춰지기를 기대하기 어렵다. 그래서 평균과 표준편차로 크기를 맞춘다. parameter 수는 입력값의
-        크기와 상관없다. ReLU 는 입력이 아니라 Linear layer 를 지난 값에 적용하므로 radian 값이 음수라고 0 이 되지 않는다.
+        크기와 상관없다. ReLU 는 입력이 아니라 Linear layer 를 지난 값에 적용하므로 위치 값이 작다고 0 이 되지 않는다.
     - question: |
-        학습 때 action 을 dataset 통계로 standardization 해서 학습한 policy 를 로봇에서 실행할 때 꼭 해야 하는 일은?
+        pixel 값을 $-1$ ~ $1$ 로 바꿔 학습한 그림 생성 model 이 낸 그림을 사진 파일로 저장할 때 꼭 해야 하는 일은?
       choices:
-        - 'policy 가 낸 action 을 같은 통계(평균·표준편차)로 되돌린 뒤 로봇에 보낸다'
-        - '실행할 때 새로 들어온 관측의 평균과 표준편차를 다시 계산해 그것으로 normalization 한다'
-        - 'policy 출력을 그대로 로봇에 보낸다. normalization 은 학습에만 필요하다'
-        - 'action 을 0 ~ 1 사이로 잘라서, 로봇이 낼 수 있는 범위를 넘지 않게 보낸다'
+        - 'model 이 낸 값을 학습 때와 같은 변환을 거꾸로 써서 0 ~ 1 범위로 되돌린 뒤 저장한다'
+        - '그릴 때마다 새로 나온 그림의 평균과 표준편차를 다시 계산해 그것으로 normalization 한다'
+        - 'model 출력을 그대로 저장한다. normalization 은 학습할 때에만 필요한 단계다'
+        - '음수를 모두 0 으로 잘라서, 사진 파일이 담을 수 있는 범위를 넘지 않게 저장한다'
       answer: 0
       explanation: |
-        policy 는 normalization 된 공간에서 학습했으므로 그 출력도 평균 0, 표준편차 1 근처의 값이다. 학습 때와 같은 통계로 되돌려야 실제
-        관절 각도가 되므로, LeRobot 은 통계를 checkpoint 와 함께 저장한다. 실행 중 관측으로 통계를 새로 구하면 학습 때와 다른 변환이 된다.
-        policy 출력을 그대로 보내면 평균 0 근처의 값이 실제 각도로 쓰여 로봇이 엉뚱하게 움직인다. 0 ~ 1 로 자르는 것도 통계로 되돌리는
-        계산이 아니라서 엉뚱한 각도가 된다.
+        model 은 $-1$ ~ $1$ 로 바꾼 공간에서 학습했으므로 그 출력도 그 범위의 값이다. 학습 때와 같은 변환을 거꾸로 써야 실제 밝기가 되므로,
+        diffusers 의 `VaeImageProcessor` 는 $x \div 2 + 0.5$ 로 0 ~ 1 범위에 되돌린다. 그림마다 통계를 새로 구하면 학습 때와 다른 변환이 된다.
+        출력을 그대로 저장하면 어두운 쪽 절반이 음수라 모두 검게 잘린다. 음수만 0 으로 자르는 것도 되돌리는 계산이 아니라서 어두운 부분이
+        뭉개진다.
     - question: |
-        학습 중 loss 가 발산해서 normalization 통계를 열어 보니, 거의 움직이지 않는 관절 하나의 표준편차가 0.001 이었다. 이것이 문제가 되는 이유는?
+        학습 중 loss 가 발산해서 normalization 통계를 열어 보니, 거의 바뀌지 않는 입력 하나의 표준편차가 0.001 이었다. 이것이 문제가 되는 이유는?
       choices:
-        - '표준편차가 작으면 normalization 뒤 값이 0 에 가까워져 그 관절이 학습에서 무시되기 때문이다'
+        - '표준편차가 작으면 normalization 뒤 값이 0 에 가까워져 그 입력이 학습에서 무시되기 때문이다'
         - '0.001 만 움직여도 1 이 되어, 작은 noise 나 처음 보는 값이 아주 큰 값으로 부풀기 때문이다'
         - '표준편차가 작으면 평균도 0 이 되어 평균을 빼는 단계에서 계산이 멈추기 때문이다'
         - '표준편차는 normalization 에 쓰이지 않고 평균만 빼므로 원인은 다른 곳에 있다'
       answer: 1
       explanation: |
         standardization 은 (값 − 평균) ÷ 표준편차 라서 표준편차가 아주 작으면 미세한 변화가 크게 부풀려진다. 학습 데이터 범위를 조금만
-        벗어난 값도 수십·수백이 되어 loss 가 발산할 수 있다. 그 관절은 학습에서 무시되는 것이 아니라 오히려 지나치게 커진다. 표준편차가
-        작다고 평균이 0 이 되지는 않는다. standardization 은 표준편차로 나누는 계산이라 표준편차가 쓰이지 않는다는 보기도 틀렸다. openpi
-        README 의 문제 해결 표에도 이런 경우 통계 파일을 확인하라는 안내가 있다.
+        벗어난 값도 수십·수백이 되어 loss 가 발산할 수 있다. 그 입력은 학습에서 무시되는 것이 아니라 오히려 지나치게 커진다. 표준편차가
+        작다고 평균이 0 이 되지는 않는다. standardization 은 표준편차로 나누는 계산이라 표준편차가 쓰이지 않는다는 보기도 틀렸다.
 
 - topic: early-stopping
   title: validation, loss curve, early stopping
@@ -282,25 +281,24 @@
         아무 선택에도 쓰지 않은 test set 이 있어야 처음 보는 데이터에서의 성능을 제대로 알 수 있다. test set 이 validation set 보다 클
         필요는 없다. test set 을 학습 데이터로 보태 쓰면 처음 보는 데이터라는 목적이 사라진다. 두 묶음 모두 loss 와 accuracy 를 잴 수 있다.
     - question: |
-        시연 데이터로 manipulation policy 를 학습했다. validation loss 가 가장 낮은 checkpoint 를 바로 로봇에 올리면 충분한가?
+        그림 생성 model 을 학습했다. loss 가 가장 낮은 checkpoint 가 가장 좋은 그림을 그린다고 보고 바로 쓰면 충분한가?
       choices:
-        - '충분하다. validation loss 가 낮을수록 시연을 잘 따라 하므로 성공률도 반드시 높다'
-        - '충분하다. 로봇 policy 에서는 validation loss 가 가장 낮은 시점이 언제나 학습 마지막이다'
-        - '충분하지 않다. validation loss 와 성공률이 어긋날 수 있어서 실행해 본 성공률로 확인해야 한다'
-        - '충분하지 않다. 시연은 정답이 하나가 아니라서 로봇 policy 의 validation loss 는 계산할 수 없다'
+        - '충분하다. loss 가 낮을수록 데이터를 잘 따라 하므로 그림 품질도 반드시 좋다'
+        - '충분하다. 그림 생성 model 은 loss 가 가장 낮은 시점이 언제나 학습의 마지막이다'
+        - '충분하지 않다. loss 와 그림 품질이 어긋날 수 있어서 그림을 직접 뽑아 확인해야 한다'
+        - '충분하지 않다. 그림은 정답이 하나가 아니라서 그림 생성 model 의 loss 는 계산할 수 없다'
       answer: 2
       explanation: |
-        시연을 얼마나 비슷하게 따라 하는지(loss)와 작업에 성공하는지는 다른 기준이다. robomimic 연구에서는 validation loss 가 가장 낮은
-        checkpoint 의 성공률이 가장 좋은 checkpoint 보다 크게 낮은 경우가 있었고, validation loss 가 오르는 동안에도 성공률이 오르기도 했다.
-        그래서 validation loss 가 낮을수록 성공률이 반드시 높은 것은 아니다. 그 연구에서 validation loss 가 가장 낮은 시점도 학습 마지막이
-        아니라 앞쪽(epoch 100 ~ 300)이었다. validation loss 는 시연 일부를 떼어 두면 로봇 policy 에서도 계산할 수 있지만, 최종 선택은 실행해
-        본 성공률로 확인한다.
+        데이터를 숫자로 얼마나 잘 설명하는지(loss)와 그림이 보기에 좋은지는 다른 기준이다. DDPM 논문에서는 NLL 이 3.70 으로 더 좋은 model 의
+        FID 가 13.51 이었고, NLL 이 3.75 로 조금 나쁜 model 의 FID 가 3.17 로 훨씬 좋았다. 그래서 loss 가 낮을수록 그림이 반드시 좋은 것은
+        아니다. loss 가 가장 낮은 시점이 늘 학습 마지막이라는 보장도 없다. 그림 생성 model 도 loss 는 계산할 수 있지만, 품질은 그림을 뽑아
+        보고 확인한다.
 
 - topic: gpu-memory
   title: 학습 중 GPU memory
   variants:
     - question: |
-        parameter 가 10 억 개인 모델을 float32 와 Adam 으로 학습하면, activation 을 빼고 parameter 관련 값만으로 GPU memory 가 대략 얼마나 필요할까?
+        parameter 가 10 억 개인 model 을 float32 와 Adam 으로 학습하면, activation 을 빼고 parameter 관련 값만으로 GPU memory 가 대략 얼마나 필요할까?
       choices:
         - '4 GB. 학습할 때도 parameter 만 GPU 에 올려 두면 된다'
         - '8 GB. parameter 와 gradient 만 있으면 Adam 이 그것으로 계산한다'
@@ -325,14 +323,14 @@
         수는 그대로라서 memory 가 줄지 않는다. epoch 수를 줄여도 step 하나에 쓰는 memory 는 같다. Adam 은 parameter 마다 $m$, $v$ 를 더
         저장해서 오히려 memory 를 더 쓴다.
     - question: |
-        큰 VLA 를 parameter 전체로 fine-tuning 하는 것보다 LoRA 로 학습할 때 GPU memory 가 크게 주는 이유는?
+        Stable Diffusion 의 U-Net 을 parameter 전체로 fine-tuning 할 때보다 LoRA 로 학습할 때 GPU memory 가 크게 주는 이유는?
       choices:
         - '원래 weight 는 고정하고 작은 행렬만 학습해서, gradient 와 optimizer 값을 그 몫만 저장하기 때문이다'
         - '원래 weight 를 고정하므로 backward 에 쓸 forward 의 activation 을 저장할 필요가 없어서다'
-        - '원래 weight 를 지우고, 덧붙인 작은 행렬로만 이루어진 모델로 바꾸기 때문이다'
+        - '원래 weight 를 지우고, 덧붙인 작은 행렬로만 이루어진 model 로 바꾸기 때문이다'
         - 'batch 크기를 자동으로 1 로 바꿔 한 번에 올리는 sample 을 줄이기 때문이다'
       answer: 0
       explanation: |
-        full fine-tuning 은 모든 parameter 마다 gradient 와 Adam 의 $m$, $v$ 를 저장해야 한다. LoRA 는 원래 weight 는 그대로 두고 쓰기만
+        전체 fine-tuning 은 모든 parameter 마다 gradient 와 Adam 의 $m$, $v$ 를 저장해야 한다. LoRA 는 원래 weight 는 그대로 두고 쓰기만
         하며, 학습하는 작은 행렬에 대해서만 gradient 와 optimizer 값을 저장한다. 원래 weight 는 forward 에 필요하므로 지우지 않는다.
-        activation 도 full fine-tuning 과 마찬가지로 저장한다. batch 크기는 LoRA 가 바꾸지 않고 사람이 정한다.
+        activation 도 전체 fine-tuning 과 마찬가지로 저장한다. batch 크기는 LoRA 가 바꾸지 않고 사람이 정한다.

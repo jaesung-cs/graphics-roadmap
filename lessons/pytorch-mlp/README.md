@@ -4,7 +4,7 @@ title: PyTorch Training Loop
 branch: core
 requires: [autograd]
 hours: 2
-summary: mini-batch 마다 forward·loss·backward·update 를 되풀이하는 학습 loop. softmax cross-entropy, SGD·momentum·Adam, 입력 normalization, loss curve 와 early stopping, GPU memory, LeRobot 의 학습 기본값
+summary: mini-batch 마다 forward·loss·backward·update 를 되풀이하는 학습 loop. softmax cross-entropy, SGD·momentum·Adam, 입력 normalization, loss curve 와 early stopping, GPU memory, diffusers 의 Stable Diffusion 학습 기본값
 papers:
   - title: "A Stochastic Approximation Method"
     authors: Herbert Robbins, Sutton Monro
@@ -18,27 +18,28 @@ papers:
     authors: Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun
     year: 2015
     url: https://arxiv.org/abs/1502.01852
-  - title: "What Matters in Learning from Offline Human Demonstrations for Robot Manipulation"
-    authors: Ajay Mandlekar et al.
-    year: 2021
-    url: https://arxiv.org/abs/2108.03298
+  - title: "Denoising Diffusion Probabilistic Models"
+    authors: Jonathan Ho, Ajay Jain, Pieter Abbeel
+    year: 2020
+    url: https://arxiv.org/abs/2006.11239
 ---
 
 # PyTorch Training Loop
 
-LeRobot 으로 로봇 팔 시연을 따라 하는 ACT policy 를 학습시키면, 몇 시간 동안 terminal 에 200 step 마다 step 번호와 loss 가 찍히고 20,000
-step 마다 checkpoint 파일이 하나씩 쌓인다. 기본 설정에서는 같은 계산을 100,000 번 되풀이하는데, 그 한 번에 GPU 는 무엇을 계산하는 걸까?
+Hugging Face 의 diffusers 에 있는 예제 `train_text_to_image.py` 로 Stable Diffusion 을 내 그림 모음에 맞게 더 학습시키면, 몇 시간 동안
+terminal 에 step 번호와 loss 가 찍히고 기본값으로 500 step 마다 checkpoint 파일이 하나씩 쌓인다. 예제 README 의 명령은 같은 계산을 15,000 번
+되풀이하는데, 그 한 번에 GPU 는 무엇을 계산하는 걸까?
 
-한 번의 계산은 시연 frame 8 개를 꺼내 policy 에 넣고(forward) 예측과 시연의 차이를 숫자 하나(loss)로 만드는 데서 시작한다. 그 숫자에서
-거꾸로 parameter 마다 gradient 를 구하고(backward), optimizer 가 그 gradient 로 parameter 를 조금 고치면 한 번이 끝난다. 이 순서를
-되풀이하는 학습 과정을 training loop 라고 한다. ACT 논문은 parameter 가 약 8,000 만 개인 policy 를 이 loop 로 RTX 2080 Ti 한 장에서 5 시간쯤
-학습시켰다.
+한 번의 계산은 사진 몇 장과 그 설명 글을 꺼내 사진에 noise 를 섞고, U-Net 에 넣어(forward) 맞힌 noise 와 실제 noise 의 차이를 숫자 하나(loss)로
+만드는 데서 시작한다. 그 숫자에서 거꾸로 parameter 마다 gradient 를 구하고(backward), optimizer 가 그 gradient 로 parameter 를 조금 고치면 한
+번이 끝난다. 이 순서를 되풀이하는 학습 과정을 training loop 라고 한다. README 에 따르면 parameter 가 약 8 억 6 천만 개인 U-Net 을 이 loop 로
+24 GB GPU 한 장에서 학습시킬 수 있다.
 
 ## 학습 목표
 
 - mini-batch 하나로 forward → loss → backward → update 를 하는 step 과 epoch 의 관계를 설명할 수 있다
 - softmax cross-entropy 와 그 gradient, SGD·momentum·Adam 이 parameter 를 고치는 방식을 숫자로 설명할 수 있다
-- 입력 normalization 과 early stopping 이 필요한 이유와, 로봇 policy 에서 validation loss 를 어디까지 믿을 수 있는지 설명할 수 있다
+- 입력 normalization 과 early stopping 이 필요한 이유와, 그림 생성 model 에서 validation loss 를 어디까지 믿을 수 있는지 설명할 수 있다
 - 학습 중 GPU memory 를 차지하는 것과, memory 가 모자랄 때 batch 크기와 gradient accumulation 으로 대응하는 방법을 설명할 수 있다
 
 ## tensor 와 batch
@@ -235,9 +236,9 @@ gradient descent 를 그대로 하면 parameter 를 한 번 고칠 때마다 사
 
 ![사진 12 장을 epoch 마다 다시 섞어 4 장씩 세 mini-batch 로 나누는 모습](figures/minibatch-epoch.svg)
 
-로봇 시연 데이터에서는 frame 하나가 sample 하나다. LeRobot 의 ALOHA 시뮬레이션 데이터 `aloha_sim_transfer_cube_human` 은 50 Hz 로 녹화한
-시연 50 개이고 frame 은 모두 20,000 개라서, 시연 하나가 400 frame(8 초)이다. 기본 batch 크기 8 로는 epoch 하나가 $20{,}000 \div 8 = 2{,}500$
-step 이고, 기본 학습 길이 100,000 step 은 $100{,}000 \div 2{,}500 = 40$ epoch 다.
+그림 생성 model 을 더 학습시킬 때는 사진 한 장과 그 설명 글 한 줄이 sample 하나다. 예를 들어 사진 1,200 장을 모았다면
+batch 크기 4 로는 epoch 하나가 $1{,}200 \div 4 = 300$ step 이고, diffusers 예제 README 의 학습 길이 15,000 step 은
+$15{,}000 \div 300 = 50$ epoch 다. 그 README 의 명령은 batch 크기를 1 로 두고 뒤에서 볼 gradient accumulation 으로 4 장씩 모아 한 번 고친다.
 
 mini-batch 의 gradient 는 전체 gradient 와 다르다. 예를 들어 sample 네 개의 gradient 가 $-4, -2, 1, 1$ 이면 전체 평균은 $-1$ 인데, 두 장씩
 묶은 mini-batch 의 평균은 섞은 순서에 따라 $-1.5$ 와 $-0.5$ 가 되기도 하고 $-3$ 과 1 이 되기도 한다. step 하나의 gradient 는 부호까지 바뀔
@@ -249,7 +250,7 @@ mini-batch 의 gradient 는 전체 gradient 와 다르다. 예를 들어 sample 
 $\theta$ 에서 learning rate $\eta$ 와 mini-batch gradient $g$ 의 곱을 빼는 $\theta \leftarrow \theta - \eta\, g$ 다. Robbins 와
 Monro(1951)는 이렇게 흔들리는 값으로 update 를 되풀이해도 답에 다가가는 조건을 처음 보였다.
 
-**확인 문제.** 시연 frame 12,000 개를 batch 크기 8 로 학습하면 epoch 하나는 몇 step 이고, 30,000 step 은 몇 epoch 일까?
+**확인 문제.** 사진 12,000 장을 batch 크기 8 로 학습하면 epoch 하나는 몇 step 이고, 30,000 step 은 몇 epoch 일까?
 
 <details><summary>답 보기</summary>
 
@@ -297,22 +298,25 @@ adaptive moment estimation 의 줄임말이다.
 
 ![gradient 가 0.02, 2, 200 일 때 Adam 의 첫 step 은 모두 η 이고, bias correction 을 빼면 3.16η 다](figures/adam-steps.svg)
 
-LeRobot 의 ACT 와 Diffusion Policy 도 Adam 계열 optimizer 를 쓰는데, 기본값은 아래와 같다.
+diffusers 의 Stable Diffusion 학습 예제도 Adam 계열 optimizer 를 쓴다. 기본값과 README 의 명령이 고른 값은 아래와 같다.
 
-| policy | optimizer | learning rate | 그 밖의 설정 |
+| 예제 | optimizer | learning rate | 그 밖의 설정 |
 | --- | --- | --- | --- |
-| ACT | AdamW | $10^{-5}$ | weight decay $10^{-4}$, learning rate 고정 |
-| Diffusion Policy | Adam | $10^{-4}$ | $\beta_1 = 0.95$, weight decay $10^{-6}$, warmup 500 step 뒤 cosine 감소 |
+| `train_text_to_image.py` 기본값 | AdamW | $10^{-4}$ | $\beta_1 = 0.9$, $\beta_2 = 0.999$, weight decay $10^{-2}$, $\epsilon = 10^{-8}$, warmup 500 step |
+| README 의 전체 fine-tuning 명령 | AdamW | $10^{-5}$ | learning rate 고정, warmup 없음 |
+| README 의 LoRA 명령 | AdamW | $10^{-4}$ | LoRA 는 전체 fine-tuning 보다 큰 learning rate 를 쓸 수 있다는 README 의 설명 |
 
-ACT 의 learning rate $10^{-5}$ 는 Adam 기본값의 100 분의 1 로, ACT 논문의 hyperparameter 표와 같은 값이다. weight decay 는 step 마다
-weight 를 0 쪽으로 조금씩 줄이는 설정이다. AdamW 는 이 줄이는 계산을 $m$, $v$ 와 섞지 않고 따로 하는 Adam 이다.
+전체 fine-tuning 의 learning rate $10^{-5}$ 는 Adam 기본값의 100 분의 1 이다. 이미 잘 학습된 parameter 8 억 6 천만 개를 조금만 고치려는
+학습이라 learning rate 를 작게 잡는다. weight decay 는 step 마다 weight 를 0 쪽으로 조금씩 줄이는 설정이다. AdamW 는 이 줄이는 계산을 $m$, $v$ 와 섞지 않고 따로
+하는 Adam 이다.
 
-learning rate 를 step 에 따라 바꾸는 규칙을 learning rate schedule 이라고 한다. Diffusion Policy 는 처음 500 step 동안 learning rate 를 0
-에서 $10^{-4}$ 까지 직선으로 올리는데, 이 단계를 warmup 이라고 한다. 그 뒤에는 cosine 곡선의 절반 모양으로 줄여 마지막 step 에 0 이 되게
-하므로, 100,000 step 을 학습하면 250 step 과 50,250 step 에서 $5 \times 10^{-5}$ 다. learning rate 가 작아질수록 흔들리는 gradient 를 따라
-parameter 가 움직이는 폭도 줄어든다.
+learning rate 를 step 에 따라 바꾸는 규칙을 learning rate schedule 이라고 한다. 이 예제에서 schedule 을 cosine 으로 고르고 기본값 그대로
+쓰면, 처음 500 step 동안 learning rate 를 0 에서 $10^{-4}$ 까지 직선으로 올린다. 이 단계를 warmup 이라고 한다. 그 뒤에는 diffusers 의
+`get_cosine_schedule_with_warmup` 이 learning rate 를 cosine 곡선의 절반 모양으로 줄여 마지막 step 에 0 이 되게 한다. 그래서 100,000 step 을
+학습하면 250 step 과 50,250 step 에서 learning rate 가 $5 \times 10^{-5}$ 다. learning rate 가 작아질수록 흔들리는 gradient 를 따라 parameter
+가 움직이는 폭도 줄어든다.
 
-![Diffusion Policy 의 learning rate. 500 step 동안 0.0001 까지 오른 뒤 cosine 곡선으로 줄어 50,250 step 에 0.00005, 100,000 step 에 0 이 된다](figures/lr-schedule.svg)
+![warmup 500 step 과 cosine schedule 의 learning rate. 500 step 동안 0.0001 까지 오른 뒤 cosine 곡선으로 줄어 50,250 step 에 0.00005, 100,000 step 에 0 이 된다](figures/lr-schedule.svg)
 
 <details><summary><b>심화: moving average 의 bias correction 과 Adam 의 식</b></summary>
 
@@ -407,10 +411,10 @@ autograd 는 어느 쪽으로 고치면 loss 가 줄어드는지 계산하고, �
 
 ![gradient 를 지우면 step 2 의 w 가 0.92, 지우지 않으면 0.5 + 0.3 = 0.8 이 쌓여 0.87 이 된다](figures/grad-accumulate.svg)
 
-LeRobot 의 학습 함수는 backward 다음에 gradient clipping → parameter 고치기 → gradient 지우기 → learning rate 갱신 순서로 진행한다. gradient
-clipping 은 모든 gradient 를 한 줄로 이은 vector 의 길이(값마다 제곱해 더한 값의 제곱근)가 LeRobot 기본값 10 을 넘지 않게 줄이는 일이다.
-gradient 가 $(30, 40)$ 이면 길이가 $\sqrt{900 + 1600} = 50$ 이라서 $10 \div 50 = 0.2$ 를 곱해 $(6, 8)$ 로 줄인다. 방향은 두고 크기만
-줄이므로, 유별난 sample 때문에 gradient 가 커진 step 에서도 parameter 가 크게 바뀌지 않는다.
+diffusers 의 `train_text_to_image.py` 는 backward 다음에 gradient clipping → parameter 고치기 → learning rate 갱신 → gradient 지우기 순서로
+진행한다. gradient clipping 은 모든 gradient 를 한 줄로 이은 vector 의 길이(값마다 제곱해 더한 값의 제곱근)가 정한 값을 넘지 않게 줄이는
+일이고, 이 예제의 기본값은 1 이다. gradient 가 $(30, 40)$ 이면 길이가 $\sqrt{900 + 1600} = 50$ 이라서 $1 \div 50 = 0.02$ 를 곱해 $(0.6, 0.8)$ 로
+줄인다. 방향은 두고 크기만 줄이므로, 유별난 sample 때문에 gradient 가 커진 step 에서도 parameter 가 크게 바뀌지 않는다.
 
 **확인 문제.** 아래 중 autograd 가 하는 일을 모두 고르자. (가) 데이터를 섞는다 (나) forward 중에 graph 를 기록한다 (다) parameter 마다
 gradient 를 계산한다 (라) parameter 에서 $\eta \times$ gradient 를 뺀다
@@ -423,43 +427,42 @@ gradient 를 계산한다 (라) parameter 에서 $\eta \times$ gradient 를 뺀�
 
 ## 입력 normalization
 
-로봇 policy 의 입력에는 단위가 다른 값이 섞인다. 관절 각도는 radian 으로 $-3$ 에서 $3$ 사이인데 집게 벌림을 mm 로 재면 0 에서 80 사이다.
-weight 의 처음 크기는 입력이 1 안팎이라고 보고 정하므로 40 mm 같은 입력은 첫 층의 $z$ 를 수십 배로 키운다. 또 $z = w_1 x_1 + w_2 x_2$ 에서
-weight 의 gradient 는 $z$ 의 gradient 에 입력을 곱한 값이라, 큰 입력에 붙은 weight 의 gradient 가 크다. 아래 예에서 집게 벌림은 40 mm 이고
-관절 각도는 0.5 rad 이며, $z$ 의 gradient 는 0.1 이다.
+network 의 입력에 크기가 다른 값이 섞이는 경우가 있다. 사진의 pixel 밝기를 0 에서 255 사이로 넣고, 그 pixel 이 사진 가로의 어디쯤인지를
+0 에서 1 사이 비율로 함께 넣는 network 를 생각해 보자. weight 의 처음 크기는 입력이 1 안팎이라고 보고 정하므로 180 같은 입력은 첫 층의 $z$ 를
+수백 배로 키운다. 또 $z = w_1 x_1 + w_2 x_2$ 에서 weight 의 gradient 는 $z$ 의 gradient 에 입력을 곱한 값이라, 큰 입력에 붙은 weight 의
+gradient 가 크다. 예를 들어 밝기가 180 이고 위치가 0.8 이며 $z$ 의 gradient 가 0.1 이라고 하자. 두 입력의 평균과 표준편차도 이 예에서
+정한 값이다.
 
 | 입력 | 그대로 | weight 의 gradient | standardization | weight 의 gradient |
 | --- | --- | --- | --- | --- |
-| 집게 (평균 20 mm, 표준편차 25 mm) | 40 | $0.1 \times 40 = 4$ | $(40 - 20) \div 25 = 0.8$ | 0.08 |
-| 관절 (평균 0.2 rad, 표준편차 0.5 rad) | 0.5 | $0.1 \times 0.5 = 0.05$ | $(0.5 - 0.2) \div 0.5 = 0.6$ | 0.06 |
+| 밝기 (평균 120, 표준편차 60) | 180 | $0.1 \times 180 = 18$ | $(180 - 120) \div 60 = 1$ | 0.1 |
+| 위치 (평균 0.5, 표준편차 0.3) | 0.8 | $0.1 \times 0.8 = 0.08$ | $(0.8 - 0.5) \div 0.3 = 1$ | 0.1 |
 
-그대로 넣으면 두 gradient 가 80 배 차이 나서 SGD 의 learning rate 하나를 두 weight 에 함께 맞추기 어렵다. 입력마다 평균을 빼고 표준편차(값이
+그대로 넣으면 두 gradient 가 225 배 차이 나서 SGD 의 learning rate 하나를 두 weight 에 함께 맞추기 어렵다. 입력마다 평균을 빼고 표준편차(값이
 평균에서 흩어진 정도)로 나누는 standardization 을 하면 두 값이 모두 1 안팎이 된다. Adam 을 쓰면 gradient 크기 차이는 덜 문제가 되지만, $z$
 가 커지는 문제는 그대로 남는다.
 
-LeRobot 은 dataset 의 통계 파일에 값마다 평균·표준편차·최솟값·최댓값을 적어 두고 이 값으로 입력을 바꾼다. ACT 는 사진·관절 상태·action 을
-모두 standardization 으로 바꾸고, Diffusion Policy 는 관절 상태와 action 을 최솟값이 $-1$ 이고 최댓값이 $1$ 이 되게 옮기는 min-max 방식을
-쓴다. policy 가 낸 action 도 normalization 된 값이라 로봇에 보내기 전에 같은 통계로 되돌려야 한다. 그래서 LeRobot 은 통계를 checkpoint 와
-함께 저장한다.
+사진을 받는 model 은 학습할 때 쓴 통계를 model 과 함께 둔다. torchvision 의 ImageNet 분류 model 들은 0 ~ 1 로 바꾼 pixel 값에서 빨강·초록·파랑마다
+아래 평균을 빼고 표준편차로 나눈 값을 받는다.
 
-ALOHA 시뮬레이션 데이터의 실제 통계를 보면, 상자를 옮기는 동안 왼팔 허리 관절은 거의 돌지 않고 오른 손목 회전 관절은 크게 돈다.
-
-| 관절 | 평균 (rad) | 표준편차 (rad) | 최솟값 → standardization | 최댓값 → standardization |
+| channel | 평균 | 표준편차 | pixel 값 0 → | pixel 값 1 → |
 | --- | --- | --- | --- | --- |
-| 왼팔 허리 | $-0.0074$ | 0.0122 | $-0.0741 \to -5.47$ | $0.0403 \to 3.91$ |
-| 오른 손목 회전 | $-0.2348$ | 0.5299 | $-1.3615 \to -2.13$ | $1.2217 \to 2.75$ |
+| 빨강 | 0.485 | 0.229 | $(0 - 0.485) \div 0.229 \approx -2.12$ | $(1 - 0.485) \div 0.229 \approx 2.25$ |
+| 초록 | 0.456 | 0.224 | $\approx -2.04$ | $\approx 2.43$ |
+| 파랑 | 0.406 | 0.225 | $\approx -1.80$ | $\approx 2.64$ |
 
-![ALOHA 의 두 관절 범위. radian 으로는 왼팔 허리 −0.074 ~ 0.040, 오른 손목 회전 −1.36 ~ 1.22 이고, standardization 뒤에는 −5.47 ~ 3.91, −2.13 ~ 2.75 다](figures/normalization.svg)
+새 사진도 학습 때와 같은 통계로 바꿔야 model 이 학습 때 본 범위의 숫자를 받는다. 출력에도 같은 범위를 쓴다. Stable Diffusion 의 VAE 는 $-1$ ~
+$1$ 로 바꾼 pixel 값을 받고 $-1$ ~ $1$ 범위의 그림을 내므로, diffusers 의 `VaeImageProcessor` 는 그림을 저장하기 전에 $x \div 2 + 0.5$ 로 0 ~ 1 범위에
+되돌린다.
 
-standardization 뒤에는 움직이는 폭이 23 배 차이 나던 두 관절이 비슷한 범위로 모이지만, 거의 움직이지 않는 왼팔 허리의 값은 오히려 $-5.47$
-까지 커진다. 표준편차 0.0122 로 나누면 0.0122 rad(0.7°)만 움직여도 1 이 되기 때문이다. openpi README 의 문제 해결 표에 따르면, 학습 loss 가
-발산할 때는 통계 파일에 표준편차나 범위가 너무 작게 잡힌 값이 없는지 확인해야 한다.
+표준편차가 아주 작은 값은 조심해야 한다. 거의 바뀌지 않는 값을 작은 표준편차로 나누면 조금만 달라져도 큰 숫자가 된다. 예를 들어 밤하늘 사진만
+모은 dataset 에서 어떤 channel 의 표준편차가 0.01 이라면, 평균에서 0.06 만 벗어난 pixel 도 standardization 뒤에는 6 이 된다.
 
-**확인 문제.** 평균 0.2 rad, 표준편차 0.5 rad 인 관절이 $-0.3$ rad 이면 standardization 한 값은?
+**확인 문제.** 평균 0.485, 표준편차 0.229 인 빨강 channel 에서 pixel 값이 0.256 이면 standardization 한 값은?
 
 <details><summary>답 보기</summary>
 
-$(-0.3 - 0.2) \div 0.5 = -0.5 \div 0.5 = -1$ 이다. 평균보다 표준편차 하나만큼 작다는 뜻이다.
+$(0.256 - 0.485) \div 0.229 = -0.229 \div 0.229 = -1$ 이다. 평균보다 표준편차 하나만큼 작다는 뜻이다.
 
 </details>
 
@@ -489,14 +492,14 @@ epoch 마다 train loss 와 validation loss 를 찍은 그래프를 loss curve �
 loss curve 에는 이렇게 나타난다.
 
 그래서 validation loss 가 가장 낮았던 시점의 parameter 를 저장해 두고, validation loss 가 한동안 더 내려가지 않으면 학습을 멈추는데, 이
-방법이 **early stopping** 이다. ACT 논문에서도 validation loss 가 가장 낮은 policy 를 골라 로봇에서 실행했다. LeRobot 에서는 validation 으로
-떼어 둘 시연 비율의 기본값이 0 이라서, 따로 설정하지 않으면 validation loss 없이 20,000 step 마다 checkpoint 만 남긴다.
+방법이 **early stopping** 이다.
 
-다만 로봇 policy 에서는 validation loss 가 가장 낮은 checkpoint 가 가장 잘 움직인다는 보장이 없다. robomimic 논문(Mandlekar 등, 2021)은
-시뮬레이션에서 checkpoint 마다 50 번씩 실행해 성공률을 쟀다. 데이터의 30% 를 validation 으로 뗀 Square 작업에서 가장 좋은 checkpoint 의
-성공률은 80.7% 였지만, validation loss 가 가장 낮은 checkpoint 는 2.7% 에 그쳤다. validation loss 는 epoch 100 ~ 300 에 가장 낮았고,
-성공률이 가장 높은 시점은 그보다 훨씬 뒤였다. 그래서 로봇 학습에서는 checkpoint 를 실제로 실행해 성공률로 고르는 일이 많다. LeRobot 도
-시뮬레이션 환경이 있으면 20,000 step 마다 policy 를 실행해 성공률을 잰다.
+다만 그림을 그리는 model 에서는 loss 가 낮다고 그림이 더 좋다는 보장이 없다. [DDPM](../ddpm/README.md) 의 저자들은 CIFAR10 에서 두 가지 loss 로
+학습한 model 을 비교했다. 원래 식에 가까운 loss 로 학습한 model 은 데이터를 설명하는 정도를 재는 값(NLL, 작을수록 좋다)이 3.70 으로 더
+좋았지만, 그림의 품질을 재는 FID(작을수록 좋다)는 13.51 이었다. 단순하게 바꾼 loss 로 학습한 model 은 NLL 이 3.75 로 조금 나빴지만 FID 는
+3.17 로 훨씬 좋은 그림을 그렸다. 저자들은 이 model 들이 데이터를 설명하는 숫자(codelength)의 절반 넘는 몫을 눈에 보이지 않는 작은 차이에 쓴다고 분석했다. 그래서 그림 생성
+model 을 학습할 때는 중간중간 그림을 직접 뽑아 본다. diffusers 의 `train_text_to_image.py` 에도 미리 정한 설명 글(validation prompt)로
+그림을 그려 기록하는 기능이 있고, 기본값은 5 epoch 마다 한 번이다.
 
 **확인 문제.** epoch 별 validation loss 가 0.9, 0.6, 0.5, 0.55, 0.6, 0.7 이었다(epoch 는 1 부터 센다). 어느 epoch 의 parameter 를 쓰는 것이
 좋을까?
@@ -513,18 +516,19 @@ validation loss 가 가장 낮은 0.5 인 epoch 3 이다. 그 뒤로 오르는 �
 다시 쓰려고 저장한 activation 이 올라간다. float32 숫자 하나는 4 byte 이고 Adam 으로 학습하면 parameter 마다 parameter·gradient·$m$·$v$ 네
 숫자를 저장하므로, 계산하면 parameter 하나에 $4 \times 4 = 16$ byte 가 든다.
 
-| 모델 | parameter | parameter·gradient·$m$·$v$ (float32) |
+| model | parameter | parameter·gradient·$m$·$v$ (float32) |
 | --- | --- | --- |
 | 이 강의의 MNIST MLP | 203,530 | $203{,}530 \times 16 \approx 3.3$ MB |
-| ACT | 약 8,000 만 | $8 \times 10^{7} \times 16 = 1.28$ GB |
-| π0 | 약 33 억 | $3.3 \times 10^{9} \times 16 = 52.8$ GB |
+| Stable Diffusion v1 U-Net | 859,520,964 | $859{,}520{,}964 \times 16 \approx 13.8$ GB |
+| SDXL U-Net | 약 26 억 | $2.6 \times 10^{9} \times 16 = 41.6$ GB |
 
-ACT 는 11 GB 짜리 RTX 2080 Ti 에서 batch 크기 8 로 학습했으므로 나머지 memory 는 카메라 사진 같은 입력과 activation 이 차지한다. π0 는 이 네
-숫자만으로 24 GB 짜리 RTX 4090 을 넘는다. openpi README 에 따르면 parameter 전체를 학습하는 full fine-tuning 에는 70 GB 넘게 필요하다. 원래
-weight 는 고정하고 덧붙인 작은 행렬만 학습하는 LoRA 는 gradient 와 $m$, $v$ 도 그 행렬 몫만 저장하므로, 필요한 memory 가 22.5 GB 남짓으로
-줄어든다.
+Stable Diffusion v1 의 U-Net 은 이 네 숫자만으로 13.8 GB 를 차지하고, 512 × 512 사진에서 나온 activation 이 그 위에 쌓인다. diffusers 예제
+README 에 따르면 gradient checkpointing(activation 일부만 저장하고 backward 때 다시 계산하는 방법)과 mixed precision(숫자 일부를 4 byte 대신
+2 byte 로 계산하는 방법)을 쓰면 24 GB GPU 한 장으로 fine-tuning 할 수 있다. SDXL 논문에 따르면 SDXL 의 U-Net 은 parameter 가 26 억 개라서,
+네 숫자만으로 24 GB 를 넘는다. 원래 weight 는 고정하고 덧붙인 작은 행렬만 학습하는 LoRA 는 gradient 와 $m$, $v$ 도 그 행렬 몫만 저장하므로, README 에 따르면 T4 나
+V100 같은 GPU 에서도 학습할 수 있다.
 
-![parameter·gradient·m·v 의 memory. ACT 는 1.28 GB, π0 는 52.8 GB 로 RTX 2080 Ti(11 GB), RTX 4090(24 GB), A100(80 GB) 과 비교한다](figures/gpu-memory.svg)
+![parameter·gradient·m·v 의 memory. Stable Diffusion v1 U-Net 은 13.8 GB, SDXL U-Net 은 41.6 GB 로 RTX 2080 Ti(11 GB), RTX 4090(24 GB), A100(80 GB) 과 비교한다](figures/gpu-memory.svg)
 
 activation 은 sample 마다 저장되므로 batch 크기에 비례해 늘어난다. batch 크기를 지키면서 memory 를 줄이려면 gradient accumulation 을 쓰는데,
 autograd 가 gradient 를 더해 쌓는 성질을 이용해 작은 mini-batch 여러 개를 backward 한 뒤 parameter 를 한 번만 고치는 방법이다. 앞에서 예로
@@ -535,10 +539,10 @@ autograd 가 gradient 를 더해 쌓는 성질을 이용해 작은 mini-batch �
 | batch 4 한 번 | 4 장 | $(-4 - 2 + 1 + 1) \div 4 = -1$ |
 | batch 2 두 번, loss 를 2 로 나눔 | 2 장 | $\{-4, -2\}$ 평균 $-3$, $\{1, 1\}$ 평균 1 → $-3 \div 2 + 1 \div 2 = -1$ |
 
-memory 에는 두 장 분량의 activation 만 올라가지만, step 하나에 forward 와 backward 를 두 번 해야 해서 시간이 더 든다. LeRobot 의 학습
-설정에도 gradient accumulation 항목이 있다.
+memory 에는 두 장 분량의 activation 만 올라가지만, step 하나에 forward 와 backward 를 두 번 해야 해서 시간이 더 든다. diffusers 예제 README 의
+명령도 batch 크기 1 에 `gradient_accumulation_steps=4` 를 써서 네 장 분량의 gradient 를 쌓은 뒤 한 번 고친다.
 
-**확인 문제.** parameter 가 10 억 개인 모델을 float32 Adam 으로 학습하면 parameter·gradient·$m$·$v$ 에만 memory 가 얼마나 들까?
+**확인 문제.** parameter 가 10 억 개인 model 을 float32 Adam 으로 학습하면 parameter·gradient·$m$·$v$ 에만 memory 가 얼마나 들까?
 
 <details><summary>답 보기</summary>
 
@@ -551,20 +555,19 @@ activation 은 따로 더 든다.
 
 ## 정리
 
-- 한 step 은 mini-batch 로 forward → loss → backward → update 를 하는 일이고, frame 20,000 개를 batch 8 로 100,000 step 학습하면
-  40 epoch 다. cross-entropy 에서 점수의 gradient 는 확률에서 one-hot 정답을 뺀 값이다
+- 한 step 은 mini-batch 로 forward → loss → backward → update 를 하는 일이고, 사진 1,200 장을 batch 4 로 15,000 step 학습하면
+  50 epoch 다. cross-entropy 에서 점수의 gradient 는 확률에서 one-hot 정답을 뺀 값이다
 - Adam 은 gradient 를 자기 크기로 나눠 한 step 에 대략 learning rate 만큼 움직인다. 기본값은 learning rate 0.001, $\beta_1$ 0.9, $\beta_2$
-  0.999, $\epsilon$ $10^{-8}$ 이고, LeRobot 의 ACT 는 AdamW 에 learning rate $10^{-5}$ 를 쓴다
-- 입력은 통계로 크기를 맞추고 그 통계를 checkpoint 와 함께 둔다. validation loss 가 다시 오르면 overfitting 이지만, 로봇 policy 는
-  성공률로도 확인해야 한다
+  0.999, $\epsilon$ $10^{-8}$ 이고, diffusers 의 Stable Diffusion 전체 fine-tuning 예제는 AdamW 에 learning rate $10^{-5}$ 를 쓴다
+- 입력은 통계로 크기를 맞추고 그 통계를 model 과 함께 둔다. validation loss 가 다시 오르면 overfitting 이지만, 그림 생성 model 은 loss 가
+  낮다고 그림이 좋다는 보장이 없어 그림을 직접 뽑아 확인한다
 - Adam 으로 학습하면 GPU 에는 parameter 하나에 16 byte 와 batch 크기에 비례하는 activation 이 올라간다
 
 이 강의의 MLP 는 사진을 784 개 숫자로 펴서 받기 때문에 어느 pixel 이 어느 pixel 옆에 있었는지를 쓰지 못한다. 입력 길이도 정해져 있어서
-길이가 제각각인 문장이나 시간에 따라 이어지는 센서 값을 다루지 못한다. 다음으로 볼 모델은 가까운 pixel 끼리 묶어 계산하는
+길이가 제각각인 문장을 다루지 못한다. 다음으로 볼 model 은 가까운 pixel 끼리 묶어 계산하는
 [CNN](../cnn/README.md), 입력 조각들이 서로를 참고하게 하는 [Transformer](../transformer/README.md), 데이터를 숫자 몇 개로 압축했다가
-되살리는 [VAE](../vae/README.md) 다. 시연을 따라 하도록 policy 를 학습시키는 Behavior Cloning 과 reward 를
-보고 행동을 고치는 Policy Gradient, DQN → SAC 도 모두 이 강의의 training loop 를
-그대로 쓴다.
+되살리는 [VAE](../vae/README.md) 다. 그림을 그리는 [DDPM](../ddpm/README.md) 과 Stable Diffusion 도 모두 이 강의의 training loop 를 그대로
+쓴다.
 
 ## 참고 자료
 
@@ -573,15 +576,15 @@ activation 은 따로 더 든다.
 - Kingma, Ba, [Adam: A Method for Stochastic Optimization](https://arxiv.org/abs/1412.6980) (2014) — Algorithm 1 의 식과 기본값, 3절의
   bias correction
 - He et al., [Delving Deep into Rectifiers](https://arxiv.org/abs/1502.01852) (2015) — 2.2절의 ReLU network weight 표준편차 $\sqrt{2/n}$ 유도
-- Mandlekar et al., [What Matters in Learning from Offline Human Demonstrations for Robot Manipulation](https://arxiv.org/abs/2108.03298)
-  (2021) — 4.5절과 부록 G 의 validation loss 와 성공률 비교
-- Zhao et al., [ACT 논문](https://arxiv.org/abs/2304.13705) (2023) — 4절의 parameter 수와 학습 시간, 부록 D Table III 의 learning rate 와
-  batch 크기
+- Ho, Jain, Abbeel, [Denoising Diffusion Probabilistic Models](https://arxiv.org/abs/2006.11239) (2020) — 표 1 의 두 loss 별 NLL(3.70, 3.75)과
+  FID(13.51, 3.17), 4.3 절의 "눈에 보이지 않는 차이에 숫자를 쓴다" 는 분석
+- Podell et al., [SDXL](https://arxiv.org/abs/2307.01952) (2023) — 표 1 과 2.1 절의 U-Net parameter 26 억 개
 - PyTorch 문서, [SGD](https://docs.pytorch.org/docs/stable/generated/torch.optim.SGD.html)·[Adam](https://docs.pytorch.org/docs/stable/generated/torch.optim.Adam.html)·[AdamW](https://docs.pytorch.org/docs/stable/generated/torch.optim.AdamW.html)·[cross_entropy](https://docs.pytorch.org/docs/stable/generated/torch.nn.functional.cross_entropy.html)·[clip_grad_norm_](https://docs.pytorch.org/docs/stable/generated/torch.nn.utils.clip_grad_norm_.html)
   — optimizer 기본값과 algorithm 상자, logits 를 받는 cross-entropy, gradient 전체의 길이를 자르는 방식
-- LeRobot 소스, [train.py](https://github.com/huggingface/lerobot/blob/main/src/lerobot/configs/train.py)·[optimizers.py](https://github.com/huggingface/lerobot/blob/main/src/lerobot/optim/optimizers.py)·[ACT 설정](https://github.com/huggingface/lerobot/blob/main/src/lerobot/policies/act/configuration_act.py)·[Diffusion Policy 설정](https://github.com/huggingface/lerobot/blob/main/src/lerobot/policies/diffusion/configuration_diffusion.py)·[normalize_processor.py](https://github.com/huggingface/lerobot/blob/main/src/lerobot/processor/normalize_processor.py)
-  — batch 크기·step 수·checkpoint 주기, optimizer 와 gradient clipping 기본값, policy 별 normalization 방식
-- Physical Intelligence, [openpi](https://github.com/Physical-Intelligence/openpi) — README 의 GPU memory 표와, loss 가 발산할 때 통계 파일을
-  확인하라는 문제 해결 표
+- diffusers, [`train_text_to_image.py`](https://github.com/huggingface/diffusers/blob/main/examples/text_to_image/train_text_to_image.py)·[README](https://github.com/huggingface/diffusers/blob/main/examples/text_to_image/README.md)·[optimization.py](https://github.com/huggingface/diffusers/blob/main/src/diffusers/optimization.py)·[image_processor.py](https://github.com/huggingface/diffusers/blob/main/src/diffusers/image_processor.py)
+  — batch 크기·checkpoint 주기·AdamW 와 gradient clipping 기본값, loop 의 순서, 24 GB GPU 와 LoRA 의 learning rate 에 대한 README 의 설명,
+  cosine schedule, VAE 출력을 0 ~ 1 로 되돌리는 계산
+- torchvision, [`transforms/_presets.py`](https://github.com/pytorch/vision/blob/main/torchvision/transforms/_presets.py) — ImageNet 분류
+  model 의 입력에 쓰는 평균과 표준편차
 - PyTorch tutorial, [What is torch.nn really?](https://docs.pytorch.org/tutorials/beginner/nn_tutorial.html) — 이 강의의 여섯 단계를 MNIST
   학습 코드로 짜 가는 글
