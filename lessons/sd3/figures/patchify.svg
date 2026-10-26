@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>latent 128×128×16 을 2×2 patch 로 자르면 patch 하나가 숫자 64 개이고, Linear 가 이를 1536 개로 바꿔 token 4,096 개를 만든다. 192×192 위치 표의 가운데 64×64 를 잘라 더한다</title>
+  <defs><marker id="a-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="a-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="a-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="a-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="a-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="758" height="298" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="380" y="30" fill="#e2e8f0" font-size="16" text-anchor="middle" font-weight="bold">latent 를 2×2 patch 로 잘라 token 4,096 개로</text>
+  <rect x="40" y="70" width="18" height="18" fill="#38bdf8" stroke="#38bdf8" stroke-width="1" fill-opacity="0.55"/>
+  <rect x="58" y="70" width="18" height="18" fill="#38bdf8" stroke="#38bdf8" stroke-width="1" fill-opacity="0.55"/>
+  <rect x="76" y="70" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="94" y="70" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="112" y="70" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="130" y="70" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="148" y="70" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="166" y="70" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="40" y="88" width="18" height="18" fill="#38bdf8" stroke="#38bdf8" stroke-width="1" fill-opacity="0.55"/>
+  <rect x="58" y="88" width="18" height="18" fill="#38bdf8" stroke="#38bdf8" stroke-width="1" fill-opacity="0.55"/>
+  <rect x="76" y="88" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="94" y="88" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="112" y="88" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="130" y="88" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="148" y="88" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="166" y="88" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="40" y="106" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="58" y="106" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="76" y="106" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="94" y="106" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="112" y="106" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="130" y="106" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="148" y="106" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="166" y="106" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="40" y="124" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="58" y="124" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="76" y="124" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="94" y="124" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="112" y="124" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="130" y="124" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="148" y="124" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="166" y="124" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="40" y="142" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="58" y="142" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="76" y="142" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="94" y="142" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="112" y="142" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="130" y="142" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="148" y="142" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="166" y="142" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="40" y="160" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="58" y="160" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="76" y="160" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="94" y="160" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="112" y="160" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="130" y="160" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="148" y="160" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="166" y="160" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="40" y="178" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="58" y="178" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="76" y="178" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="94" y="178" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="112" y="178" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="130" y="178" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="148" y="178" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="166" y="178" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="40" y="196" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="58" y="196" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="76" y="196" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="94" y="196" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="112" y="196" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="130" y="196" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="148" y="196" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="166" y="196" width="18" height="18" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <text x="112" y="238" fill="#e2e8f0" font-size="13" text-anchor="middle">latent 128 × 128 × 16</text>
+  <text x="112" y="256" fill="#94a3b8" font-size="11" text-anchor="middle">(1024×1024 그림을 VAE 로 줄인 것)</text>
+  <line x1="200" y1="105" x2="250" y2="105" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#a-b)"/>
+  <rect x="255" y="75" width="150" height="60" rx="8" fill="#111a2e" stroke="#38bdf8" stroke-width="1.6"/>
+  <text x="330" y="100" fill="#e2e8f0" font-size="13" text-anchor="middle">patch 하나</text>
+  <text x="330" y="120" fill="#38bdf8" font-size="13" text-anchor="middle">2 × 2 × 16 = 64 개</text>
+  <line x1="405" y1="105" x2="450" y2="105" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <rect x="455" y="75" width="120" height="60" rx="8" fill="#111a2e" stroke="#a78bfa" stroke-width="1.6"/>
+  <text x="515" y="100" fill="#e2e8f0" font-size="13" text-anchor="middle">Linear</text>
+  <text x="515" y="120" fill="#a78bfa" font-size="13" text-anchor="middle">64 → 1536</text>
+  <line x1="575" y1="105" x2="615" y2="105" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <rect x="620" y="75" width="120" height="60" rx="8" fill="#111a2e" stroke="#34d399" stroke-width="1.6"/>
+  <text x="680" y="100" fill="#e2e8f0" font-size="13" text-anchor="middle">token 하나</text>
+  <text x="680" y="120" fill="#34d399" font-size="13" text-anchor="middle">숫자 1536 개</text>
+  <text x="560" y="168" fill="#e2e8f0" font-size="13" text-anchor="middle">가로 64 × 세로 64 = token 4,096 개</text>
+  <text x="560" y="188" fill="#94a3b8" font-size="12" text-anchor="middle">마지막에는 Linear 1536 → 64 로 patch 를 되돌린다</text>
+  <rect x="250" y="215" width="70" height="70" fill="#111a2e" stroke="#334155" stroke-width="1"/>
+  <rect x="273.3333333333333" y="238.33333333333334" width="23.333333333333332" height="23.333333333333332" fill="#34d399" stroke="#34d399" stroke-width="1" fill-opacity="0.5"/>
+  <text x="334" y="241" fill="#e2e8f0" font-size="12" text-anchor="start">위치 표 192 × 192 (sin·cos 로 계산, 학습하지 않음)</text>
+  <text x="334" y="261" fill="#94a3b8" font-size="12" text-anchor="start">그 가운데에서 latent 크기만큼(64 × 64) 잘라 token 에 더한다</text>
+</svg>

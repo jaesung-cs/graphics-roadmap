@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 350" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>시각 t 의 sin·cos 256 개와 pooled vector 2048 개를 각각 MLP 로 1536 개로 바꿔 더한 조건 c 를, block 마다 Linear 가 9216 = 6 × 1536 개로 늘려 shift·scale·gate 두 벌을 만든다. 0.5 × 1.2 + 0.1 = 0.7, 출력 2.0 × gate 0.3 = 0.6 의 예</title>
+  <defs><marker id="a-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="a-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="a-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="a-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="a-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="778" height="348" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="390" y="30" fill="#e2e8f0" font-size="16" text-anchor="middle" font-weight="bold">시각과 pooled vector 로 block 의 숫자를 고르기</text>
+  <rect x="30" y="60" width="170" height="50" rx="8" fill="#111a2e" stroke="#38bdf8" stroke-width="1.6"/>
+  <text x="115" y="82" fill="#38bdf8" font-size="13" text-anchor="middle">시각 t</text>
+  <text x="115" y="99" fill="#94a3b8" font-size="11" text-anchor="middle">sin·cos 256 개 → MLP</text>
+  <rect x="30" y="130" width="170" height="50" rx="8" fill="#111a2e" stroke="#f59e0b" stroke-width="1.6"/>
+  <text x="115" y="152" fill="#f59e0b" font-size="13" text-anchor="middle">pooled vector</text>
+  <text x="115" y="169" fill="#94a3b8" font-size="11" text-anchor="middle">768 + 1280 = 2048 → MLP</text>
+  <line x1="200" y1="85" x2="240" y2="112" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#a-b)"/>
+  <line x1="200" y1="155" x2="240" y2="128" stroke="#f59e0b" stroke-width="1.6" marker-end="url(#a-a)"/>
+  <circle cx="255" cy="120" r="14" fill="#111a2e" stroke="#e2e8f0" stroke-width="1.4"/>
+  <text x="255" y="125" fill="#e2e8f0" font-size="16" text-anchor="middle">+</text>
+  <line x1="269" y1="120" x2="305" y2="120" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <rect x="308" y="95" width="110" height="50" rx="8" fill="#111a2e" stroke="#34d399" stroke-width="1.6"/>
+  <text x="363" y="117" fill="#34d399" font-size="13" text-anchor="middle">조건 c</text>
+  <text x="363" y="134" fill="#94a3b8" font-size="11" text-anchor="middle">숫자 1536 개</text>
+  <line x1="418" y1="120" x2="455" y2="120" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <rect x="458" y="95" width="130" height="50" rx="8" fill="#111a2e" stroke="#a78bfa" stroke-width="1.6"/>
+  <text x="523" y="117" fill="#e2e8f0" font-size="12" text-anchor="middle">block 마다 Linear</text>
+  <text x="523" y="134" fill="#a78bfa" font-size="12" text-anchor="middle">1536 → 9216</text>
+  <line x1="588" y1="120" x2="620" y2="120" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <rect x="623" y="62" width="120" height="19" fill="#111a2e" stroke="#a78bfa" stroke-width="1"/>
+  <text x="683" y="76" fill="#e2e8f0" font-size="11" text-anchor="middle">shift₁ 1536</text>
+  <rect x="623" y="83" width="120" height="19" fill="#111a2e" stroke="#a78bfa" stroke-width="1"/>
+  <text x="683" y="97" fill="#e2e8f0" font-size="11" text-anchor="middle">scale₁ 1536</text>
+  <rect x="623" y="104" width="120" height="19" fill="#111a2e" stroke="#a78bfa" stroke-width="1"/>
+  <text x="683" y="118" fill="#e2e8f0" font-size="11" text-anchor="middle">gate₁ 1536</text>
+  <rect x="623" y="125" width="120" height="19" fill="#111a2e" stroke="#34d399" stroke-width="1"/>
+  <text x="683" y="139" fill="#e2e8f0" font-size="11" text-anchor="middle">shift₂ 1536</text>
+  <rect x="623" y="146" width="120" height="19" fill="#111a2e" stroke="#34d399" stroke-width="1"/>
+  <text x="683" y="160" fill="#e2e8f0" font-size="11" text-anchor="middle">scale₂ 1536</text>
+  <rect x="623" y="167" width="120" height="19" fill="#111a2e" stroke="#34d399" stroke-width="1"/>
+  <text x="683" y="181" fill="#e2e8f0" font-size="11" text-anchor="middle">gate₂ 1536</text>
+  <text x="683" y="200" fill="#94a3b8" font-size="11" text-anchor="middle">6 × 1536 = 9216</text>
+  <rect x="30" y="225" width="720" height="110" rx="8" fill="#0e1628" stroke="#1e293b" stroke-width="1.6"/>
+  <text x="50" y="250" fill="#e2e8f0" font-size="13" text-anchor="start" font-weight="bold">숫자 하나로 따라가기 (attention 앞, 1 은 attention, 2 는 MLP)</text>
+  <text x="50" y="276" fill="#e2e8f0" font-size="12" text-anchor="start">LayerNorm 을 지난 값 0.5 → 0.5 × (1 + scale₁ 0.2) + shift₁ 0.1 = 0.7 이 attention 에 들어간다</text>
+  <text x="50" y="300" fill="#e2e8f0" font-size="12" text-anchor="start">attention 출력 2.0 → gate₁ 0.3 을 곱한 0.6 을 원래 값에 더한다. gate 가 0 이면 이 block 은 아무것도 더하지 않는다</text>
+  <text x="50" y="322" fill="#94a3b8" font-size="12" text-anchor="start">같은 block 이라도 시각과 글에 따라 이 여섯 묶음이 달라진다</text>
+</svg>

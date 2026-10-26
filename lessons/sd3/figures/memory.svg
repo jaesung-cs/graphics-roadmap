@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 318" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>SD3 Medium 의 weight 를 fp16 으로 올릴 때 필요한 메모리. 세 encoder 를 모두 쓰면 15.50 GB, T5 를 8-bit 로 줄이면 약 10.74 GB, T5 를 빼면 5.97 GB 이고 T5-XXL 하나가 9.52 GB 다</title>
+  <defs><marker id="a-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="a-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="a-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="a-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="a-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="778" height="316" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="390.0" y="30" fill="#e2e8f0" font-size="15" text-anchor="middle" font-weight="bold">weight 를 GPU 에 올리는 데 드는 메모리 (fp16, 1 GB = 10억 byte)</text>
+  <text x="178" y="92" fill="#e2e8f0" font-size="13" text-anchor="end">세 encoder 모두</text>
+  <rect x="190" y="70" width="285.73863936000004" height="34" fill="#f59e0b" stroke="#0b1220" stroke-width="1" fill-opacity="0.85"/>
+  <text x="332.86931968" y="92" fill="#0b1220" font-size="12" text-anchor="middle" font-weight="bold">9.52</text>
+  <rect x="475.73863936000004" y="70" width="125.09706624" height="34" fill="#38bdf8" stroke="#0b1220" stroke-width="1" fill-opacity="0.85"/>
+  <text x="538.28717248" y="92" fill="#0b1220" font-size="12" text-anchor="middle" font-weight="bold">4.17</text>
+  <rect x="600.8357056" y="70" width="41.6795904" height="34" fill="#34d399" stroke="#0b1220" stroke-width="1" fill-opacity="0.85"/>
+  <rect x="642.515296" y="70" width="7.41901824" height="34" fill="#a78bfa" stroke="#0b1220" stroke-width="1" fill-opacity="0.85"/>
+  <rect x="649.93431424" y="70" width="5.0291809800000005" height="34" fill="#f87171" stroke="#0b1220" stroke-width="1" fill-opacity="0.85"/>
+  <text x="662.96349522" y="92" fill="#e2e8f0" font-size="13" text-anchor="start" font-weight="bold">15.50 GB</text>
+  <text x="178" y="154" fill="#e2e8f0" font-size="13" text-anchor="end">T5 를 8-bit 로</text>
+  <rect x="190" y="132" width="142.86931968000002" height="34" fill="#f59e0b" stroke="#0b1220" stroke-width="1" fill-opacity="0.45"/>
+  <text x="261.43465984" y="154" fill="#e2e8f0" font-size="12" text-anchor="middle" font-weight="bold">4.76</text>
+  <rect x="332.86931968" y="132" width="125.09706624" height="34" fill="#38bdf8" stroke="#0b1220" stroke-width="1" fill-opacity="0.85"/>
+  <text x="395.4178528" y="154" fill="#0b1220" font-size="12" text-anchor="middle" font-weight="bold">4.17</text>
+  <rect x="457.96638592" y="132" width="41.6795904" height="34" fill="#34d399" stroke="#0b1220" stroke-width="1" fill-opacity="0.85"/>
+  <rect x="499.64597632" y="132" width="7.41901824" height="34" fill="#a78bfa" stroke="#0b1220" stroke-width="1" fill-opacity="0.85"/>
+  <rect x="507.06499456" y="132" width="5.0291809800000005" height="34" fill="#f87171" stroke="#0b1220" stroke-width="1" fill-opacity="0.85"/>
+  <text x="520.09417554" y="154" fill="#e2e8f0" font-size="13" text-anchor="start" font-weight="bold">10.74 GB</text>
+  <text x="178" y="216" fill="#e2e8f0" font-size="13" text-anchor="end">T5 없이</text>
+  <rect x="190" y="194" width="125.09706624" height="34" fill="#38bdf8" stroke="#0b1220" stroke-width="1" fill-opacity="0.85"/>
+  <text x="252.54853312" y="216" fill="#0b1220" font-size="12" text-anchor="middle" font-weight="bold">4.17</text>
+  <rect x="315.09706624" y="194" width="41.6795904" height="34" fill="#34d399" stroke="#0b1220" stroke-width="1" fill-opacity="0.85"/>
+  <rect x="356.77665664" y="194" width="7.41901824" height="34" fill="#a78bfa" stroke="#0b1220" stroke-width="1" fill-opacity="0.85"/>
+  <rect x="364.19567488" y="194" width="5.0291809800000005" height="34" fill="#f87171" stroke="#0b1220" stroke-width="1" fill-opacity="0.85"/>
+  <text x="377.22485586" y="216" fill="#e2e8f0" font-size="13" text-anchor="start" font-weight="bold">5.97 GB</text>
+  <rect x="40" y="262" width="14" height="14" fill="#f59e0b" stroke="none" stroke-width="1" fill-opacity="0.85"/>
+  <text x="60" y="274" fill="#94a3b8" font-size="11" text-anchor="start">T5-XXL 9.52</text>
+  <rect x="190" y="262" width="14" height="14" fill="#38bdf8" stroke="none" stroke-width="1" fill-opacity="0.85"/>
+  <text x="210" y="274" fill="#94a3b8" font-size="11" text-anchor="start">transformer 4.17</text>
+  <rect x="340" y="262" width="14" height="14" fill="#34d399" stroke="none" stroke-width="1" fill-opacity="0.85"/>
+  <text x="360" y="274" fill="#94a3b8" font-size="11" text-anchor="start">OpenCLIP ViT-bigG 1.39</text>
+  <rect x="490" y="262" width="14" height="14" fill="#a78bfa" stroke="none" stroke-width="1" fill-opacity="0.85"/>
+  <text x="510" y="274" fill="#94a3b8" font-size="11" text-anchor="start">CLIP ViT-L 0.25</text>
+  <rect x="640" y="262" width="14" height="14" fill="#f87171" stroke="none" stroke-width="1" fill-opacity="0.85"/>
+  <text x="660" y="274" fill="#94a3b8" font-size="11" text-anchor="start">VAE 0.17</text>
+  <text x="40" y="300" fill="#94a3b8" font-size="11" text-anchor="start">parameter 수 × 2 byte 로 계산. 계산 중의 중간값 메모리는 빠져 있다</text>
+</svg>

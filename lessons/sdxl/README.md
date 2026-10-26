@@ -301,7 +301,7 @@ refiner 를 쓰면 두 큰 model 을 memory 에 올려야 해서 느리고 쓰�
 - 마지막 학습은 pixel 수가 $1024^2$ 에 가까운 가로세로 비율별 bucket 으로 한다. VAE 는 다시 학습해 scaling factor 가 0.13025 이고, noise 가 적은
   200 단계만 학습한 refiner 가 세부를 다듬는다. diffusers 예의 40 step 에서는 base 가 32 step, refiner 가 8 step 을 맡는다
 
-SDXL 은 U-Net 과 DDPM 의 noise 예측을 그대로 쓰면서 크기를 키웠다. 다음 강의인 Stable Diffusion 3 는 U-Net 대신 Transformer 를 쓰고, noise 예측 대신
+SDXL 은 U-Net 과 DDPM 의 noise 예측을 그대로 쓰면서 크기를 키웠다. 다음 강의인 [Stable Diffusion 3](../sd3/README.md) 는 U-Net 대신 Transformer 를 쓰고, noise 예측 대신
 [Flow Matching](../flow-matching/README.md) 의 속도 예측을 쓴다.
 
 ## 참고 자료
