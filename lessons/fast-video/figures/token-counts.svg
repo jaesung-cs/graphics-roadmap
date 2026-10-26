@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 360" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>121 프레임 768×512 video 의 token 수. 8×8×4 VAE 와 2×2 patch 를 쓰면 token 하나가 pixel 1,024 개를 맡아 31 × 32 × 48 = 47,616 개이고, LTX-Video 의 32×32×8 VAE 는 token 하나가 pixel 8,192 개를 맡아 16 × 16 × 24 = 6,144 개다. token 이 7.75 분의 1 이라 full attention 점수는 약 60 분의 1 이다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="878" height="358" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="440.0" y="32.0" fill="#e2e8f0" font-size="16" text-anchor="middle" font-weight="bold">같은 video, 다른 token 수 (121 프레임, 768 × 512)</text>
+  <text x="40.0" y="96.0" fill="#38bdf8" font-size="13" text-anchor="start" font-weight="bold">8×8×4 VAE + 2×2 patch</text>
+  <text x="40.0" y="116.0" fill="#94a3b8" font-size="11" text-anchor="start">token 하나 = pixel 1,024 개 (16×16×4)</text>
+  <rect x="280.0" y="80.0" width="560.0" height="34.0" rx="0" fill="#38bdf8" stroke="none" stroke-width="1" fill-opacity="0.6"/>
+  <text x="290.0" y="136.0" fill="#e2e8f0" font-size="12" text-anchor="start">31 × 32 × 48 = 47,616 개</text>
+  <text x="40.0" y="191.0" fill="#34d399" font-size="13" text-anchor="start" font-weight="bold">LTX-Video 32×32×8 VAE</text>
+  <text x="40.0" y="211.0" fill="#94a3b8" font-size="11" text-anchor="start">token 하나 = pixel 8,192 개 (32×32×8)</text>
+  <rect x="280.0" y="175.0" width="72.3" height="34.0" rx="0" fill="#34d399" stroke="none" stroke-width="1" fill-opacity="0.6"/>
+  <text x="362.3" y="197.0" fill="#e2e8f0" font-size="12" text-anchor="start">16 × 16 × 24 = 6,144 개</text>
+  <rect x="40.0" y="270.0" width="800.0" height="66.0" rx="8" fill="#111a2e" stroke="#1e293b" stroke-width="1.5"/>
+  <text x="440.0" y="296.0" fill="#e2e8f0" font-size="13" text-anchor="middle">token 은 47,616 ÷ 6,144 ≈ 7.75 분의 1, full attention 점수는 그 제곱인 약 60 분의 1</text>
+  <text x="440.0" y="320.0" fill="#94a3b8" font-size="12" text-anchor="middle">LTX-Video 는 channel 을 128 개로 늘려 숫자 압축은 1 : 192 로 두 배 정도만 세게 한다</text>
+</svg>

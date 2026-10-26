@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 360" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>network 계산 횟수. AnimateDiff 원래 설정 32 step 에 guidance 로 두 번씩 64 번, AnimateDiff-Lightning 4 step 은 guidance 없이 4 번이다. LTX-Video 기본 50 step 과 guidance 로 100 번, guidance 와 step 을 함께 distillation 한 LTX-Video 0.9.7 13B distilled 는 8 번이다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="878" height="358" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="440.0" y="32.0" fill="#e2e8f0" font-size="16" text-anchor="middle" font-weight="bold">network 를 몇 번 계산하는가</text>
+  <text x="40.0" y="92.0" fill="#38bdf8" font-size="12" text-anchor="start" font-weight="bold">AnimateDiff (32 step, guidance 7.5)</text>
+  <rect x="320.0" y="74.0" width="281.6" height="28.0" rx="0" fill="#38bdf8" stroke="none" stroke-width="1" fill-opacity="0.6"/>
+  <text x="611.6" y="93.0" fill="#e2e8f0" font-size="12" text-anchor="start">32 × 2 = 64 번</text>
+  <text x="40.0" y="154.0" fill="#34d399" font-size="12" text-anchor="start" font-weight="bold">AnimateDiff-Lightning (4 step)</text>
+  <rect x="320.0" y="136.0" width="17.6" height="28.0" rx="0" fill="#34d399" stroke="none" stroke-width="1" fill-opacity="0.6"/>
+  <text x="347.6" y="155.0" fill="#e2e8f0" font-size="12" text-anchor="start">4 번 (16 분의 1)</text>
+  <text x="40.0" y="230.0" fill="#38bdf8" font-size="12" text-anchor="start" font-weight="bold">LTX-Video (50 step, guidance)</text>
+  <rect x="320.0" y="212.0" width="440.0" height="28.0" rx="0" fill="#38bdf8" stroke="none" stroke-width="1" fill-opacity="0.6"/>
+  <text x="770.0" y="231.0" fill="#e2e8f0" font-size="12" text-anchor="start">50 × 2 = 100 번</text>
+  <text x="40.0" y="292.0" fill="#34d399" font-size="12" text-anchor="start" font-weight="bold">LTX-Video 0.9.7 13B distilled (8 step)</text>
+  <rect x="320.0" y="274.0" width="35.2" height="28.0" rx="0" fill="#34d399" stroke="none" stroke-width="1" fill-opacity="0.6"/>
+  <text x="365.2" y="293.0" fill="#e2e8f0" font-size="12" text-anchor="start">8 번 (12.5 분의 1)</text>
+  <text x="440.0" y="345.0" fill="#94a3b8" font-size="11" text-anchor="middle">guidance 를 쓰면 step 마다 글이 있는 예측과 없는 예측을 둘 다 계산한다. distillation 한 model 은 guidance 1.0 으로 한 번만 계산한다</text>
+</svg>

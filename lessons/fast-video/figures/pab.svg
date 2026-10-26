@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 340" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>Pyramid Attention Broadcast. 출력이 거의 바뀌지 않는 가운데 구간에서 attention 의 출력을 몇 step 에 한 번만 계산하고 나머지 step 에는 그 값을 다시 쓴다. 가운데 20 step 에서 범위 2 인 spatial attention 은 10 번, 범위 4 인 temporal attention 은 5 번, 범위 6 인 cross attention 은 4 번 계산한다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="898" height="338" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="450.0" y="32.0" fill="#e2e8f0" font-size="16" text-anchor="middle" font-weight="bold">attention 출력 다시 쓰기 (가운데 20 step 의 예)</text>
+  <text x="40.0" y="100.0" fill="#38bdf8" font-size="13" text-anchor="start" font-weight="bold">spatial, 범위 2</text>
+  <rect x="200.0" y="84.0" width="21.0" height="24.0" rx="0" fill="#38bdf8" stroke="#38bdf8" stroke-width="1.2" fill-opacity="0.85"/>
+  <rect x="226.0" y="84.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#38bdf8" stroke-width="1.2"/>
+  <rect x="252.0" y="84.0" width="21.0" height="24.0" rx="0" fill="#38bdf8" stroke="#38bdf8" stroke-width="1.2" fill-opacity="0.85"/>
+  <rect x="278.0" y="84.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#38bdf8" stroke-width="1.2"/>
+  <rect x="304.0" y="84.0" width="21.0" height="24.0" rx="0" fill="#38bdf8" stroke="#38bdf8" stroke-width="1.2" fill-opacity="0.85"/>
+  <rect x="330.0" y="84.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#38bdf8" stroke-width="1.2"/>
+  <rect x="356.0" y="84.0" width="21.0" height="24.0" rx="0" fill="#38bdf8" stroke="#38bdf8" stroke-width="1.2" fill-opacity="0.85"/>
+  <rect x="382.0" y="84.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#38bdf8" stroke-width="1.2"/>
+  <rect x="408.0" y="84.0" width="21.0" height="24.0" rx="0" fill="#38bdf8" stroke="#38bdf8" stroke-width="1.2" fill-opacity="0.85"/>
+  <rect x="434.0" y="84.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#38bdf8" stroke-width="1.2"/>
+  <rect x="460.0" y="84.0" width="21.0" height="24.0" rx="0" fill="#38bdf8" stroke="#38bdf8" stroke-width="1.2" fill-opacity="0.85"/>
+  <rect x="486.0" y="84.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#38bdf8" stroke-width="1.2"/>
+  <rect x="512.0" y="84.0" width="21.0" height="24.0" rx="0" fill="#38bdf8" stroke="#38bdf8" stroke-width="1.2" fill-opacity="0.85"/>
+  <rect x="538.0" y="84.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#38bdf8" stroke-width="1.2"/>
+  <rect x="564.0" y="84.0" width="21.0" height="24.0" rx="0" fill="#38bdf8" stroke="#38bdf8" stroke-width="1.2" fill-opacity="0.85"/>
+  <rect x="590.0" y="84.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#38bdf8" stroke-width="1.2"/>
+  <rect x="616.0" y="84.0" width="21.0" height="24.0" rx="0" fill="#38bdf8" stroke="#38bdf8" stroke-width="1.2" fill-opacity="0.85"/>
+  <rect x="642.0" y="84.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#38bdf8" stroke-width="1.2"/>
+  <rect x="668.0" y="84.0" width="21.0" height="24.0" rx="0" fill="#38bdf8" stroke="#38bdf8" stroke-width="1.2" fill-opacity="0.85"/>
+  <rect x="694.0" y="84.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#38bdf8" stroke-width="1.2"/>
+  <text x="734.0" y="101.0" fill="#e2e8f0" font-size="12" text-anchor="start">10 번 계산</text>
+  <text x="40.0" y="160.0" fill="#f59e0b" font-size="13" text-anchor="start" font-weight="bold">temporal, 범위 4</text>
+  <rect x="200.0" y="144.0" width="21.0" height="24.0" rx="0" fill="#f59e0b" stroke="#f59e0b" stroke-width="1.2" fill-opacity="0.85"/>
+  <rect x="226.0" y="144.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1.2"/>
+  <rect x="252.0" y="144.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1.2"/>
+  <rect x="278.0" y="144.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1.2"/>
+  <rect x="304.0" y="144.0" width="21.0" height="24.0" rx="0" fill="#f59e0b" stroke="#f59e0b" stroke-width="1.2" fill-opacity="0.85"/>
+  <rect x="330.0" y="144.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1.2"/>
+  <rect x="356.0" y="144.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1.2"/>
+  <rect x="382.0" y="144.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1.2"/>
+  <rect x="408.0" y="144.0" width="21.0" height="24.0" rx="0" fill="#f59e0b" stroke="#f59e0b" stroke-width="1.2" fill-opacity="0.85"/>
+  <rect x="434.0" y="144.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1.2"/>
+  <rect x="460.0" y="144.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1.2"/>
+  <rect x="486.0" y="144.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1.2"/>
+  <rect x="512.0" y="144.0" width="21.0" height="24.0" rx="0" fill="#f59e0b" stroke="#f59e0b" stroke-width="1.2" fill-opacity="0.85"/>
+  <rect x="538.0" y="144.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1.2"/>
+  <rect x="564.0" y="144.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1.2"/>
+  <rect x="590.0" y="144.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1.2"/>
+  <rect x="616.0" y="144.0" width="21.0" height="24.0" rx="0" fill="#f59e0b" stroke="#f59e0b" stroke-width="1.2" fill-opacity="0.85"/>
+  <rect x="642.0" y="144.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1.2"/>
+  <rect x="668.0" y="144.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1.2"/>
+  <rect x="694.0" y="144.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#f59e0b" stroke-width="1.2"/>
+  <text x="734.0" y="161.0" fill="#e2e8f0" font-size="12" text-anchor="start">5 번 계산</text>
+  <text x="40.0" y="220.0" fill="#a78bfa" font-size="13" text-anchor="start" font-weight="bold">cross, 범위 6</text>
+  <rect x="200.0" y="204.0" width="21.0" height="24.0" rx="0" fill="#a78bfa" stroke="#a78bfa" stroke-width="1.2" fill-opacity="0.85"/>
+  <rect x="226.0" y="204.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1.2"/>
+  <rect x="252.0" y="204.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1.2"/>
+  <rect x="278.0" y="204.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1.2"/>
+  <rect x="304.0" y="204.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1.2"/>
+  <rect x="330.0" y="204.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1.2"/>
+  <rect x="356.0" y="204.0" width="21.0" height="24.0" rx="0" fill="#a78bfa" stroke="#a78bfa" stroke-width="1.2" fill-opacity="0.85"/>
+  <rect x="382.0" y="204.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1.2"/>
+  <rect x="408.0" y="204.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1.2"/>
+  <rect x="434.0" y="204.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1.2"/>
+  <rect x="460.0" y="204.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1.2"/>
+  <rect x="486.0" y="204.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1.2"/>
+  <rect x="512.0" y="204.0" width="21.0" height="24.0" rx="0" fill="#a78bfa" stroke="#a78bfa" stroke-width="1.2" fill-opacity="0.85"/>
+  <rect x="538.0" y="204.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1.2"/>
+  <rect x="564.0" y="204.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1.2"/>
+  <rect x="590.0" y="204.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1.2"/>
+  <rect x="616.0" y="204.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1.2"/>
+  <rect x="642.0" y="204.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1.2"/>
+  <rect x="668.0" y="204.0" width="21.0" height="24.0" rx="0" fill="#a78bfa" stroke="#a78bfa" stroke-width="1.2" fill-opacity="0.85"/>
+  <rect x="694.0" y="204.0" width="21.0" height="24.0" rx="0" fill="#111a2e" stroke="#a78bfa" stroke-width="1.2"/>
+  <text x="734.0" y="221.0" fill="#e2e8f0" font-size="12" text-anchor="start">4 번 계산</text>
+  <text x="460.0" y="270.0" fill="#94a3b8" font-size="12" text-anchor="middle">칠한 칸: 그 step 에서 계산, 빈 칸: 앞에서 계산한 출력을 그대로 씀</text>
+  <text x="450.0" y="312.0" fill="#94a3b8" font-size="12" text-anchor="middle">처음과 끝 step 은 출력이 크게 바뀌므로 매번 계산한다. 변화가 작은 attention 일수록 범위를 길게 둔다</text>
+</svg>

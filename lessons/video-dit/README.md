@@ -342,7 +342,7 @@ Wan 1.3B 에서는 글 encoder 가 Transformer 보다 4 배 크다. 글 encoder 
 - 세 model 모두 낮은 해상도와 짧은 video 에서 시작해 키우고, HunyuanVideo 와 Wan 은 flow matching 과 shift 를 쓴다
 - Wan 1.3B 의 Transformer 는 bf16 약 2.84 GB 이고 umT5 는 약 11.36 GB 다. Wan 의 공개 설명에 나온 8.19 GB 는 글 encoder 를 CPU 에서 돌리는 설정으로 RTX 4090 에서 잰 값이다
 
-다음 강의는 이런 video model 을 더 빠르게 만드는 방법을 다룬다. latent 를 더 세게 줄여 token 을 줄이는 LTX-Video 와, step 수를 줄이는 distillation, 그리고
+[다음 강의](../fast-video/README.md)는 이런 video model 을 더 빠르게 만드는 방법을 다룬다. latent 를 더 세게 줄여 token 을 줄이는 LTX-Video 와, step 수를 줄이는 distillation, 그리고
 메모리를 아끼는 방법이다.
 
 ## 참고 자료
