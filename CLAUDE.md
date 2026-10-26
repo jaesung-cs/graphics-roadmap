@@ -25,7 +25,7 @@ frontmatter 를 읽어 선수 관계 지도를 그린다. 공부하는 법은 [R
    색(배경 `#0b1220`, 글자 `#e2e8f0`, 강조 `#38bdf8`·`#34d399`·`#f59e0b`·`#f87171`·`#a78bfa`, 보조 `#94a3b8`)을 쓴다. 그림을 만드는
    script 는 리포에 넣지 않는다. 넣기 전에 PNG 로 렌더해(headless Chrome `--headless=new --screenshot`) 글자 겹침과 잘림을 눈으로 확인하고,
    그림 속 숫자를 본문 예시와 맞춘다
-5. 퀴즈를 쓴다. Stable Diffusion branch(`stable-diffusion`)의 강의에는 퀴즈를 두지 않는다. 다른 branch 의 강의는
+5. 퀴즈를 쓴다. Stable Diffusion branch(`stable-diffusion`)와 Video branch(`video`)의 강의에는 퀴즈를 두지 않는다. 다른 branch 의 강의는
    [lessons/ddpm/quiz.yaml](lessons/ddpm/quiz.yaml) 과 같은 모양으로 topic 6 ~ 8개, topic 마다 variant 3개다
 6. 형식을 검사한다: `cd site && npm test`
 7. 문장을 따로 검수한다. 다 쓴 뒤 강의 파일과 [docs/korean-prose.md](docs/korean-prose.md) 만 놓고 문장만 고치는 단계를 한 번 더

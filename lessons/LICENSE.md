@@ -19,7 +19,7 @@ CC BY-NC-SA 4.0. The changes made to it:
   material. In vae, the ACT section became a section on CVAE-based image-to-image translation; in ddpm, the Diffusion
   Policy section became a section on coarse-to-fine sampling; in flow-matching, the π0 and GR00T N1 sections became
   sections on the rectified flow of Stable Diffusion 3.
-- The lessons of the `stable-diffusion` branch are new, © 2026 jaesung-cs, and released under the same
+- The lessons of the `stable-diffusion` and `video` branches are new, © 2026 jaesung-cs, and released under the same
   license.
 - `lessons/branches.yaml` was rewritten for the new curriculum map, a single tree that grows down from the first lesson
   instead of trees around a central hub, and the images of the robotics map in `docs/` were removed.

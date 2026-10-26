@@ -13,7 +13,7 @@ const REQUIRED_SECTIONS = ['## 학습 목표', '## 정리', '## 참고 자료']
 // a lesson is a lecture, its figures and its quiz; anything else (code, environments) does not belong
 const LESSON_FILES = new Set(['README.md', 'quiz.yaml', 'figures'])
 // branches whose lessons have no quiz; the learner marks them read instead
-const QUIZLESS_BRANCHES = new Set(['stable-diffusion'])
+const QUIZLESS_BRANCHES = new Set(['stable-diffusion', 'video'])
 
 function load() {
   const branches = parseBranches(readFileSync(join(ROOT, 'branches.yaml'), 'utf8'))
@@ -43,7 +43,7 @@ describe('curriculum', () => {
     }
   })
 
-  it('ends every lesson with a quiz, except the Stable Diffusion lessons, which the learner marks read', () => {
+  it('ends every lesson with a quiz, except the Stable Diffusion and Video lessons, which the learner marks read', () => {
     for (const p of c.lessons) {
       expect(existsSync(join(ROOT, p.id, 'quiz.yaml')), `${p.id}/quiz.yaml`).toBe(!QUIZLESS_BRANCHES.has(p.branch))
     }

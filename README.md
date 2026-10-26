@@ -27,7 +27,7 @@ sampler 까지 Stable Diffusion 의 부품을 하나씩 읽어 나갑니다. 리
 ## 특징
 
 - **fork 해서 혼자 진행하는 자율형 학습**: 강의를 읽고 퀴즈를 풀면 결과가 내 fork 의 `progress/` 에 쌓이고, 다시 풀 때는 틀린 원리만
-  다른 문항으로 묻습니다. 퀴즈가 없는 Stable Diffusion 강의는 다 읽은 뒤 "다 읽음" 으로 표시합니다.
+  다른 문항으로 묻습니다. 퀴즈가 없는 Stable Diffusion·Video 강의는 다 읽은 뒤 "다 읽음" 으로 표시합니다.
 - **기술의 의존 관계가 보이는 지도**: 강의가 선수 관계로 이어져 있어서, Stable Diffusion 의 text conditioning 을 이해하려면 CLIP 과
   latent diffusion 을, latent diffusion 을 이해하려면 VAE 와 U-Net 을 먼저 읽어야 한다는 것이 지도에서 바로 보입니다.
 - **논문 기반 강의**: 강의마다 근거 논문을 밝히고 그 방법과 숫자를 따라갑니다.
@@ -83,7 +83,8 @@ git merge upstream/main
 | Foundations | linear regression 에서 perceptron, autograd, PyTorch MLP 까지의 신경망 기초 |
 | Vision · Language | CNN·ResNet·ViT·CLIP, tokenizer·Transformer·GPT-2 |
 | Generative Models | VAE·DDPM·flow matching |
-| Stable Diffusion | U-Net, latent diffusion, text conditioning(cross-attention), classifier-free guidance, sampler |
+| Stable Diffusion | U-Net, latent diffusion, text conditioning(cross-attention), classifier-free guidance, sampler, LoRA, ControlNet, SDXL, Stable Diffusion 3, 적은 step distillation |
+| Video | 이미지 diffusion model 에 시간 축을 더하는 video diffusion |
 
 원 하나가 강의 하나이고, 선은 먼저 읽어 두면 좋은 강의를 잇습니다. 지도는 맨 위의 Vectors & Matrices 에서 시작해 아래로 자라고, 선수
 강의가 언제나 위에 놓입니다. 위에서부터 수학 기초와 신경망 기초를 읽고, 이미지와 글을 읽는 encoder 와 생성 모델을 거쳐 맨 아래의
@@ -94,9 +95,9 @@ Stable Diffusion 까지 내려가면 됩니다. 선수 관계는 권장 순서�
 강의는 학습 목표, 본문, 정리 순서로 이루어집니다. 본문은 직접 따라 계산하는 표, 그림, 수식, 절마다 답을 접어 둔 확인 문제로 짜여
 있고, 긴 유도는 "심화" 블록에 접어 두어 처음 읽을 때는 건너뛸 수 있습니다.
 
-Stable Diffusion branch 를 뺀 강의는 끝에 퀴즈가 있습니다. 강의의 원리 하나마다 한 문항을 묻고, 제출하면 틀린 문항의 해설이
+Stable Diffusion·Video branch 를 뺀 강의는 끝에 퀴즈가 있습니다. 강의의 원리 하나마다 한 문항을 묻고, 제출하면 틀린 문항의 해설이
 보이고, 다시 풀 때는 틀린 원리만 같은 원리의 다른 문항으로 묻습니다. 틀린 문항이 남지 않으면 그 강의는 완료로 칠해지고 이어지는 강의가
-밝아집니다. Stable Diffusion 강의에는 퀴즈가 없고, 끝까지 읽은 뒤 "다 읽음" 으로 표시하면 완료로 칠해집니다.
+밝아집니다. Stable Diffusion·Video 강의에는 퀴즈가 없고, 끝까지 읽은 뒤 "다 읽음" 으로 표시하면 완료로 칠해집니다.
 
 ## 프로젝트 구조
 
@@ -106,7 +107,7 @@ graphics-roadmap/
 │   ├── branches.yaml     # 지도의 branch 와 배치 설정
 │   └── <강의>/
 │       ├── README.md     # 강의 본문 (frontmatter 에 선수 강의·시간·논문)
-│       ├── quiz.yaml     # 퀴즈 (Stable Diffusion 강의에는 없음)
+│       ├── quiz.yaml     # 퀴즈 (Stable Diffusion·Video 강의에는 없음)
 │       └── figures/      # SVG 그림
 ├── progress/             # 내 퀴즈·읽음 기록 (fork 에서만 커밋)
 ├── site/                 # 지도와 강의를 보여 주는 Vite + React 앱
@@ -142,7 +143,7 @@ graphics-roadmap/
   해당하는 절을 지웠습니다. 본문·그림·퀴즈를 모두 고쳤습니다. VAE 의 ACT 절은 여러 답을 내는 그림 변환의 CVAE 로, DDPM 의 Diffusion
   Policy 절은 큰 모양에서 세부로 정해지는 sampling 으로, Flow Matching 의 π0·GR00T N1 절은 Stable Diffusion 3 의 rectified flow 로
   바꿨습니다
-- Stable Diffusion branch 의 강의를 새로 썼습니다
+- Stable Diffusion branch 와 Video branch 의 강의를 새로 썼습니다
 - 지도를 가운데에서 여러 트리가 뻗는 원형에서 맨 위의 첫 강의부터 아래로 자라는 트리 하나로 바꿨고, 퀴즈가 없는 강의를 "다 읽음" 으로 완료하는 기능을 사이트에
   더했습니다
 - README·CONTRIBUTING·CLAUDE.md 를 이 커리큘럼에 맞게 고쳤고, 로보틱스 지도를 찍은 `docs/` 의 이미지를 지웠습니다

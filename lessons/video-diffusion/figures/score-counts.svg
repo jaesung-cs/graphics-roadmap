@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 300" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>512×512 그림 16 프레임에서 64×64 단계의 attention 점수. 프레임 안의 self-attention 은 16 × 4,096² = 268,435,456 개, 프레임끼리의 attention 은 4,096 × 16² = 1,048,576 개로 256 분의 1 이다</title>
+  <defs><marker id="a-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="a-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="a-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="a-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="a-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker><marker id="a-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker></defs>
+  <rect x="1" y="1" width="778" height="298" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="390.0" y="30.0" fill="#e2e8f0" font-size="16" text-anchor="middle" font-weight="bold">64 × 64 단계의 attention 점수: 16 프레임</text>
+  <text x="238.0" y="102.0" fill="#e2e8f0" font-size="13" text-anchor="end">프레임 안의 self-attention</text>
+  <rect x="250.0" y="80.0" width="480.0" height="34.0" fill="#38bdf8" stroke="none" stroke-width="1" fill-opacity="0.8"/>
+  <text x="738.0" y="102.0" fill="#e2e8f0" font-size="12" text-anchor="start"></text>
+  <text x="490.0" y="102.0" fill="#0b1220" font-size="12" text-anchor="middle" font-weight="bold">16 × 4,096² = 268,435,456</text>
+  <text x="238.0" y="172.0" fill="#e2e8f0" font-size="13" text-anchor="end">프레임끼리의 attention</text>
+  <rect x="250.0" y="150.0" width="3.0" height="34.0" fill="#f59e0b" stroke="none" stroke-width="1" fill-opacity="0.8"/>
+  <text x="261.0" y="172.0" fill="#e2e8f0" font-size="12" text-anchor="start">4,096 × 16² = 1,048,576</text>
+  <text x="40.0" y="240.0" fill="#e2e8f0" font-size="13" text-anchor="start">프레임끼리의 attention 은 줄 하나가 16 개뿐이라 점수가 256 분의 1 이다</text>
+  <text x="40.0" y="264.0" fill="#94a3b8" font-size="12" text-anchor="start">그래서 시간 layer 를 모든 해상도 단계에 넣어도 계산이 크게 늘지 않는다</text>
+</svg>

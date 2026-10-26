@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 330" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>Video LDM 은 이미지 layer 의 출력 z 와 시간 layer 의 출력 z′ 를 학습하는 숫자 α 로 α z + (1 − α) z′ 처럼 섞는다. z = 0.8, z′ = 0.5 이면 α = 1 에서 0.8, α = 0.6 에서 0.68, α = 0 에서 0.5</title>
+  <defs><marker id="a-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="a-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="a-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="a-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="a-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker><marker id="a-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker></defs>
+  <rect x="1" y="1" width="778" height="328" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="390.0" y="30.0" fill="#e2e8f0" font-size="16" text-anchor="middle" font-weight="bold">이미지 layer 의 출력과 시간 layer 의 출력 섞기</text>
+  <rect x="40.0" y="70.0" width="170.0" height="60.0" rx="8" fill="#111a2e" stroke="#38bdf8" stroke-width="1.6"/>
+  <text x="125.0" y="95.0" fill="#38bdf8" font-size="13" text-anchor="middle">이미지 layer 출력 z</text>
+  <text x="125.0" y="115.0" fill="#e2e8f0" font-size="12" text-anchor="middle">예: 0.8</text>
+  <line x1="210.0" y1="100.0" x2="280.0" y2="100.0" stroke="#38bdf8" stroke-width="1.6" marker-end="url(#a-b)"/>
+  <rect x="283.0" y="70.0" width="170.0" height="60.0" rx="8" fill="#111a2e" stroke="#f59e0b" stroke-width="1.6"/>
+  <text x="368.0" y="95.0" fill="#f59e0b" font-size="13" text-anchor="middle">시간 layer 출력 z′</text>
+  <text x="368.0" y="115.0" fill="#e2e8f0" font-size="12" text-anchor="middle">예: 0.5</text>
+  <line x1="453.0" y1="100.0" x2="523.0" y2="100.0" stroke="#f59e0b" stroke-width="1.6" marker-end="url(#a-a)"/>
+  <rect x="526.0" y="62.0" width="214.0" height="76.0" rx="8" fill="#111a2e" stroke="#a78bfa" stroke-width="1.6"/>
+  <text x="633.0" y="88.0" fill="#a78bfa" font-size="14" text-anchor="middle">α z + (1 − α) z′</text>
+  <text x="633.0" y="110.0" fill="#94a3b8" font-size="11" text-anchor="middle">α 는 학습하는 숫자</text>
+  <text x="633.0" y="126.0" fill="#94a3b8" font-size="11" text-anchor="middle">0 ≤ α ≤ 1</text>
+  <path d="M125,130 C125,170 633,170 633,140" fill="none" stroke="#38bdf8" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#a-b)"/>
+  <text x="60.0" y="205.0" fill="#a78bfa" font-size="13" text-anchor="start" font-weight="bold">α = 1</text>
+  <text x="150.0" y="205.0" fill="#e2e8f0" font-size="13" text-anchor="start">1 × 0.8 + 0 × 0.5 = 0.8</text>
+  <text x="450.0" y="205.0" fill="#94a3b8" font-size="12" text-anchor="start">시간 layer 를 건너뛴 원래 이미지 model</text>
+  <text x="60.0" y="239.0" fill="#a78bfa" font-size="13" text-anchor="start" font-weight="bold">α = 0.6</text>
+  <text x="150.0" y="239.0" fill="#e2e8f0" font-size="13" text-anchor="start">0.6 × 0.8 + 0.4 × 0.5 = 0.68</text>
+  <text x="450.0" y="239.0" fill="#94a3b8" font-size="12" text-anchor="start">둘을 섞는다 (변화량 −0.12)</text>
+  <text x="60.0" y="273.0" fill="#a78bfa" font-size="13" text-anchor="start" font-weight="bold">α = 0</text>
+  <text x="150.0" y="273.0" fill="#e2e8f0" font-size="13" text-anchor="start">0 × 0.8 + 1 × 0.5 = 0.5</text>
+  <text x="450.0" y="273.0" fill="#94a3b8" font-size="12" text-anchor="start">시간 layer 의 출력만</text>
+</svg>

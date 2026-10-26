@@ -7,7 +7,7 @@
 ## 강의 폴더와 frontmatter
 
 강의 하나는 `lessons/<id>/` 폴더 하나이고, 그 안에는 강의 본문 `README.md`, 그림 `figures/`, 퀴즈 `quiz.yaml` 만 둔다.
-Stable Diffusion branch 의 강의에는 퀴즈가 없고, 학습자가 "다 읽음" 으로 표시해 완료한다. 응시·읽음 기록은 강의 폴더가 아니라
+Stable Diffusion branch 와 Video branch 의 강의에는 퀴즈가 없고, 학습자가 "다 읽음" 으로 표시해 완료한다. 응시·읽음 기록은 강의 폴더가 아니라
 `progress/<id>.json` 에 쌓인다. 강의 `README.md` 앞의 YAML frontmatter 가 지도에 쓰이는 정보(branch, 선수 강의, 예상 시간, 논문)다.
 branch 의 이름·색·순서와 지도에서 branch 를 놓는 순서는 [`lessons/branches.yaml`](lessons/branches.yaml) 에서 정한다.
 
@@ -76,8 +76,8 @@ step 수와 sampler 의 관계처럼 실제 모델이 왜 그렇게 동작하는
 
 ## 퀴즈 규칙
 
-퀴즈는 [DDPM](lessons/ddpm/quiz.yaml) 과 같은 모양의 `quiz.yaml` 이다. Stable Diffusion branch 의 강의에는 퀴즈를 두지
-않는다(`npm test` 가 검사한다). 강의의 원리 하나가 topic 하나이고, 처음
+퀴즈는 [DDPM](lessons/ddpm/quiz.yaml) 과 같은 모양의 `quiz.yaml` 이다. Stable Diffusion branch 와 Video branch 의 강의에는
+퀴즈를 두지 않는다(`npm test` 가 검사한다). 강의의 원리 하나가 topic 하나이고, 처음
 응시하면 topic 마다 한 문항을 낸다. 다시 풀 때는 틀린 topic 만 그 topic 의 다음 variant 로 낸다.
 
 - 문항은 면접에서 물을 법한 개념 질문으로 쓰고, 질문 글에는 `면접관:` 같은 화자 표시나 따옴표 없이 질문만 적는다. 말투는 시험

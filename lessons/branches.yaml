@@ -16,7 +16,7 @@ trees:
     title: Graphics Roadmap
     color: "#a78bfa"
     angle: 180
-    branches: [math, language, core, vision, generative, stable-diffusion]
+    branches: [math, language, core, vision, generative, stable-diffusion, video]
 
 # Listed in legend order. core: true marks the foundations every other branch builds on (exactly one); the map draws
 # its chain as the trunk.
@@ -51,3 +51,8 @@ branches:
     title: Stable Diffusion
     summary: U-Net, latent space, text conditioning, guidance, sampler. 글 한 줄로 이미지를 만드는 Stable Diffusion 의 부품
     color: "#f59e0b"
+
+  - id: video
+    title: Video
+    summary: 이미지 diffusion model 에 시간 축을 더해 움직이는 그림을 만드는 video diffusion. 프레임 사이의 attention, motion module, 동영상 latent
+    color: "#2dd4bf"
