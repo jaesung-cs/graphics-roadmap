@@ -354,7 +354,7 @@ guidance scale 을 낮추는 방법(CFG resolution weighting)을 제안했다.
 - 학습할 때 글의 50% 를 비워 조건 그림에서 뜻을 읽게 하고, 조건을 따르는 능력은 대개 1 만 step 안에 갑자기 생긴다. 생성할 때는 세기와 쓸 step
   구간으로 조건의 영향을 조절하고, 여러 ControlNet 의 출력을 더해 조건을 섞는다
 
-ControlNet 은 Stable Diffusion v1 의 U-Net 을 그대로 두고 그 옆에 붙였다. 다음 강의인 SDXL 은 U-Net 자체를 세 배쯤 키우고 text encoder 를 둘로 늘려
+ControlNet 은 Stable Diffusion v1 의 U-Net 을 그대로 두고 그 옆에 붙였다. 다음 강의인 [SDXL](../sdxl/README.md) 은 U-Net 자체를 세 배쯤 키우고 text encoder 를 둘로 늘려
 $1024 \times 1024$ 그림을 만든다.
 
 ## 참고 자료

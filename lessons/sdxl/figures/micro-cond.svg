@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>micro-conditioning. 원래 크기 (1024, 1024), 잘라 낸 자리 (0, 0), 목표 크기 (1024, 1024) 의 숫자 6 개를 하나에 256 개씩 sin·cos 로 늘린 1536 개와 pooled vector 1280 개를 이어 붙여 2816 개를 만들고, linear 층 2 개로 1280 개로 바꿔 time embedding 에 더한다</title>
+  <defs><marker id="a-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="a-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="a-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="a-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="a-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="758" height="298" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="24" y="32" fill="#e2e8f0" font-size="14" text-anchor="start" font-weight="600">micro-conditioning 을 time embedding 에 더하기</text>
+  <rect x="30" y="60" width="150" height="44" rx="8" fill="#111a2e" stroke="#94a3b8" stroke-width="1.6"/>
+  <text x="105" y="79" fill="#e2e8f0" font-size="12" text-anchor="middle">원래 크기</text>
+  <text x="105" y="96" fill="#94a3b8" font-size="11" text-anchor="middle">(1024, 1024)</text>
+  <line x1="180" y1="82" x2="226" y2="82" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <rect x="228" y="60" width="130" height="44" rx="8" fill="#1f1a33" stroke="#a78bfa" stroke-width="1.6"/>
+  <text x="293" y="79" fill="#a78bfa" font-size="12" text-anchor="middle">sin·cos</text>
+  <text x="293" y="96" fill="#94a3b8" font-size="11" text-anchor="middle">2 × 256 = 512</text>
+  <line x1="358" y1="82" x2="404" y2="114.2" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <rect x="30" y="116" width="150" height="44" rx="8" fill="#111a2e" stroke="#94a3b8" stroke-width="1.6"/>
+  <text x="105" y="135" fill="#e2e8f0" font-size="12" text-anchor="middle">잘라 낸 자리</text>
+  <text x="105" y="152" fill="#94a3b8" font-size="11" text-anchor="middle">(0, 0)</text>
+  <line x1="180" y1="138" x2="226" y2="138" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <rect x="228" y="116" width="130" height="44" rx="8" fill="#1f1a33" stroke="#a78bfa" stroke-width="1.6"/>
+  <text x="293" y="135" fill="#a78bfa" font-size="12" text-anchor="middle">sin·cos</text>
+  <text x="293" y="152" fill="#94a3b8" font-size="11" text-anchor="middle">2 × 256 = 512</text>
+  <line x1="358" y1="138" x2="404" y2="131.0" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <rect x="30" y="172" width="150" height="44" rx="8" fill="#111a2e" stroke="#94a3b8" stroke-width="1.6"/>
+  <text x="105" y="191" fill="#e2e8f0" font-size="12" text-anchor="middle">목표 크기</text>
+  <text x="105" y="208" fill="#94a3b8" font-size="11" text-anchor="middle">(1024, 1024)</text>
+  <line x1="180" y1="194" x2="226" y2="194" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <rect x="228" y="172" width="130" height="44" rx="8" fill="#1f1a33" stroke="#a78bfa" stroke-width="1.6"/>
+  <text x="293" y="191" fill="#a78bfa" font-size="12" text-anchor="middle">sin·cos</text>
+  <text x="293" y="208" fill="#94a3b8" font-size="11" text-anchor="middle">2 × 256 = 512</text>
+  <line x1="358" y1="194" x2="404" y2="147.8" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <rect x="30" y="234" width="328" height="44" rx="8" fill="#10291f" stroke="#34d399" stroke-width="1.6"/>
+  <text x="194" y="261" fill="#34d399" font-size="12" text-anchor="middle">ViT-bigG 의 pooled vector 1280</text>
+  <line x1="358" y1="256" x2="404" y2="150" stroke="#34d399" stroke-width="1.6" marker-end="url(#a-g)"/>
+  <rect x="406" y="104" width="120" height="60" rx="8" fill="#1f1a10" stroke="#f59e0b" stroke-width="1.6"/>
+  <text x="466" y="128" fill="#f59e0b" font-size="12" text-anchor="middle">이어 붙이기</text>
+  <text x="466" y="148" fill="#e2e8f0" font-size="11" text-anchor="middle">1536 + 1280 = 2816</text>
+  <line x1="526" y1="134" x2="556" y2="134" stroke="#f59e0b" stroke-width="1.6" marker-end="url(#a-a)"/>
+  <rect x="558" y="104" width="90" height="60" rx="8" fill="#1f1a10" stroke="#f59e0b" stroke-width="1.6"/>
+  <text x="603" y="128" fill="#f59e0b" font-size="12" text-anchor="middle">linear 2 층</text>
+  <text x="603" y="148" fill="#e2e8f0" font-size="11" text-anchor="middle">→ 1280</text>
+  <line x1="648" y1="134" x2="676" y2="134" stroke="#f59e0b" stroke-width="1.6" marker-end="url(#a-a)"/>
+  <circle cx="696" cy="134" r="18" fill="#111a2e" stroke="#f59e0b" stroke-width="1.6"/>
+  <text x="696" y="140" fill="#f59e0b" font-size="16" text-anchor="middle">+</text>
+  <line x1="696" y1="210" x2="696" y2="154" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#a-m)"/>
+  <text x="696" y="228" fill="#94a3b8" font-size="11" text-anchor="middle">step 번호의</text>
+  <text x="696" y="244" fill="#94a3b8" font-size="11" text-anchor="middle">time embedding</text>
+  <text x="696" y="260" fill="#94a3b8" font-size="11" text-anchor="middle">1280</text>
+</svg>
