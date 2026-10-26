@@ -320,8 +320,8 @@ feature cache 로 4 프레임씩 처리한다.
 - PAB 는 가운데 약 70% step 에서 attention 출력을 몇 step 에 한 번만 계산한다. GPU 한 장에서는 1.3 ~ 1.4 배쯤 빨라지고, 범위를 늘리면 품질이 떨어진다
 - fp8 저장은 weight 메모리를 절반으로 줄이고, offloading 은 단위가 작을수록 메모리를 아끼지만 느려지며, VAE tiling 은 되돌리는 단계의 메모리를 줄인다
 
-이 강의로 Video branch 에서 계획한 강의를 모두 마친다. 더 공부할 주제로는 여러 조각을 이어 몇 분짜리 video 를 만드는 방법, 앞 프레임만 보고 다음 프레임을
-만드는 autoregressive video model 등이 있다.
+[다음 강의](../long-video/README.md)는 여러 조각을 이어 학습한 길이보다 긴 video 를 만드는 방법과, 앞 프레임만 보고 다음 프레임을 만드는 autoregressive
+video model 을 다룬다.
 
 ## 참고 자료
 
