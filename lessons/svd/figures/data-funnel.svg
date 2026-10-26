@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 400" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>긴 video 를 cut 검출로 clip 577M 개, 212 년 분량으로 자르고, 움직임·글자 면적·미적 점수·글과 그림의 유사도로 걸러 LVD-F 152M 개, 50.64 년 분량을 만든다. 같은 방법으로 거른 LVD-10M-F 2.3M 개가 거르지 않은 LVD-10M 9.8M 개보다 사람 평가에서 낫다</title>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker><marker id="arrow-text" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e2e8f0"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker></defs>
+  <rect x="1" y="1" width="858" height="398" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="430.0" y="32.0" fill="#e2e8f0" font-size="16" text-anchor="middle" font-weight="bold">video dataset 고르기: LVD 에서 LVD-F 로</text>
+  <rect x="30.0" y="64.0" width="520.0" height="46.0" rx="8" fill="#111a2e" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="290.0" y="84.0" fill="#38bdf8" font-size="13" text-anchor="middle" font-weight="bold">긴 video 모음</text>
+  <text x="290.0" y="102.0" fill="#94a3b8" font-size="11" text-anchor="middle">cut 검출을 fps 세 단계로 겹쳐 돌려 자른다</text>
+  <line x1="290.0" y1="110.0" x2="290.0" y2="126.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="70.0" y="130.0" width="440.0" height="46.0" rx="8" fill="#111a2e" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="290.0" y="150.0" fill="#38bdf8" font-size="13" text-anchor="middle" font-weight="bold">LVD: clip 577M 개, 212 년</text>
+  <text x="290.0" y="168.0" fill="#94a3b8" font-size="11" text-anchor="middle">clip 마다 caption 3 개 (CoCa, V-BLIP, LLM 요약)</text>
+  <line x1="290.0" y1="176.0" x2="290.0" y2="192.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="110.0" y="196.0" width="360.0" height="46.0" rx="8" fill="#111a2e" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="290.0" y="216.0" fill="#f59e0b" font-size="13" text-anchor="middle" font-weight="bold">점수 붙이기</text>
+  <text x="290.0" y="234.0" fill="#94a3b8" font-size="11" text-anchor="middle">움직임 · 글자 면적 · 미적 점수 · 글-그림 유사도</text>
+  <line x1="290.0" y1="242.0" x2="290.0" y2="258.0" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="150.0" y="262.0" width="280.0" height="46.0" rx="8" fill="#111a2e" stroke="#34d399" stroke-width="1.5"/>
+  <text x="290.0" y="282.0" fill="#34d399" font-size="13" text-anchor="middle" font-weight="bold">LVD-F: 152M 개, 50.64 년</text>
+  <text x="290.0" y="300.0" fill="#94a3b8" font-size="11" text-anchor="middle">점수마다 정한 기준 아래를 버린 결과</text>
+  <rect x="580.0" y="64.0" width="250.0" height="244.0" rx="8" fill="#111a2e" stroke="#1e293b" stroke-width="1.5"/>
+  <text x="705.0" y="90.0" fill="#f59e0b" font-size="13" text-anchor="middle" font-weight="bold">기준 정하기</text>
+  <text x="705.0" y="116.0" fill="#e2e8f0" font-size="12" text-anchor="middle">LVD 에서 9.8M 개를 뽑은 LVD-10M 에서</text>
+  <text x="705.0" y="138.0" fill="#e2e8f0" font-size="12" text-anchor="middle">점수 아래 12.5 · 25 · 50% 를</text>
+  <text x="705.0" y="160.0" fill="#e2e8f0" font-size="12" text-anchor="middle">버린 subset 마다 model 을 학습하고</text>
+  <text x="705.0" y="182.0" fill="#e2e8f0" font-size="12" text-anchor="middle">사람 평가로 가장 좋은 기준을 고른다</text>
+  <text x="705.0" y="204.0" fill="#94a3b8" font-size="12" text-anchor="middle"></text>
+  <text x="705.0" y="226.0" fill="#94a3b8" font-size="12" text-anchor="middle">글자 면적: 7% 넘으면 버림</text>
+  <text x="705.0" y="248.0" fill="#94a3b8" font-size="12" text-anchor="middle">움직임: optical flow 평균이</text>
+  <text x="705.0" y="270.0" fill="#94a3b8" font-size="12" text-anchor="middle">기준보다 작으면 버림</text>
+  <rect x="30.0" y="334.0" width="800.0" height="48.0" rx="8" fill="#111a2e" stroke="#34d399" stroke-width="1.5"/>
+  <text x="430.0" y="363.0" fill="#e2e8f0" font-size="12" text-anchor="middle">LVD-10M-F 2.3M 개(4 배 작음)로 학습한 model 이 LVD-10M · WebVid-10M · InternVid-10M 으로 학습한 model 보다 사람 평가에서 낫다</text>
+</svg>

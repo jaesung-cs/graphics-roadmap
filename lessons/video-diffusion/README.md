@@ -326,7 +326,7 @@ noise schedule 이 `linear` 다. [Diffusion Distillation](../distillation/README
   MotionLoRA 로 카메라 움직임을 더한다
 - 16 프레임 video 는 같은 step 수에서 이미지 layer 의 계산이 그림 한 장의 16 배다
 
-이 강의의 model 들은 글에서 video 를 만들었다. 다음 강의인 Stable Video Diffusion 은 그림 한 장을 받아 움직이게 하는 image-to-video model 이고, video
+이 강의의 model 들은 글에서 video 를 만들었다. 다음 강의인 [Stable Video Diffusion](../svd/README.md) 은 그림 한 장을 받아 움직이게 하는 image-to-video model 이고, video
 dataset 을 고르는 방법과 움직임의 크기를 조건으로 주는 방법을 다룬다.
 
 ## 참고 자료
