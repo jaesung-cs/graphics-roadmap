@@ -463,7 +463,7 @@ diffusers 문서는 메모리를 줄이는 방법 세 가지를 든다.
 - SVD-XT 의 weight 는 fp16 으로 약 4.51 GB 이고, 기본값으로 그림 1,250 장 분의 이미지 layer 계산을 한다. CPU offload, feed-forward 나눠 계산하기,
   `decode_chunk_size` 로 8GB 아래에서 돌릴 수 있다
 
-SVD 는 U-Net 과 프레임마다 따로 줄이는 이미지 VAE 위에 시간 layer 를 더한 model 이다. 다음 강의는 시간 축까지 함께 줄이는 3D VAE 와,
+SVD 는 U-Net 과 프레임마다 따로 줄이는 이미지 VAE 위에 시간 layer 를 더한 model 이다. [다음 강의](../video-dit/README.md)는 시간 축까지 함께 줄이는 3D VAE 와,
 U-Net 대신 Transformer 로 공간과 시간을 한꺼번에 attention 하는 video model 을 다룬다.
 
 ## 참고 자료

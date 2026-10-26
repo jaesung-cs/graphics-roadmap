@@ -84,7 +84,7 @@ git merge upstream/main
 | Vision · Language | CNN·ResNet·ViT·CLIP, tokenizer·Transformer·GPT-2 |
 | Generative Models | VAE·DDPM·flow matching |
 | Stable Diffusion | U-Net, latent diffusion, text conditioning(cross-attention), classifier-free guidance, sampler, LoRA, ControlNet, SDXL, Stable Diffusion 3, 적은 step distillation |
-| Video | 이미지 diffusion model 에 시간 축을 더하는 video diffusion, 그림 한 장을 움직이게 하는 Stable Video Diffusion |
+| Video | 이미지 diffusion model 에 시간 축을 더하는 video diffusion, 그림 한 장을 움직이게 하는 Stable Video Diffusion, 3D VAE 와 Transformer 로 만드는 CogVideoX·HunyuanVideo·Wan |
 
 원 하나가 강의 하나이고, 선은 먼저 읽어 두면 좋은 강의를 잇습니다. 지도는 맨 위의 Vectors & Matrices 에서 시작해 아래로 자라고, 선수
 강의가 언제나 위에 놓입니다. 위에서부터 수학 기초와 신경망 기초를 읽고, 이미지와 글을 읽는 encoder 와 생성 모델을 거쳐 맨 아래의
