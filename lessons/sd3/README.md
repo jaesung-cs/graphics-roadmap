@@ -417,7 +417,7 @@ $1024 \times 1024$ 의 몇 번에 해당하는 계산일까?
 - SD3 Medium 의 fp16 weight 는 15.50 GB 이고 T5 가 9.52 GB 다. T5 를 빼거나 8 bit 로 줄이면 메모리가 줄고, step·그림 크기·guidance 를 줄이면 시간이 준다
 
 이 강의의 방법들은 model 을 그대로 두고 덜 계산하는 방법이었다. 다음 강의에서는 SDXL-Turbo 처럼 model 을 다시 학습해, 몇 step 만에 guidance 없이
-그림을 만들게 하는 distillation 을 다룬다.
+그림을 만들게 하는 [Diffusion Distillation](../distillation/README.md) 을 다룬다.
 
 ## 참고 자료
 

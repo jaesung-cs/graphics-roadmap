@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 330" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>그림 한 장에 U-Net 을 실행하는 횟수. SDXL 50 step 과 CFG 는 100 번, 25 step 은 50 번, LCM-LoRA 4 step 과 SDXL-Lightning 4 step 은 4 번, SDXL-Turbo 1 step 은 1 번이다</title>
+  <defs><marker id="a-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="a-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="a-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="a-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="a-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker><marker id="a-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker></defs>
+  <rect x="1" y="1" width="778" height="328" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="390.0" y="30.0" fill="#e2e8f0" font-size="16" text-anchor="middle" font-weight="bold">그림 한 장에 U-Net 을 실행하는 횟수</text>
+  <text x="238.0" y="80.0" fill="#e2e8f0" font-size="12" text-anchor="end">SDXL 50 step + CFG</text>
+  <rect x="250.0" y="60.0" width="460.0" height="28.0" fill="#94a3b8" stroke="none" stroke-width="1" fill-opacity="0.8"/>
+  <text x="718.0" y="79.0" fill="#e2e8f0" font-size="12" text-anchor="start" font-weight="bold">100 번</text>
+  <text x="238.0" y="124.0" fill="#e2e8f0" font-size="12" text-anchor="end">SDXL 25 step + CFG</text>
+  <rect x="250.0" y="104.0" width="230.0" height="28.0" fill="#94a3b8" stroke="none" stroke-width="1" fill-opacity="0.8"/>
+  <text x="488.0" y="123.0" fill="#e2e8f0" font-size="12" text-anchor="start" font-weight="bold">50 번</text>
+  <text x="238.0" y="168.0" fill="#e2e8f0" font-size="12" text-anchor="end">LCM-LoRA 4 step, guidance 끔</text>
+  <rect x="250.0" y="148.0" width="18.4" height="28.0" fill="#34d399" stroke="none" stroke-width="1" fill-opacity="0.8"/>
+  <text x="276.4" y="167.0" fill="#e2e8f0" font-size="12" text-anchor="start" font-weight="bold">4 번</text>
+  <text x="238.0" y="212.0" fill="#e2e8f0" font-size="12" text-anchor="end">SDXL-Lightning 4 step</text>
+  <rect x="250.0" y="192.0" width="18.4" height="28.0" fill="#f59e0b" stroke="none" stroke-width="1" fill-opacity="0.8"/>
+  <text x="276.4" y="211.0" fill="#e2e8f0" font-size="12" text-anchor="start" font-weight="bold">4 번</text>
+  <text x="238.0" y="256.0" fill="#e2e8f0" font-size="12" text-anchor="end">SDXL-Turbo 1 step</text>
+  <rect x="250.0" y="236.0" width="4.6" height="28.0" fill="#38bdf8" stroke="none" stroke-width="1" fill-opacity="0.8"/>
+  <text x="262.6" y="255.0" fill="#e2e8f0" font-size="12" text-anchor="start" font-weight="bold">1 번</text>
+  <text x="40.0" y="296.0" fill="#94a3b8" font-size="11" text-anchor="start">CFG 를 쓰면 step 마다 글 있는 쪽과 빈 글 쪽을 함께 계산해 2 번이다. 크기가 같은 U-Net 이라 한 번의 계산량은 모두 같다</text>
+  <text x="40.0" y="314.0" fill="#94a3b8" font-size="11" text-anchor="start">(SDXL-Turbo 는 512×512 를 권하므로 한 번의 계산도 1024×1024 보다 작다)</text>
+</svg>

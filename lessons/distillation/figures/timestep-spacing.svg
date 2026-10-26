@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 330" font-family="Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif">
+  <title>1000 단계를 4 step 으로 나눈 시각. SDXL 의 기본 leading 은 751, 501, 251, 1 이라 첫 step 에도 신호가 남은 시각을 쓰고, trailing 은 999, 749, 499, 249 라 거의 순수 noise 인 시각에서 시작한다</title>
+  <defs><marker id="a-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker><marker id="a-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#38bdf8"/></marker><marker id="a-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#34d399"/></marker><marker id="a-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker><marker id="a-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"/></marker><marker id="a-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f87171"/></marker></defs>
+  <rect x="1" y="1" width="778" height="328" rx="12" fill="#0b1220" stroke="#1e293b"/>
+  <text x="390.0" y="30.0" fill="#e2e8f0" font-size="16" text-anchor="middle" font-weight="bold">4 step 으로 나눈 시각: leading 과 trailing</text>
+  <text x="90.0" y="70.0" fill="#f87171" font-size="13" text-anchor="start" font-weight="bold">leading (SDXL 기본)</text>
+  <line x1="90.0" y1="100.0" x2="720.0" y2="100.0" stroke="#94a3b8" stroke-width="1.2"/>
+  <line x1="90.0" y1="95.0" x2="90.0" y2="105.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="90.0" y="122.0" fill="#94a3b8" font-size="11" text-anchor="middle">0</text>
+  <line x1="247.5" y1="95.0" x2="247.5" y2="105.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="247.5" y="122.0" fill="#94a3b8" font-size="11" text-anchor="middle">250</text>
+  <line x1="405.0" y1="95.0" x2="405.0" y2="105.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="405.0" y="122.0" fill="#94a3b8" font-size="11" text-anchor="middle">500</text>
+  <line x1="562.5" y1="95.0" x2="562.5" y2="105.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="562.5" y="122.0" fill="#94a3b8" font-size="11" text-anchor="middle">750</text>
+  <line x1="720.0" y1="95.0" x2="720.0" y2="105.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="720.0" y="122.0" fill="#94a3b8" font-size="11" text-anchor="middle">1000</text>
+  <circle cx="563.1" cy="100.0" r="7" fill="#f87171" fill-opacity="0.9"/>
+  <text x="563.1" y="88.0" fill="#f87171" font-size="11" text-anchor="middle">751</text>
+  <circle cx="405.6" cy="100.0" r="7" fill="#f87171" fill-opacity="0.9"/>
+  <text x="405.6" y="88.0" fill="#f87171" font-size="11" text-anchor="middle">501</text>
+  <circle cx="248.1" cy="100.0" r="7" fill="#f87171" fill-opacity="0.9"/>
+  <text x="248.1" y="88.0" fill="#f87171" font-size="11" text-anchor="middle">251</text>
+  <circle cx="90.6" cy="100.0" r="7" fill="#f87171" fill-opacity="0.9"/>
+  <text x="90.6" y="88.0" fill="#f87171" font-size="11" text-anchor="middle">1</text>
+  <text x="90.0" y="144.0" fill="#94a3b8" font-size="12" text-anchor="start">첫 step 이 751: 순수 noise 를 넣는데 신호가 남은 시각으로 계산한다</text>
+  <text x="90.0" y="180.0" fill="#34d399" font-size="13" text-anchor="start" font-weight="bold">trailing (Turbo·Lightning)</text>
+  <line x1="90.0" y1="210.0" x2="720.0" y2="210.0" stroke="#94a3b8" stroke-width="1.2"/>
+  <line x1="90.0" y1="205.0" x2="90.0" y2="215.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="90.0" y="232.0" fill="#94a3b8" font-size="11" text-anchor="middle">0</text>
+  <line x1="247.5" y1="205.0" x2="247.5" y2="215.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="247.5" y="232.0" fill="#94a3b8" font-size="11" text-anchor="middle">250</text>
+  <line x1="405.0" y1="205.0" x2="405.0" y2="215.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="405.0" y="232.0" fill="#94a3b8" font-size="11" text-anchor="middle">500</text>
+  <line x1="562.5" y1="205.0" x2="562.5" y2="215.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="562.5" y="232.0" fill="#94a3b8" font-size="11" text-anchor="middle">750</text>
+  <line x1="720.0" y1="205.0" x2="720.0" y2="215.0" stroke="#94a3b8" stroke-width="1"/>
+  <text x="720.0" y="232.0" fill="#94a3b8" font-size="11" text-anchor="middle">1000</text>
+  <circle cx="719.4" cy="210.0" r="7" fill="#34d399" fill-opacity="0.9"/>
+  <text x="719.4" y="198.0" fill="#34d399" font-size="11" text-anchor="middle">999</text>
+  <circle cx="561.9" cy="210.0" r="7" fill="#34d399" fill-opacity="0.9"/>
+  <text x="561.9" y="198.0" fill="#34d399" font-size="11" text-anchor="middle">749</text>
+  <circle cx="404.4" cy="210.0" r="7" fill="#34d399" fill-opacity="0.9"/>
+  <text x="404.4" y="198.0" fill="#34d399" font-size="11" text-anchor="middle">499</text>
+  <circle cx="246.9" cy="210.0" r="7" fill="#34d399" fill-opacity="0.9"/>
+  <text x="246.9" y="198.0" fill="#34d399" font-size="11" text-anchor="middle">249</text>
+  <text x="90.0" y="254.0" fill="#94a3b8" font-size="12" text-anchor="start">첫 step 이 999: √ᾱ = 0.068 로 거의 순수 noise 인 시각</text>
+  <text x="90.0" y="300.0" fill="#94a3b8" font-size="12" text-anchor="start">시각 0 은 그림, 1000 에 가까울수록 noise. scaled_linear 에서 √ᾱ 는 751 에서 0.236, 999 에서 0.068</text>
+</svg>
