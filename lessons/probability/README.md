@@ -285,16 +285,16 @@ component analysis)라고 한다.
 ![고양이 분류기의 Bayes rule 을 사진 1000 장으로 센 그림. 1000 장 중 고양이 사진은 100 장, 다른 사진은 900 장이다. 고양이 사진 100 장 중 90 장이 고양이로 판정되고, 다른 사진 900 장 중 45 장이 오경보로 판정된다. 고양이로 판정된 135 장 중 실제 고양이 사진은 90 장이라 확률은 0.67 이다](figures/bayes-door.svg)
 
 "B 가 일어난 경우만 놓고 볼 때 A 의 확률" 을 **조건부 확률**(conditional probability)이라고 하고 $P(A \mid B)$ 로 적는다. $P$ 는
-probability 의 첫 글자다. 분류기의 90% 는 고양이 사진 100 장만 놓고 센 $P(\text{판정} \mid \text{고양이}) = 90 \div 100$ 이고, 알고 싶은 것은
-"고양이" 로 판정된 135 장만 놓고 센 $P(\text{고양이} \mid \text{판정}) = 90 \div 135$ 다. 두 값은 같은 90 장을 서로 다른 범위로 나눈 것이라
+probability 의 첫 글자다. 식에서는 실제 고양이 사진인 경우를 cat, "고양이" 로 판정된 경우를 detected 로 적는다. 분류기의 90% 는 고양이 사진 100 장만 놓고 센 $P(\text{detected} \mid \text{cat}) = 90 \div 100$ 이고, 알고 싶은 것은
+"고양이" 로 판정된 135 장만 놓고 센 $P(\text{cat} \mid \text{detected}) = 90 \div 135$ 다. 두 값은 같은 90 장을 서로 다른 범위로 나눈 것이라
 다르다. 이 셈을 확률 기호로 적은 식이 **Bayes rule** 이다.
 
 $$
-P(\text{고양이} \mid \text{판정}) = \frac{P(\text{판정} \mid \text{고양이}) \, P(\text{고양이})}{P(\text{판정})} = \frac{0.9 \times 0.1}{0.9 \times 0.1 + 0.05 \times 0.9} = \frac{0.09}{0.135} \approx 0.67
+P(\text{cat} \mid \text{detected}) = \frac{P(\text{detected} \mid \text{cat}) \, P(\text{cat})}{P(\text{detected})} = \frac{0.9 \times 0.1}{0.9 \times 0.1 + 0.05 \times 0.9} = \frac{0.09}{0.135} \approx 0.67
 $$
 
-판정 전의 믿음 $P(\text{고양이}) = 0.1$ 을 prior(사전 확률)라고 하고, 분류기가 상황마다 어떤 판정을 내는지 적은
-$P(\text{판정} \mid \text{고양이})$ 를 likelihood 라고 한다. 판정 뒤의 믿음 0.67 은 posterior(사후 확률)다. 분모 $P(\text{판정})$ 은
+판정 전의 믿음 $P(\text{cat}) = 0.1$ 을 prior(사전 확률)라고 하고, 분류기가 상황마다 어떤 판정을 내는지 적은
+$P(\text{detected} \mid \text{cat})$ 를 likelihood 라고 한다. 판정 뒤의 믿음 0.67 은 posterior(사후 확률)다. 분모 $P(\text{detected})$ 은
 "고양이" 판정이 나올 전체 확률로, 고양이 사진에서 나오는 판정과 다른 사진에서 나오는 오경보를 더한 값이다. 이름은 영국의 목사 Thomas Bayes
 에서 왔다. 이 계산을 다룬 그의 글은 그가 1761 년에 죽은 뒤 친구 Richard Price 가 정리해 1763 년 Royal Society 에 발표했다.
 
@@ -309,7 +309,7 @@ posterior 는 prior 에 크게 좌우된다. 같은 분류기를 고양이 사�
 고양이 사진이 1% 뿐인 모음에서는 "고양이" 판정의 85% 가 오경보인데, 찾는 대상이 드물수록 오경보율이 조금만 높아도 판정 대부분이 오경보가 된다.
 
 **흔한 오해.** "적중률 90% 인 분류기가 고양이로 판정하면 90% 의 확률로 고양이다." 90% 는 고양이가 있을 때 판정이 나올 확률
-$P(\text{판정} \mid \text{고양이})$ 이고, 판정이 나왔을 때 고양이일 확률 $P(\text{고양이} \mid \text{판정})$ 은 prior 와 오경보율까지 넣어
+$P(\text{detected} \mid \text{cat})$ 이고, 판정이 나왔을 때 고양이일 확률 $P(\text{cat} \mid \text{detected})$ 은 prior 와 오경보율까지 넣어
 Bayes rule 로 따로 구해야 한다.
 
 **확인 문제.** 같은 사진 모음(고양이 10%)에서 분류기를 바꿔 적중률은 90% 로 두고 오경보율만 1% 로 낮췄다. "고양이" 판정이 나온 사진에 고양이가 있을 확률은?
@@ -337,7 +337,7 @@ P(A \mid B) = \frac{P(B \mid A)\,P(A)}{P(B)}, \qquad P(B) = P(B \mid A)\,P(A) + 
 $$
 
 분모는 B 가 일어나는 경우를 "A 이면서 B" 와 "A 가 아니면서 B" 로 나눠 더한 것이다. 고양이 예에서
-$P(\text{고양이}, \text{판정}) = 0.9 \times 0.1 = 0.09$ 가 1000 장 중 90 장이고, 분모 0.135 가 135 장이다.
+$P(\text{cat}, \text{detected}) = 0.9 \times 0.1 = 0.09$ 가 1000 장 중 90 장이고, 분모 0.135 가 135 장이다.
 
 </details>
 

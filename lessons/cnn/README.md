@@ -182,10 +182,10 @@ filter 가 놓일 수 있는 자리는 세로 1 곳, 가로 2 곳이라 출력�
 
 ## feature map
 
-같은 사진에 숫자만 바꾼 filter 를 대 본다.
+같은 사진에 숫자만 바꾼 filter 를 대 본다. 가로선을 찾는 filter 라서 horizontal(가로)의 줄임말 horiz 를 붙였다.
 
 $$
-K_{\text{가로}} = \begin{bmatrix} -1 & -1 & -1 \\ 2 & 2 & 2 \\ -1 & -1 & -1 \end{bmatrix}
+K_{\text{horiz}} = \begin{bmatrix} -1 & -1 & -1 \\ 2 & 2 & 2 \\ -1 & -1 & -1 \end{bmatrix}
 $$
 
 window 의 윗줄·가운데 줄·아랫줄 합을 차례로 $A$, $B$, $C$ 라 하면 결과는 $-A + 2B - C$ 다. 왼쪽 위 window 는 줄 합이 1, 2, 1 이라
@@ -363,7 +363,7 @@ $x_0$, $x_1$ 은 입력의 0 번·1 번 channel 이고, $K_0$, $K_1$ 은 filter 
 하나의 parameter 수는 입력 channel 수 $C_{\text{in}}$, 출력 channel 수 $C_{\text{out}}$, filter 크기 $k$ 로 정해진다.
 
 $$
-\text{parameter 수} = C_{\text{out}} \times (C_{\text{in}} \times k \times k + 1)
+\text{parameters} = C_{\text{out}} \times (C_{\text{in}} \times k \times k + 1)
 $$
 
 | 층 | $C_{\text{in}}$ | $C_{\text{out}}$ | $k$ | 계산 | parameter |

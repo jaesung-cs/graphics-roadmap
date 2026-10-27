@@ -236,7 +236,7 @@ $c_\text{skip} = \frac{0.25}{u^2 + 0.25}$, $c_\text{out} = \frac{u}{\sqrt{u^2 + 
 </details>
 
 Stable Diffusion 의 1000 단계에서 이웃한 단계끼리 맞추면 두 점이 너무 가까워 loss 가 작고 학습이 느리다. 저자들은 $k = 20$ 단계씩 건너뛰어 맞췄다
-(skipping-step). 또 선생님의 step 에 guidance 를 넣어 $(1 + \omega)\epsilon_\text{글} - \omega\,\epsilon_\text{빈 글}$ 로 옮기고, $\omega$ 를 2 ~ 14 에서
+(skipping-step). 또 선생님의 step 에 guidance 를 넣어 $(1 + \omega)\epsilon_c - \omega\,\epsilon_\varnothing$ 로 옮기고($\epsilon_c$ 는 글을 넣은 예측, $\epsilon_\varnothing$ 는 빈 글을 넣은 예측), $\omega$ 를 2 ~ 14 에서
 뽑아 학생의 입력으로도 넣었다. 그래서 학생은 guidance 를 쓴 길의 끝을 한 번의 계산으로 낸다. diffusers 는 `guidance_scale` 에서 1 을 뺀 값을 이 $\omega$
 로 넘긴다.
 
@@ -273,7 +273,7 @@ rank 64 인 층이 788 개이고 parameter 는 196,752,148 개다. fp16 파일�
 저자들은 이 LoRA 가 원래 SDXL 뿐 아니라 SDXL 을 미세조정한 다른 model 에도 그대로 붙는다는 것을 발견했다. LoRA 강의에서 본 여러 LoRA 섞기처럼,
 그림체를 학습한 LoRA $\tau$ 와 LCM-LoRA $\tau_\text{LCM}$ 을 함께 더한다.
 
-$\theta = \theta_\text{원래} + \lambda_1 \tau + \lambda_2 \tau_\text{LCM}$
+$\theta = \theta_\text{base} + \lambda_1 \tau + \lambda_2 \tau_\text{LCM}$
 
 보고서의 그림 3 에서 저자들은 종이 오리기 그림체 LoRA 를 $\lambda_1 = 0.8$ 로 더하고 LCM-LoRA 를 $\lambda_2 = 1.0$ 으로 더해, 추가 학습 없이
 그 그림체로 적은 step 에 그렸다. LCM 이 배운 변화는 "빠르게 하는 vector" 라고 부르고, 그림체 LoRA 는 "그림체 vector" 라고 불렀다.

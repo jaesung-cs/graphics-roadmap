@@ -113,14 +113,14 @@ $0.468 \times [1, 1] + 0.063 \times [0, 0] + 0.468 \times [2, 0] = [1.404, 0.468
 
 <details><summary><b>심화: "배" 의 attention 표</b></summary>
 
-| 상대 token | embedding | 점수 | $e^{\text{점수}}$ | weight | weight × embedding |
+| 상대 token | embedding | 점수 | $e^{\text{score}}$ | weight | weight × embedding |
 | --- | --- | --- | --- | --- | --- |
 | 배 | $[1, 1]$ | $1 \times 1 + 1 \times 1 = 2$ | 7.389 | 0.468 | $[0.468, 0.468]$ |
 | 를 | $[0, 0]$ | $0 + 0 = 0$ | 1 | 0.063 | $[0, 0]$ |
 | 먹었다 | $[2, 0]$ | $1 \times 2 + 1 \times 0 = 2$ | 7.389 | 0.468 | $[0.936, 0]$ |
 | 합 | | | 15.778 | 1 | $[1.404, 0.468]$ |
 
-weight 열은 $e^{\text{점수}}$ 를 합 15.778 로 나눈 값이다.
+weight 열은 $e^{\text{score}}$ 를 합 15.778 로 나눈 값이다.
 
 </details>
 
@@ -200,7 +200,7 @@ $K$, $V$ 라고 하면, 점수 표는 $QK^\top$ 이고 계산 전체는 $\mathrm
 
 "쓴" 의 query $[-1, 1]$ 로 한 계산을 칸마다 적으면 아래와 같다.
 
-| 상대 token | key | 점수 | $e^{\text{점수}}$ | weight | value | weight × value |
+| 상대 token | key | 점수 | $e^{\text{score}}$ | weight | value | weight × value |
 | --- | --- | --- | --- | --- | --- | --- |
 | 빨간 | $[1, 0]$ | $-1 + 0 = -1$ | 0.368 | 0.114 | $[1, 0]$ | $[0.114, 0]$ |
 | 모자 | $[0, 1]$ | $0 + 1 = 1$ | 2.718 | 0.844 | $[1, 1]$ | $[0.844, 0.844]$ |
@@ -266,7 +266,7 @@ weight 로 value 를 가중 평균한다는 뜻이다.
 
 "빨간 모자 쓴" 은 $d_k = 2$ 라서 "쓴" 의 점수 $[-1, 1, -2]$ 를 $\sqrt{2} \approx 1.414$ 로 나눈다.
 
-| 상대 token | 점수 | $\div 1.414$ | $e^{\text{나눈 점수}}$ | weight | value |
+| 상대 token | 점수 | $\div 1.414$ | $e^{\text{scaled score}}$ | weight | value |
 | --- | --- | --- | --- | --- | --- |
 | 빨간 | $-1$ | $-0.707$ | 0.493 | 0.178 | $[1, 0]$ |
 | 모자 | 1 | 0.707 | 2.028 | 0.734 | $[1, 1]$ |
@@ -441,7 +441,7 @@ attention 처럼 층 안에서 한 단계를 맡는 계산을 sub-layer 라고 �
 connection** 이다.
 
 $$
-\text{출력} = \mathbf{x} + \mathrm{Sublayer}(\mathbf{x})
+\text{output} = \mathbf{x} + \mathrm{Sublayer}(\mathbf{x})
 $$
 
 $\mathbf{x} = [1, 2]$ 이고 attention 의 출력이 $[0.5, -0.5]$ 면 넘기는 값은 $[1.5, 1.5]$ 다. sub-layer 가 0 에 가까운 값을 내도 입력이
@@ -597,7 +597,7 @@ loss 는 쉽게 내려가지만, 생성할 때는 뒤쪽 token 이 아직 없으
 이고, $e^{-\infty}$ 는 0 으로 보므로 막은 칸의 weight 는 0 이 된다. 예를 들어 위치 2 의 "4" 가 네 token 과 얻은 점수가 $[1, 2, 3, 0]$
 이라고 하자. 위치 2 는 위치 3, 4 를 보면 안 되므로 그 두 칸을 막는다.
 
-| 상대 token | 점수 | mask 후 점수 | $e^{\text{점수}}$ | weight | mask 없을 때 weight |
+| 상대 token | 점수 | mask 후 점수 | $e^{\text{score}}$ | weight | mask 없을 때 weight |
 | --- | --- | --- | --- | --- | --- |
 | `<bos>` | 1 | 1 | 2.718 | 0.269 | 0.087 |
 | 4 | 2 | 2 | 7.389 | 0.731 | 0.237 |

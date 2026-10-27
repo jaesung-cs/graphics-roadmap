@@ -273,7 +273,7 @@
       answer: 1
       explanation: |
         random 값을 뽑으면 neuron 마다 출발점이 달라 서로 다른 gradient 를 받고 서로 다른 역할을 맡을 수 있다. PyTorch 의 `nn.Linear` 도 기본으로
-        $-1/\sqrt{\text{입력 수}}$ 와 $+1/\sqrt{\text{입력 수}}$ 사이에서 고르게 뽑는다. 모두 0 으로 두면 neuron 들이 똑같이 움직인다. 모두 1 로
+        $-1/\sqrt{n_\text{in}}$ 와 $+1/\sqrt{n_\text{in}}$($n_\text{in}$ 은 입력 수) 사이에서 고르게 뽑는다. 모두 0 으로 두면 neuron 들이 똑같이 움직인다. 모두 1 로
         두어도 마찬가지다. 모든 neuron 에 같은 큰 값을 두면 대칭 문제에 더해 sigmoid 출력이 1 에 붙어 기울기까지 작아진다.
     - question: |
         hidden neuron 4 개의 weight 와 bias 를 모두 같은 값으로 출발시켜 학습했다. 학습이 끝난 뒤 hidden layer 가 긋는 서로 다른 경계 직선은 몇

@@ -247,10 +247,10 @@ network 가 속도를 내 줘도 속도가 자리마다 바뀌기 때문에 위�
 이름을 땄다.
 
 $$
-x_{\text{새}} = x + \Delta t \times v(x, t), \qquad \Delta t = \frac{1}{n}
+x_{\text{next}} = x + \Delta t \times v(x, t), \qquad \Delta t = \frac{1}{n}
 $$
 
-$\Delta t$("델타 t")는 한 토막의 길이이고, 한 번 직진하는 것을 step 이라 부른다. flow matching 에서는 $v$ 를 network 가 내므로 step 하나에
+$x$ 는 지금 위치, $x_{\text{next}}$ 는 다음 위치다. $\Delta t$("델타 t")는 한 토막의 길이이고, 한 번 직진하는 것을 step 이라 부른다. flow matching 에서는 $v$ 를 network 가 내므로 step 하나에
 network 를 한 번 쓴다.
 
 경로가 직선이면 Euler 법은 오차가 없다. 앞의 규칙 $v(x, t) = (2 - x) \div (1 - t)$ 를 따라 $x = -1$ 에서 출발한 점은 속도가 줄곧 3 이라서
@@ -285,7 +285,7 @@ Heun 법은 step 하나에서 속도를 두 번 구해 평균을 낸다. 먼저 
 
 $$
 \tilde x = x + \Delta t \times v(x, t), \qquad
-x_{\text{새}} = x + \Delta t \times \frac{v(x, t) + v(\tilde x, t + \Delta t)}{2}
+x_{\text{next}} = x + \Delta t \times \frac{v(x, t) + v(\tilde x, t + \Delta t)}{2}
 $$
 
 $v = 2t$ 를 Heun 법 1 step($\Delta t = 1$)으로 계산하면 출발 속도 0 과 $t = 1$ 의 속도 2 를 평균한 1 로 직진해 $0 + 1 \times 1 = 1$ 에

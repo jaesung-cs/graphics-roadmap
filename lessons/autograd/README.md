@@ -587,8 +587,8 @@ $[1, 0]$ 에서는 두 neuron 의 $z$ 가 모두 $z_3$ 의 gradient $-0.0574$ �
 0.670 이라 $[1, 1]$ 을 틀리고(loss 0.1708), 20,000 step 을 학습해도 loss 는 0.167 근처에서 멈춘다. 똑같은 neuron 두 개는 neuron 하나와 같아서
 직선 하나밖에 긋지 못하고, perceptron 이 XOR 를 못 푼 것과 같은 이유로 풀지 못한다.
 
-그래서 parameter 는 서로 다른 작은 random 값으로 출발시킨다. PyTorch 의 `nn.Linear` 는 기본으로 weight 와 bias 를 $-1/\sqrt{\text{입력 수}}$
-와 $+1/\sqrt{\text{입력 수}}$ 사이에서 고르게 뽑는다. 입력이 2 개면 $\pm 1/\sqrt 2 \approx \pm 0.71$ 사이다.
+그래서 parameter 는 서로 다른 작은 random 값으로 출발시킨다. PyTorch 의 `nn.Linear` 는 기본으로 weight 와 bias 를 $-1/\sqrt{n_\text{in}}$
+와 $+1/\sqrt{n_\text{in}}$ 사이에서 고르게 뽑는다($n_\text{in}$ 은 입력 수). 입력이 2 개면 $\pm 1/\sqrt 2 \approx \pm 0.71$ 사이다.
 
 <details><summary><b>심화: 모두 0 에서 출발한 network 와 같은 값에서 출발한 두 neuron 의 backward</b></summary>
 

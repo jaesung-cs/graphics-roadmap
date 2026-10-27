@@ -59,7 +59,7 @@ $2 \times (3, 4) = (6, 8)$ pixel 이다.
 동영상에서 공의 다음 위치를 계산할 때는 덧셈과 scalar 곱을 한 번씩 쓴다.
 
 $$
-\text{새 위치} = \text{지금 위치} + \Delta t \times \text{속도}
+\text{next position} = \text{current position} + \Delta t \times \text{velocity}
 $$
 
 $\Delta t$ 는 시간 간격(여기서는 frame 수)이고, $\Delta$(delta)는 변한 양을 나타낼 때 쓰는 그리스 문자다. 색에도 같은 계산을 쓰는데,

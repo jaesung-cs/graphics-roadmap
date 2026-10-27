@@ -267,11 +267,11 @@ drift 라고 부르고, **prior preservation loss** 를 더해 막았다. 학습
 loss 를 함께 줄이게 한다.
 
 $$
-L = L_\text{대상} + \lambda\, L_\text{prior}
+L = L_\text{subject} + \lambda\, L_\text{prior}
 $$
 
-$L_\text{대상}$ 은 "a [V] dog" 와 대상 사진으로 구한 noise 오차이고, $L_\text{prior}$ 는 "a dog" 와 미리 만든 그림으로 구한 noise 오차다. $\lambda$("람다")는
-두 loss 의 비율이다. 예를 들어 한 step 에서 $L_\text{대상} = 0.12$, $L_\text{prior} = 0.08$ 이고 $\lambda = 1$ 이면 $L = 0.20$ 이다. 저자들은 $\lambda = 1$,
+$L_\text{subject}$ 은 "a [V] dog" 와 대상 사진으로 구한 noise 오차이고, $L_\text{prior}$ 는 "a dog" 와 미리 만든 그림으로 구한 noise 오차다. $\lambda$("람다")는
+두 loss 의 비율이다. 예를 들어 한 step 에서 $L_\text{subject} = 0.12$, $L_\text{prior} = 0.08$ 이고 $\lambda = 1$ 이면 $L = 0.20$ 이다. 저자들은 $\lambda = 1$,
 learning rate $5 \times 10^{-6}$ 으로 Stable Diffusion 을 약 1000 번 학습했고, 이때 "a dog" 그림은 약 1000 장 만들었다. 논문에 따르면 A100 GPU 한 대로
 약 5 분이 걸렸다.
 
@@ -281,7 +281,7 @@ DreamBooth 의 저자들은 U-Net 전체를 미세조정했지만, 같은 학습
 DreamBooth 를 한다. 기본값은 learning rate 가 $5 \times 10^{-4}$ 이고, `prior_loss_weight` 가 1.0 이고, prior 용 그림이 100 장이다. 이 learning rate 는
 저자들이 전체 미세조정에 쓴 $5 \times 10^{-6}$ 의 100 배다.
 
-**확인 문제.** DreamBooth 학습의 한 step 에서 $L_\text{대상} = 0.30$, $L_\text{prior} = 0.10$ 이다. $\lambda = 0.5$ 이면 줄일 loss 는 얼마이고, prior preservation
+**확인 문제.** DreamBooth 학습의 한 step 에서 $L_\text{subject} = 0.30$, $L_\text{prior} = 0.10$ 이다. $\lambda = 0.5$ 이면 줄일 loss 는 얼마이고, prior preservation
 loss 를 쓰지 않으면($\lambda = 0$) 얼마일까?
 
 <details><summary>답 보기</summary>

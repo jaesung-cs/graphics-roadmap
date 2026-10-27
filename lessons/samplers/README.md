@@ -148,19 +148,20 @@ Song 등(2021)은 이런 방정식을 probability flow ODE 라고 부르고, 이
 위 방정식에 쓰면 아래와 같다.
 
 $$
-\bar x_\text{다음} = \bar x + (\sigma_\text{다음} - \sigma) \times \hat\epsilon(\bar x, \sigma)
+\bar x_\text{next} = \bar x + (\sigma_\text{next} - \sigma) \times \hat\epsilon(\bar x, \sigma)
 $$
 
-$\sigma_\text{다음} < \sigma$ 라서 $(\sigma_\text{다음} - \sigma)$ 는 음수이고, 맞힌 noise 방향의 반대로 간다. 이 식은 DDIM 의 식과 같다. DDIM 의
-한 step 은 $\hat x_0$ 를 구한 뒤 같은 $\hat\epsilon$ 으로 작은 $\sigma$ 의 값을 만드는 것이었는데, 그 값은 $\hat x_0 + \sigma_\text{다음}\hat\epsilon =
-\bar x - \sigma\hat\epsilon + \sigma_\text{다음}\hat\epsilon$ 으로 위 식과 같다. DDIM 논문은 4.3 절에서 이 관계를 적었고, Karras 등과 DPM-Solver
+$\sigma$ 와 $\bar x$ 는 지금 step 의 값이고, 아래 첨자 next 를 붙인 $\sigma_\text{next}$ 와 $\bar x_\text{next}$ 는 다음 step 의 값이다.
+$\sigma_\text{next} < \sigma$ 라서 $(\sigma_\text{next} - \sigma)$ 는 음수이고, 맞힌 noise 방향의 반대로 간다. 이 식은 DDIM 의 식과 같다. DDIM 의
+한 step 은 $\hat x_0$ 를 구한 뒤 같은 $\hat\epsilon$ 으로 작은 $\sigma$ 의 값을 만드는 것이었는데, 그 값은 $\hat x_0 + \sigma_\text{next}\hat\epsilon =
+\bar x - \sigma\hat\epsilon + \sigma_\text{next}\hat\epsilon$ 으로 위 식과 같다. DDIM 논문은 4.3 절에서 이 관계를 적었고, Karras 등과 DPM-Solver
 논문도 DDIM 을 이 방정식의 1 차 해법으로 본다.
 
 예를 들어 1 차원 데이터가 $+2$ 와 $-2$ 에 표준편차 0.5 로 퍼진 두 무리(반반)라고 하자. U-Net 대신 이 데이터에서 noise 를 정확히 맞히는 값을
 직접 계산해 쓴다. $\sigma = 14.615$, $\bar x = 0.731$ 에서 출발해, 작은 $\sigma$ 쪽에 step 을 촘촘히 두는 Karras schedule 의 값 10 개로 $\sigma$ 를
 줄이는 Euler 법의 처음 세 step 은 아래와 같다.
 
-| $\sigma$ | $\sigma_\text{다음}$ | $\bar x$ | $\hat x_0$ | $\hat\epsilon = (\bar x - \hat x_0) \div \sigma$ | $\sigma_\text{다음} - \sigma$ | $\bar x_\text{다음}$ |
+| $\sigma$ | $\sigma_\text{next}$ | $\bar x$ | $\hat x_0$ | $\hat\epsilon = (\bar x - \hat x_0) \div \sigma$ | $\sigma_\text{next} - \sigma$ | $\bar x_\text{next}$ |
 | --- | --- | --- | --- | --- | --- | --- |
 | 14.615 | 9.103 | 0.731 | 0.015 | 0.049 | $-5.512$ | 0.461 |
 | 9.103 | 5.478 | 0.461 | 0.023 | 0.048 | $-3.625$ | 0.287 |
@@ -175,16 +176,16 @@ Euler 법은 step 안에서 빠르기가 바뀌지 않는다고 보고 직선으
 $\sigma$ 가 1 아래로 내려올 때 크게 바뀌어(위 표 뒤의 step 들에서 0.034 → $-0.015$ → $-0.319$ → $-1.426$), 큰 step 으로 지나가면 오차가 생긴다.
 sampler 들은 step 을 경로가 휘는 곳에 촘촘히 두거나, step 안에서 빠르기가 바뀌는 것까지 계산에 넣어 이 오차를 줄인다.
 
-**확인 문제.** $\sigma = 2$, $\bar x = 1.0$ 에서 U-Net 이 $\hat\epsilon = 0.3$ 을 냈다. Euler 법으로 $\sigma_\text{다음} = 1.5$ 로 간 값과, 이때의
+**확인 문제.** $\sigma = 2$, $\bar x = 1.0$ 에서 U-Net 이 $\hat\epsilon = 0.3$ 을 냈다. Euler 법으로 $\sigma_\text{next} = 1.5$ 로 간 값과, 이때의
 $\hat x_0$ 는?
 
 <details><summary>답 보기</summary>
 
-① $\bar x_\text{다음} = 1.0 + (1.5 - 2) \times 0.3 = 1.0 - 0.15 = 0.85$ 다.
+① $\bar x_\text{next} = 1.0 + (1.5 - 2) \times 0.3 = 1.0 - 0.15 = 0.85$ 다.
 
 ② $\hat x_0 = \bar x - \sigma\hat\epsilon = 1.0 - 2 \times 0.3 = 0.4$ 다.
 
-답: $\bar x_\text{다음} = 0.85$ 이고 $\hat x_0 = 0.4$ 다. $\hat x_0 + 1.5 \times 0.3 = 0.85$ 라서 DDIM 의 계산과도 같다.
+답: $\bar x_\text{next} = 0.85$ 이고 $\hat x_0 = 0.4$ 다. $\hat x_0 + 1.5 \times 0.3 = 0.85$ 라서 DDIM 의 계산과도 같다.
 
 </details>
 
@@ -271,15 +272,15 @@ guidance 는 원래 값의 추정을 데이터 범위 밖으로 밀어낸다. DP
 
 <details><summary><b>심화: DPM-Solver++(2M) 의 한 step</b></summary>
 
-$\bar x$ 표기에서 1 차 DPM-Solver++ 는 $\bar x_\text{다음} = \frac{\sigma_\text{다음}}{\sigma}\bar x + \big(1 - \frac{\sigma_\text{다음}}{\sigma}\big)\hat x_0$ 다.
-$\hat x_0 = \bar x - \sigma\hat\epsilon$ 을 넣으면 $\bar x + (\sigma_\text{다음} - \sigma)\hat\epsilon$ 으로 Euler·DDIM 과 같다. 2M 은 $\hat x_0$ 자리에 지금과
-한 step 앞의 추정을 섞은 $D = \big(1 + \frac{1}{2r}\big)\hat x_0 - \frac{1}{2r}\hat x_0^{\text{앞}}$ 을 넣는다. $r$ 은 앞 step 과 이번 step 의 길이를
+$\bar x$ 표기에서 1 차 DPM-Solver++ 는 $\bar x_\text{next} = \frac{\sigma_\text{next}}{\sigma}\bar x + \big(1 - \frac{\sigma_\text{next}}{\sigma}\big)\hat x_0$ 다.
+$\hat x_0 = \bar x - \sigma\hat\epsilon$ 을 넣으면 $\bar x + (\sigma_\text{next} - \sigma)\hat\epsilon$ 으로 Euler·DDIM 과 같다. 2M 은 $\hat x_0$ 자리에 지금과
+한 step 앞의 추정을 섞은 $D = \big(1 + \frac{1}{2r}\big)\hat x_0 - \frac{1}{2r}\hat x_0^{\text{prev}}$ 을 넣는다. $r$ 은 앞 step 과 이번 step 의 길이를
 $-\log\sigma$ 로 잰 비다. 첫 step 은 앞의 추정이 없어 1 차로 간다. 본문 표의 DPM-Solver++(2M) 은 이 식으로 계산했고, 마지막 $\sigma = 0$ 으로 가는
 step 은 $\bar x = \hat x_0$ 로 두었다.
 
 </details>
 
-**확인 문제.** DPM-Solver++ 의 1 차 식으로 $\sigma = 2$, $\bar x = 1.0$, $\hat x_0 = 0.4$ 에서 $\sigma_\text{다음} = 1.5$ 로 간 값은? 앞 절 Euler 의 확인
+**확인 문제.** DPM-Solver++ 의 1 차 식으로 $\sigma = 2$, $\bar x = 1.0$, $\hat x_0 = 0.4$ 에서 $\sigma_\text{next} = 1.5$ 로 간 값은? 앞 절 Euler 의 확인
 문제와 비교해 보자.
 
 <details><summary>답 보기</summary>
@@ -297,10 +298,10 @@ $$
 DDPM 의 reverse step 은 step 마다 새 noise $\sigma_t z$($z$ 는 $\mathcal N(0, 1)$ 에서 새로 뽑은 값)를 더했다. Euler a 는 이 방식을 Euler 법에
 붙인 sampler 이고, 이름의 a 는 ancestral 의 줄임이다. step 마다
 $\sigma$ 를 목표보다 더 줄였다가, 그만큼 새 noise 를 더해 목표 $\sigma$ 로 되돌린다. diffusers 의 `EulerAncestralDiscreteScheduler` 는 $\sigma$ 에서
-$\sigma_\text{다음}$ 으로 갈 때 아래 두 값을 쓴다.
+$\sigma_\text{next}$ 으로 갈 때 아래 두 값을 쓴다.
 
 $$
-\sigma_\text{up} = \sqrt{\frac{\sigma_\text{다음}^2\,(\sigma^2 - \sigma_\text{다음}^2)}{\sigma^2}}, \qquad \sigma_\text{down} = \sqrt{\sigma_\text{다음}^2 - \sigma_\text{up}^2}
+\sigma_\text{up} = \sqrt{\frac{\sigma_\text{next}^2\,(\sigma^2 - \sigma_\text{next}^2)}{\sigma^2}}, \qquad \sigma_\text{down} = \sqrt{\sigma_\text{next}^2 - \sigma_\text{up}^2}
 $$
 
 Euler 법으로 $\sigma_\text{down}$ 까지 간 뒤 표준편차 $\sigma_\text{up}$ 의 새 noise 를 더한다. Karras schedule 의 $\sigma = 1.749 \to 0.914$ step 이면
@@ -314,7 +315,7 @@ sampler 는 step 을 늘리면 같은 그림에 점점 가까워지지만, ances
 등도 noise 를 더 넣는 확률적 sampling 이 앞 step 의 오차를 바로잡는 데 효과가 있지만, noise 를 지나치게 넣고 빼면 만든 그림의 세부가 점점 사라지고
 색이 포화되는 쪽으로 흐른다고 적었다.
 
-**확인 문제.** ancestral sampler 가 $\sigma = 2$ 에서 $\sigma_\text{다음} = 1$ 로 갈 때 $\sigma_\text{up}$ 과 $\sigma_\text{down}$ 은?
+**확인 문제.** ancestral sampler 가 $\sigma = 2$ 에서 $\sigma_\text{next} = 1$ 로 갈 때 $\sigma_\text{up}$ 과 $\sigma_\text{down}$ 은?
 
 <details><summary>답 보기</summary>
 

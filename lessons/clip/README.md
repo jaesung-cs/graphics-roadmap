@@ -186,14 +186,14 @@ $(0.122 + 0.086) \div 2 = 0.104$ 다.
 | --- | --- |
 | 쌍 3 개 | $B = 3$ |
 | $I_2$ 행의 정답 확률 $1 \div 1.3746 = 0.7275$ | $\dfrac{e^{s_{22}/\tau}}{\sum_{j} e^{s_{2j}/\tau}}$ |
-| 행 평균 0.122 | $\mathcal{L}_{\text{행}}$ |
+| 행 평균 0.122 | $\mathcal{L}_{\text{row}}$ |
 
 $$
-\mathcal{L}_{\text{행}} = -\frac{1}{B}\sum_{i=1}^{B} \log \frac{e^{s_{ii}/\tau}}{\sum_{j=1}^{B} e^{s_{ij}/\tau}}, \qquad
-\mathcal{L} = \frac{\mathcal{L}_{\text{행}} + \mathcal{L}_{\text{열}}}{2}
+\mathcal{L}_{\text{row}} = -\frac{1}{B}\sum_{i=1}^{B} \log \frac{e^{s_{ii}/\tau}}{\sum_{j=1}^{B} e^{s_{ij}/\tau}}, \qquad
+\mathcal{L} = \frac{\mathcal{L}_{\text{row}} + \mathcal{L}_{\text{col}}}{2}
 $$
 
-$\sum_{j=1}^{B}$ 는 $j$ 를 1 부터 $B$ 까지 바꿔 가며 더하라는 기호이고, $\mathcal{L}_{\text{열}}$ 은 분모의 $s_{ij}$ 를 $s_{ji}$ 로 바꿔 같은 열의
+row 는 행, col(column)은 열이다. $\sum_{j=1}^{B}$ 는 $j$ 를 1 부터 $B$ 까지 바꿔 가며 더하라는 기호이고, $\mathcal{L}_{\text{col}}$ 은 분모의 $s_{ij}$ 를 $s_{ji}$ 로 바꿔 같은 열의
 칸끼리 더한 식이다. 학습이 더 진행되어 짝의 점수가 모두 0.9 가 되고 강아지 사진–고양이 설명은 0.3 이 된 표(나머지는 0.2, 0.0, 0.1, 0.0, 0.1)에서
 같은 계산을 하면 전체 loss 는 약 0.001 이다.
 
