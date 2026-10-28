@@ -746,14 +746,23 @@ code {
   height: 100%;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 20px 32px 48px;
+  padding: 0 32px 48px;
+  /* height of the sticky top line, so scroll targets land below it */
+  --panel-bar: 64px;
 }
 
+/* stays at the top while the lecture scrolls so the close button is always in reach; the negative margins let its
+   background cover the side padding and the text scrolling under it */
 .panel-topline {
+  position: sticky;
+  top: 0;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-right: -10px;
+  margin: 0 -32px;
+  padding: 20px 22px 0 32px;
+  background: var(--surface-solid);
 }
 
 .branch-tag {
@@ -1028,7 +1037,7 @@ code {
 
 /* a section link stops short of the heading instead of on the panel's top edge */
 .markdown :is(h2, h3, h4) {
-  scroll-margin-top: 24px;
+  scroll-margin-top: calc(var(--panel-bar) + 24px);
 }
 
 .markdown p {
@@ -1286,7 +1295,7 @@ code {
 /* the quiz closes the lecture; scrollIntoView stops here with a little air above */
 .panel-quiz {
   margin-top: 32px;
-  scroll-margin-top: 16px;
+  scroll-margin-top: calc(var(--panel-bar) + 16px);
 }
 
 .quiz-card-last {
@@ -1628,7 +1637,13 @@ code {
   }
 
   .panel-scroll {
-    padding: 16px 16px 40px;
+    padding: 0 16px 40px;
+    --panel-bar: 60px;
+  }
+
+  .panel-topline {
+    margin: 0 -16px;
+    padding: 16px 6px 0 16px;
   }
 
   .panel h2 {

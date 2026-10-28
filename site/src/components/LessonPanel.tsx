@@ -110,16 +110,17 @@ export const LessonPanel = memo(function LessonPanel({ curriculum: c, progressFi
   return (
     <aside className="panel" aria-labelledby="panel-title" style={{ ['--branch' as string]: branch.color }}>
       <div className="panel-scroll" ref={scrollRef}>
+        {/* outside the header so it can stay stuck for the whole scroll, not only while the header is in view */}
+        <div className="panel-topline">
+          <span className="branch-tag">
+            <span className="branch-dot" aria-hidden="true" />
+            {branch.title}
+          </span>
+          <button type="button" className="icon-button" onClick={onClose} aria-label="강의 닫기">
+            <X size={20} aria-hidden="true" />
+          </button>
+        </div>
         <header className="panel-head">
-          <div className="panel-topline">
-            <span className="branch-tag">
-              <span className="branch-dot" aria-hidden="true" />
-              {branch.title}
-            </span>
-            <button type="button" className="icon-button" onClick={onClose} aria-label="강의 닫기">
-              <X size={20} aria-hidden="true" />
-            </button>
-          </div>
           <h2 id="panel-title" ref={headingRef} tabIndex={-1}>
             {lesson.title}
           </h2>
